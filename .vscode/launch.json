@@ -4,35 +4,12 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
+
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Server",
-      "program": "${workspaceFolder}/webHooks.js"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Launch ArtNet Test",
-      "program": "${workspaceFolder}/artNetTest.js"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Test MessageQueue",
-      "program": "${workspaceFolder}/MessageQueue.js"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Test NameManager",
-      "program": "${workspaceFolder}/NameManager.js"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Test HttpUtilities",
-      "program": "${workspaceFolder}/HttpUtilities.js"
+      "name": "Launch BeamTest",
+      "program": "${workspaceFolder}/BeamTest.js"
     }
   ]
 }

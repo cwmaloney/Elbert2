@@ -1,29 +1,27 @@
+
 "use strict";
 
 const { ArtNet } = require("./ArtNet.js");
-const {
-  Beam,
-  Universes
-} = require('./config.js');
+const { Beam } = require("./config.js");
 
-const defaultChannelData = [
-    Beam.Color.White,
-    Beam.Strobe.Off,
-    /*dimmer*/ 0,
-    Beam.Gobo.Off,
-    Beam.Prism.Off,
-    /*PrismRotation*/ 0,
-    /*effects movement*/Beam.Unused,
-    Beam.Frost.Off,
-    /*focus*/ 0,
-    /*pan*/ 0,
-    /*pan fine*/ 0,
-    /*tilt*/ 0,
-    /*tilt fine*/ 0,
-    /*function*/ Beam.Unused,
-    Beam.Reset.None,
-    Beam.Lamp.On
-];
+// const defaultChannelData = [
+//     Beam.Color.White,
+//     Beam.Strobe.Off,
+//     /*dimmer*/ 0,
+//     Beam.Gobo.Off,
+//     Beam.Prism.Off,
+//     /*PrismRotation*/ 0,
+//     /*effects movement*/Beam.Unused,
+//     Beam.Frost.Off,
+//     /*focus*/ 0,
+//     /*pan*/ 0,
+//     /*pan fine*/ 0,
+//     /*tilt*/ 0,
+//     /*tilt fine*/ 0,
+//     /*function*/ Beam.Unused,
+//     Beam.Reset.None,
+//     Beam.Lamp.On
+// ];
 
 // const beamTestData = [
 //   { channel: 1, channelData: [
@@ -84,8 +82,9 @@ const testPrisms = [
 ];
  
 const testPrismRotations = [
-  Beam.Prism.Off,
-  Beam.Prism.Slow
+  Beam.PrismRotation.Off,
+  Beam.PrismRotation.Slow,
+  Beam.PrismRotation.Fast
 ];
  
 const testPans = [
@@ -129,100 +128,167 @@ const eastUniverseInfo = {
   "universe": 1,
   "sourcePort": 6454,
   "sendOnlyChangeData": false,
-  "refreshInterval": 1000 };
+  "refreshInterval": 1000
+};
 
   const westUniverseInfo = {
     "address": westAddress,
     "universe": 1,
     "sourcePort": 6454,
     "sendOnlyChangeData": false,
-    "refreshInterval": 1000 };
+    "refreshInterval": 1000
+  };
   
-artnet.configureUniverse(westUniverseInfo);
 artnet.configureUniverse(eastUniverseInfo);
+artnet.configureUniverse(westUniverseInfo);
 
-let testIndex = -1;
-let colorIndex = -1;
-let panIndex = -1;
-let tiltIndex = -1;
-let goboIndex = -1;
-let strobeIndex = -1;
-let prismIndex = -1;
-let prismRotationIndex = -1;
+let channelData = [];
 
-function resetTestDataIndexes()
-{
-  colorIndex = -1;
-  panIndex = -1;
-  tiltIndex = -1;
-  goboIndex = -1;
-  strobeIndex = -1;
-  prismIndex = -1;
-  prismRotationIndex = -1;
+function setDefaultChannelData() {
+  channelData[Beam.BeamChannel.ColorWheel] = Beam.Color.White
+  channelData[Beam.BeamChannel.Strobe] = Beam.Strobe.Off;
+  channelData[Beam.BeamChannel.Dimmer] = 0;
+  channelData[Beam.BeamChannel.Gobo] = Beam.Gobo.Off;
+  channelData[Beam.BeamChannel.Prism] = Beam.Prism.Off;
+  channelData[Beam.BeamChannel.PrismRotation] = Beam.PrismRotation.Off;
+  channelData[Beam.BeamChannel.EffectsMovement] = Beam.Unused;
+  channelData[Beam.BeamChannel.Frost] = Beam.Frost.Off;
+  channelData[Beam.BeamChannel.Focus] = 0;
+  channelData[Beam.BeamChannel.Pan] = 0;
+  channelData[Beam.BeamChannel.PanFine] = 0;
+  channelData[Beam.BeamChannel.Tilt] = 128;
+  channelData[Beam.BeamChannel.TiltFine] = 0;
+  channelData[Beam.BeamChannel.Macro] = Beam.Unused;
+  channelData[Beam.BeamChannel.Reset] = Beam.Reset.None;
+  channelData[Beam.BeamChannel.Lamp] = Beam.Lamp.On;
 }
+setDefaultChannelData();
+
+let testIndex = 0;
+let colorIndex = -1;
+let panIndex = 0;
+let tiltIndex = 0;
+let goboIndex = 0;
+let strobeIndex = 0;
+let prismIndex = 0;
+let prismRotationIndex = 0;
 
 function nextColor() {
+  let reset = false;
   if (++colorIndex >= testColors.length) {
     colorIndex = 0;
-    return true;
+    reset = true;
   }
-  return false;
+  channelData[Beam.BeamChannel.ColorWheel] = testColors[colorIndex];
+  return reset;
 }
 function nextGobo() {
+  let reset = false;
   if (++goboIndex >= testGobos.length) {
     goboIndex = 0;
-    return true;
+    reset = true;
   }
-  return false;
+  channelData[Beam.BeamChannel.Gobo] = testGobos[goboIndex];
+  return reset;
 }
-function nextGobo() {
-  if (++goboIndex >= testGobos.length) {
-    goboIndex = 0;
-    return true;
-  }
-  return false;
-}
-function nextStrobe() {
-  if (++strobeIndex >= testStrobes.length) {
-    strobeIndex = 0;
-    return true;
-  }
-  return false;
-}
+
 function nextPrism() {
+  let reset = false;
   if (++prismIndex >= testPrisms.length) {
     prismIndex = 0;
-    return true;
+    reset = true;
   }
-  return false;
+  channelData[Beam.BeamChannel.Prism] = testPrisms[prismIndex];
+  return reset;
 }
 function nextPrismRoation() {
-  if (++prismRotationIndex >= testPrismRoation.length) {
+  let reset = false;
+  if (++prismRotationIndex >= testPrismRotations.length) {
     prismRotationIndex = 0;
-    return true;
+    reset = true;
   }
-  return false;
+  channelData[Beam.BeamChannel.PrismRoation] = testPrismRotations[prismRotationIndex];
+  return reset;
 }
+
+function nextStrobe() {
+  let reset = false;
+  if (++strobeIndex >= testStrobes.length) {
+    strobeIndex = 0;
+    reset = true;
+  }
+  channelData[Beam.BeamChannel.Strobe] = testStrobes[strobeIndex];
+  return reset;
+}
+
 function nextPan() {
+  let reset = false;
   if (++panIndex >= testPans.length) {
     panIndex = 0;
-    return true;
+    reset = true;
   }
-  return false;
+  channelData[Beam.BeamChannel.Pan] = testPans[panIndex];
+  return reset;
 }
 function nextTilt() {
+  let reset = false;
   if (++tiltIndex >= testTilts.length) {
     tiltIndex = 0;
-    return true;
+    reset = true;
   }
-  return false;
+  channelData[Beam.BeamChannel.Tilt] = testTilts[tiltIndex];
+  return reset;
 }
 
 function nextTest() {
-  if (++testIndex >= 1) {
-    testIndex = 0;
+  if (++testIndex > 4) testIndex = 0;
+  setDefaultChannelData();
+  switch (testIndex)
+  {
+    case 0:
+      // colors
+      colorIndex = 0;
+      channelData[Beam.BeamChannel.ColorWheel] = testPans[colorIndex];
+      break;
+    case 1:
+      // pan & tilt
+      panIndex = 0;
+      channelData[Beam.BeamChannel.Pan] = testPans[panIndex];
+
+      tiltIndex = 1;
+      channelData[Beam.BeamChannel.Tilt] = testTilts[tiltIndex];
+      break;
+    case 2:
+      // gobo
+      goboIndex = 1;
+      channelData[Beam.BeamChannel.Gobo] = testGobos[goboIndex];
+
+      tiltIndex = 2;
+      channelData[Beam.BeamChannel.Tilt] = testTilts[tiltIndex];
+   
+      break;
+    case 3:
+      // prism and prism roatation
+      prismIndex = 1;
+      channelData[Beam.BeamChannel.Prism] = testPrisms[prismIndex];
+
+      prismRotationIndex = 0;
+      channelData[Beam.BeamChannel.PrismRotation] = testPrismRotations[prismRotationIndex];
+
+      panIndex = 0;
+      channelData[Beam.BeamChannel.Pan] = testPans[panIndex];
+
+      panIndex = 0;    
+      break;
+    case 4:
+      // strobe
+      strobeIndex = 1;
+      channelData[Beam.BeamChannel.Strob] = testStrobes[strobeIndex];
+
+      panIndex = 0;
+      channelData[Beam.BeamChannel.Pan] = testPans[panIndex];
+      break;
   }
-  resetTestDataIndexes();
 }
 
 function runNextTest() {
@@ -230,42 +296,76 @@ function runNextTest() {
   switch (testIndex)
   {
     case 0:
-      if (nextColor(channelData)) {
-        if (nextTilt(channelData)) {
-          if (nextPan(channelData)) {
-              nextTest(channelData);
+      if (nextColor()) {
+        nextTest()
+      }
+      break;
+    case 1:
+      if (nextPan()) {
+        if (nextTilt()) {
+          nextTest()
+        }
+      }
+      break;
+    case 2:
+      if (nextGobo()) {
+        if (nextPan()) {
+           nextTest()
+        }
+      }
+      break;
+    case 3:
+      if (nextPrism()) {
+        if (nextPrismRoation()) {
+          if (nextPan()) {
+           nextTest()
           }
         }
       }
       break;
+    case 4:
+      if (nextStrobe()) {
+        if (nextPan()) {
+           nextTest()
+        }
+      }
+      break;
   }
+  
+  // channelData[Beam.BeamChannel.Strobe] = testStrobes[strobeIndex];
+  // channelData[Beam.BeamChannel.Dimmer] = 0;
+  // channelData[Beam.BeamChannel.Gobo] = testGobos[goboIndex];
+  // channelData[Beam.BeamChannel.Prism] = testPrisms[prismIndex];
+  // channelData[Beam.BeamChannel.PrismRotation] = testPrismRotations[prismRotationIndex];
+  // channelData[Beam.BeamChannel.EffectsMovement] = Beam.Unused;
+  // channelData[Beam.BeamChannel.Frost] = Beam.Frost.Off;
+  // channelData[Beam.BeamChannel.Focus] = 0;
+  // channelData[Beam.BeamChannel.Pan] = testPans[panIndex];
+  // channelData[Beam.BeamChannel.PanFine] = 0;
+  // channelData[Beam.BeamChannel.Tilt] = testTilts[tiltIndex];
+  // channelData[Beam.BeamChannel.TiltFine] = 0;
+  // channelData[Beam.BeamChannel.Macro] = Beam.Unused;
+  // channelData[Beam.BeamChannel.Reset] = Beam.Reset.None;
+  // channelData[Beam.BeamChannel.Lamp] = Beam.Lamp.On;
+  
+  console.log("--- BeamTest::",
+    " test=", testIndex,
+    " c=", channelData[Beam.BeamChannel.ColorWheel],
+    " s=", channelData[Beam.BeamChannel.Strobe],
+    " g=", channelData[Beam.BeamChannel.Gobo],
+    " pz=", channelData[Beam.BeamChannel.Prism],
+    " pr=", channelData[Beam.BeamChannel.PrismRotation],
+    " p=", channelData[Beam.BeamChannel.Pan],
+    " t=", channelData[Beam.BeamChannel.Tilt],
+    " l=", channelData[Beam.BeamChannel.Lamp]);
 
-  var channelData = [];
-  
-  channelData[BeamChannel.ColorWheel] = testColors[colorIndex];
-  channelData[BeamChannel.Strobe] = testStrobes[strobeIndex];
-  channelData[BeamChannel.Dimmer] = 0;
-  channelData[BeamChannel.Gobo] = testGobos[goboIndex];
-  channelData[BeamChannel.Prism] = testPrisms[prismIndex];
-  channelData[BeamChannel.PrismRotation] = testPrismRotations[prismRotationIndex];
-  channelData[BeamChannel.EffectsMovement] = Beam.Unused;
-  channelData[BeamChannel.Frost] = Beam.Frost.Off;
-  channelData[BeamChannel.Focus] = 0;
-  channelData[BeamChannel.Pan] = testPans[panIndex];
-  channelData[BeamChannel.PanFine] = 0;
-  channelData[BeamChannel.Tilt] = testColors[colorIndex];
-  channelData[BeamChannel.TiltFine] = 0;
-  channelData[BeamChannel.Macro] = Beam.Unused;
-  channelData[BeamChannel.Reset] = Beam.Reset;
-  channelData[BeamChannel.Lamp] = Beam.Lamp.On;
-  
-  console.log("--- BeamTest::", "testIndex", testIndex, 'data: ',  channelData);
-  for (var beamIndex = 0; beamIndex < beams.length(); beamIndex++) {
+  for (var beamIndex = 0; beamIndex < beams.length; beamIndex++) {
     artnet.setChannelData(beams[beamIndex].address, beams[beamIndex].universe, 1, channelData);
   }
-  artnet.send(universe);
+  artnet.send(eastUniverseInfo.address, eastUniverseInfo.universe);
+  artnet.send(westUniverseInfo.address, westUniverseInfo.universe);
 }
 
 runNextTest();
 
-setInterval(runNextTest, 5000);
+setInterval(runNextTest, 10);

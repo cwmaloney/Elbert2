@@ -2,20 +2,19 @@
 
 module.exports = {
   root: true,
-  parser: 'babel-eslint',
   parserOptions: {
+    parser: "babel-eslint",
     ecmaVersion: 8,
-    ecmaFeatures: { "experimentalObjectRestSpread": true },
     sourceType: 'module'
   },
 
   env: {
-    browser: true,
+    node: true,
     commonjs: true,
     es6: true
   },
 
-  extends: "eslint:recommended",
+  extends: [ "eslint:recommended" ],
 
   // html plugin required to lint *.vue files
   // plugins: [ 'html' ],
