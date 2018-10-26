@@ -31,91 +31,93 @@
 // };
 
 const Beam = {
-  Unused: 0,
+  "Unused": 0,
 
-  Color: {
-    White: 0,
-    Red: 1,
-    Lavender: 2,
-    Yellow: 3,
-    Green: 4,
-    LightGreen: 5,
-    Fluorescent: 6,
-    Pink: 7,
-    Orange: 8,
-    Megenta: 9,
-    Aquamarine: 10,
-    Blue: 14,
+  "Color": {
+    "White": 0,
+    "Red": 1,
+    "Lavender": 2,
+    "Yellow": 3,
+    "Green": 4,
+    "LightGreen": 5,
+    "Fluorescent": 6,
+    "Pink": 7,
+    "Orange": 8,
+    "Megenta": 9,
+    "Aquamarine": 10,
+    "Blue": 14,
   },
 
-  Gobo: {
-    Off: 0,
-    Dot1: 1,
-    Dot2: 2,
-    Dot3: 3,
-    Dot4: 4,
-    Dot5: 5,
-    Dot6: 6,
-    ThreePoints: 8,
-    FourPoints: 9,
-    Stars10: 10,
-    Star12: 12,
-    Star13: 13,
-    Star14: 14,
-    Star15: 15,
-    VerticalBar: 16,
-    HorizontalBar: 17
+  "Gobo": {
+    "Off": 0,
+    "Dot1": 1,
+    "Dot2": 2,
+    "Dot3": 3,
+    "Dot4": 4,
+    "Dot5": 5,
+    "Dot6": 6,
+    "ThreePoints": 8,
+    "FourPoints": 9,
+    "Stars10": 10,
+    "Star12": 12,
+    "Star13": 13,
+    "Star14": 14,
+    "Star15": 15,
+    "VerticalBar": 16,
+    "HorizontalBar": 17
   },
 
-  Prism: {
-    On: 128,
-    Off: 0
+  "Prism": {
+    "On": 128,
+    "Off": 0
   },
 
-  PrismRotation: {
-    Fast: 255,
-    Slow: 128,
-    Off: 0
+  "PrismRotation": {
+    "Fast": 255,
+    "Slow": 128,
+    "Off": 0
   },
 
-  Frost: {
-    On: 128,
-    Off: 0
+  "Frost": {
+    "On": 128,
+    "Off": 0
   },
 
-  Strobe: {
-    Off: 0,
-    Slow: 4
+  "Strobe": {
+    "Off": 0,
+    "Slow": 10,
+    "Medium": 50,
+    "Fast": 100
   },
 
-  Reset: {
-    None: 0,
+  "Reset": {
+    "None": 0,
   },
 
-  Lamp: {
-    Off: 10,
-    On: 255
+  "Lamp": {
+    "Off": 10,
+    "On": 255
   },
 
-  ChannelsPerBeam: 16,
+  "ChannelsPerBeam": 16,
 
-  BeamChannel: {
-    ColorWheel: 0,
-    Strobe: 1,
-    Dimmer: 2,
-    Gobo: 3,
-    Prism: 4,
-    PrismRotation: 5,
-    EffectsMovement: 6,
-    Frost: 7,
-    Focus: 8,
-    Pan: 9,
-    PanFine: 10,
-    Tilt: 11,
-    TiltFine: 12,
-    Macro: 13,
-    Reset: 14,
-    Lamp: 15
+  "BeamChannel": {
+    "ColorWheel": 0,
+    "Strobe": 1,
+    "Dimmer": 2,
+    "Gobo": 3,
+    "Prism": 4,
+    "PrismRotation": 5,
+    "EffectsMovement": 6,
+    "Frost": 7,
+    "Focus": 8,
+    "Pan": 9,
+    "PanFine": 10,
+    "Tilt": 11,
+    "TiltFine": 12,
+    "Macro": 13,
+    "Reset": 14,
+    "Lamp": 15
   }
 }
 

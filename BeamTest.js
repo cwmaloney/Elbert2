@@ -4,25 +4,6 @@
 const { ArtNet } = require("./ArtNet.js");
 const { Beam } = require("./config.js");
 
-// const defaultChannelData = [
-//     Beam.Color.White,
-//     Beam.Strobe.Off,
-//     /*dimmer*/ 0,
-//     Beam.Gobo.Off,
-//     Beam.Prism.Off,
-//     /*PrismRotation*/ 0,
-//     /*effects movement*/Beam.Unused,
-//     Beam.Frost.Off,
-//     /*focus*/ 0,
-//     /*pan*/ 0,
-//     /*pan fine*/ 0,
-//     /*tilt*/ 0,
-//     /*tilt fine*/ 0,
-//     /*function*/ Beam.Unused,
-//     Beam.Reset.None,
-//     Beam.Lamp.On
-// ];
-
 // const beamTestData = [
 //   { channel: 1, channelData: [
 //     Beam.Color.Red, Beam.Strobe.Off, /*dimmer*/ 0, Beam.Gobo.Off, Beam.Prism.Off, /*PrismRotation*/ 0, Beam.Unused,
@@ -73,7 +54,9 @@ const testGobos = [
 
 const testStrobes = [
   Beam.Strobe.Off,
-  Beam.Strobe.On
+  Beam.Strobe.Slow,
+  Beam.Strobe.Medium,
+  Beam.Strobe.Fast
 ];
  
 const testPrisms = [
@@ -89,17 +72,31 @@ const testPrismRotations = [
  
 const testPans = [
   0,
+  16,
+  32,
+  48,
   64,
+  80,
+  96,
   128,
+  144,
+  160,
+  176,
   192,
+  208,
+  224,
   255
 ];
   
 const testTilts = [
   0,
+  32,
   64,
+  96,
   128,
+  160,
   192,
+  224,
   255
 ];
       
@@ -109,18 +106,18 @@ const eastAddress = "10.7.84.55";
 const westAddress = "10.7.84.56";
 
 const beams = [
+  { address: eastAddress, universe: 1, channel: (0 * Beam.ChannelsPerBeam) },
   { address: eastAddress, universe: 1, channel: (1 * Beam.ChannelsPerBeam) },
   { address: eastAddress, universe: 1, channel: (2 * Beam.ChannelsPerBeam) },
   { address: eastAddress, universe: 1, channel: (3 * Beam.ChannelsPerBeam) },
   { address: eastAddress, universe: 1, channel: (4 * Beam.ChannelsPerBeam) },
   { address: eastAddress, universe: 1, channel: (5 * Beam.ChannelsPerBeam) },
-  { address: eastAddress, universe: 1, channel: (6 * Beam.ChannelsPerBeam) },
+  { address: westAddress, universe: 1, channel: (0 * Beam.ChannelsPerBeam) },
   { address: westAddress, universe: 1, channel: (1 * Beam.ChannelsPerBeam) },
   { address: westAddress, universe: 1, channel: (2 * Beam.ChannelsPerBeam) },
   { address: westAddress, universe: 1, channel: (3 * Beam.ChannelsPerBeam) },
   { address: westAddress, universe: 1, channel: (4 * Beam.ChannelsPerBeam) },
-  { address: westAddress, universe: 1, channel: (5 * Beam.ChannelsPerBeam) },
-  { address: westAddress, universe: 1, channel: (6 * Beam.ChannelsPerBeam) }
+  { address: westAddress, universe: 1, channel: (5 * Beam.ChannelsPerBeam) }
 ]
 
 const eastUniverseInfo = {
@@ -242,7 +239,9 @@ function nextTilt() {
 
 function nextTest() {
   if (++testIndex > 4) testIndex = 0;
+
   setDefaultChannelData();
+
   switch (testIndex)
   {
     case 0:
@@ -291,13 +290,17 @@ function nextTest() {
   }
 }
 
+let pauseTime = 1000;
+
 function runNextTest() {
 
   switch (testIndex)
   {
     case 0:
-      if (nextColor()) {
-        nextTest()
+      if (nextPan()) {
+        if (nextColor()) {
+          nextTest()
+        }
       }
       break;
     case 1:
@@ -308,25 +311,25 @@ function runNextTest() {
       }
       break;
     case 2:
-      if (nextGobo()) {
-        if (nextPan()) {
+      if (nextPan()) {
+        if (nextGobo()) {
            nextTest()
         }
       }
       break;
     case 3:
-      if (nextPrism()) {
-        if (nextPrismRoation()) {
-          if (nextPan()) {
+      if (nextPan()) {
+        if (nextPrism()) {
+          if (nextPrismRoation()) {
            nextTest()
           }
         }
       }
       break;
     case 4:
-      if (nextStrobe()) {
-        if (nextPan()) {
-           nextTest()
+      if (nextPan()) {
+        if (nextStrobe()) {
+            nextTest()
         }
       }
       break;
@@ -351,12 +354,12 @@ function runNextTest() {
   console.log("--- BeamTest::",
     " test=", testIndex,
     " c=", channelData[Beam.BeamChannel.ColorWheel],
-    " s=", channelData[Beam.BeamChannel.Strobe],
+    " p=", channelData[Beam.BeamChannel.Pan],
+    " t=", channelData[Beam.BeamChannel.Tilt],
+    " -- s=", channelData[Beam.BeamChannel.Strobe],
     " g=", channelData[Beam.BeamChannel.Gobo],
     " pz=", channelData[Beam.BeamChannel.Prism],
     " pr=", channelData[Beam.BeamChannel.PrismRotation],
-    " p=", channelData[Beam.BeamChannel.Pan],
-    " t=", channelData[Beam.BeamChannel.Tilt],
     " l=", channelData[Beam.BeamChannel.Lamp]);
 
   for (var beamIndex = 0; beamIndex < beams.length; beamIndex++) {
@@ -368,4 +371,4 @@ function runNextTest() {
 
 runNextTest();
 
-setInterval(runNextTest, 10);
+setInterval(runNextTest, pauseTime);
