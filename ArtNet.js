@@ -234,7 +234,7 @@ class ArtNet extends EventEmitter {
       this.clearInterval(universeInfo.refreshInternvalTimerId);
       this.clearTimeout(universeInfo.throttleTimerId);
       universeInfo.socket.close();
-      this.universeInfos.delete(getUniverseKey(address, universe));
+      this.universeInfos.delete(this.getUniverseKey(address, universe));
     }
   }
 
