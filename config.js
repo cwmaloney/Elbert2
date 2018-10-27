@@ -34,18 +34,15 @@ const Beam = {
   "Unused": 0,
 
   "Color": {
-    "White": 0,
-    "Red": 1,
-    "Lavender": 2,
-    "Yellow": 3,
-    "Green": 4,
-    "LightGreen": 5,
-    "Fluorescent": 6,
-    "Pink": 7,
-    "Orange": 8,
-    "Megenta": 9,
-    "Aquamarine": 10,
-    "Blue": 14,
+    "White": 0, // correct
+    "Red": 10, // correct
+    "Orange": 20, // close?
+    "Yellow": 70, // close?
+    "Green": 35, // correct
+    "Blue": 120, // correct
+    "Magenta": 80, // correct
+    "Pink": 60, // correct
+    "Lavender": 55
   },
 
   "Gobo": {
@@ -84,10 +81,14 @@ const Beam = {
   },
 
   "Strobe": {
-    "Off": 0,
+    "Open": 255,
     "Slow": 10,
     "Medium": 50,
     "Fast": 100
+  },
+
+  "Dimmer": {
+    "Off": 255
   },
 
   "Reset": {
@@ -95,8 +96,8 @@ const Beam = {
   },
 
   "Lamp": {
-    "Off": 10,
-    "On": 255
+    "Off": 63,
+    "On": 217
   },
 
   "ChannelsPerBeam": 16,
