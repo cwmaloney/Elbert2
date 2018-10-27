@@ -28,16 +28,12 @@ const { Beam } = require("./config.js");
 const testColors = [
   Beam.Color.White,
   Beam.Color.Red,
-  Beam.Color.Lavender,
-  Beam.Color.Yellow,
-  Beam.Color.Green,
-  Beam.Color.LightGreen,
-  Beam.Color.Fluorescent,
-  Beam.Color.Pink,
   Beam.Color.Orange,
-  Beam.Color.Megenta,
-  Beam.Color.Aquamarine,
-  Beam.Color.Blue
+  //Beam.Color.Yellow,
+  Beam.Color.Green,
+  Beam.Color.Blue,
+  Beam.Color.Magenta,
+  //Beam.Color.Pink
   ];
 
 const testGobos = [
@@ -71,33 +67,17 @@ const testPrismRotations = [
 ];
  
 const testPans = [
-  0,
-  16,
-  32,
-  48,
-  64,
-  80,
-  96,
-  128,
-  144,
-  160,
-  176,
-  192,
-  208,
-  224,
-  255
+    0,  5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95,
+  100,105,110,115,120,125,130,135,140,145,150,155,160
 ];
   
 const testTilts = [
-  0,
-  32,
+  40,
+  52,
   64,
-  96,
-  128,
-  160,
-  192,
-  224,
-  255
+  76,
+  // 88,
+  // 100
 ];
       
 const artnet = new ArtNet();
@@ -106,18 +86,18 @@ const eastAddress = "10.7.84.55";
 const westAddress = "10.7.84.56";
 
 const beams = [
-  { address: eastAddress, universe: 1, channel: (0 * Beam.ChannelsPerBeam) },
-  { address: eastAddress, universe: 1, channel: (1 * Beam.ChannelsPerBeam) },
-  { address: eastAddress, universe: 1, channel: (2 * Beam.ChannelsPerBeam) },
-  { address: eastAddress, universe: 1, channel: (3 * Beam.ChannelsPerBeam) },
-  { address: eastAddress, universe: 1, channel: (4 * Beam.ChannelsPerBeam) },
-  { address: eastAddress, universe: 1, channel: (5 * Beam.ChannelsPerBeam) },
-  { address: westAddress, universe: 1, channel: (0 * Beam.ChannelsPerBeam) },
-  { address: westAddress, universe: 1, channel: (1 * Beam.ChannelsPerBeam) },
-  { address: westAddress, universe: 1, channel: (2 * Beam.ChannelsPerBeam) },
-  { address: westAddress, universe: 1, channel: (3 * Beam.ChannelsPerBeam) },
-  { address: westAddress, universe: 1, channel: (4 * Beam.ChannelsPerBeam) },
-  { address: westAddress, universe: 1, channel: (5 * Beam.ChannelsPerBeam) }
+  { address: eastAddress, universe: 1, channel: (0 * Beam.ChannelsPerBeam)+1 },
+  { address: eastAddress, universe: 1, channel: (1 * Beam.ChannelsPerBeam)+1 },
+  { address: eastAddress, universe: 1, channel: (2 * Beam.ChannelsPerBeam)+1 },
+  { address: eastAddress, universe: 1, channel: (3 * Beam.ChannelsPerBeam)+1 },
+  { address: eastAddress, universe: 1, channel: (4 * Beam.ChannelsPerBeam)+1 },
+  { address: eastAddress, universe: 1, channel: (5 * Beam.ChannelsPerBeam)+1 },
+  { address: westAddress, universe: 1, channel: (0 * Beam.ChannelsPerBeam)+1 },
+  { address: westAddress, universe: 1, channel: (1 * Beam.ChannelsPerBeam)+1 },
+  { address: westAddress, universe: 1, channel: (2 * Beam.ChannelsPerBeam)+1 },
+  { address: westAddress, universe: 1, channel: (3 * Beam.ChannelsPerBeam)+1 },
+  { address: westAddress, universe: 1, channel: (4 * Beam.ChannelsPerBeam)+1 },
+  { address: westAddress, universe: 1, channel: (5 * Beam.ChannelsPerBeam)+1 }
 ]
 
 const eastUniverseInfo = {
@@ -125,14 +105,16 @@ const eastUniverseInfo = {
   "universe": 1,
   "sourcePort": 6454,
   "sendOnlyChangeData": false,
+  "sendSequenceNumbers": false,
   "refreshInterval": 1000
 };
 
   const westUniverseInfo = {
     "address": westAddress,
     "universe": 1,
-    "sourcePort": 6454,
+    "sourcePort": 6455,
     "sendOnlyChangeData": false,
+    "sendSequenceNumbers": false,
     "refreshInterval": 1000
   };
   
@@ -143,26 +125,26 @@ let channelData = [];
 
 function setDefaultChannelData() {
   channelData[Beam.BeamChannel.ColorWheel] = Beam.Color.White
-  channelData[Beam.BeamChannel.Strobe] = Beam.Strobe.Off;
-  channelData[Beam.BeamChannel.Dimmer] = 0;
+  channelData[Beam.BeamChannel.Strobe] = Beam.Strobe.Open;
+  channelData[Beam.BeamChannel.Dimmer] = Beam.Dimmer.Off;
   channelData[Beam.BeamChannel.Gobo] = Beam.Gobo.Off;
   channelData[Beam.BeamChannel.Prism] = Beam.Prism.Off;
   channelData[Beam.BeamChannel.PrismRotation] = Beam.PrismRotation.Off;
   channelData[Beam.BeamChannel.EffectsMovement] = Beam.Unused;
   channelData[Beam.BeamChannel.Frost] = Beam.Frost.Off;
-  channelData[Beam.BeamChannel.Focus] = 0;
+  channelData[Beam.BeamChannel.Focus] = 127;
   channelData[Beam.BeamChannel.Pan] = 0;
   channelData[Beam.BeamChannel.PanFine] = 0;
-  channelData[Beam.BeamChannel.Tilt] = 128;
+  channelData[Beam.BeamChannel.Tilt] = 127;
   channelData[Beam.BeamChannel.TiltFine] = 0;
   channelData[Beam.BeamChannel.Macro] = Beam.Unused;
   channelData[Beam.BeamChannel.Reset] = Beam.Reset.None;
-  channelData[Beam.BeamChannel.Lamp] = Beam.Lamp.On;
+  channelData[Beam.BeamChannel.Lamp] = Beam.Lamp.Off;
 }
 setDefaultChannelData();
 
 let testIndex = 0;
-let colorIndex = -1;
+let colorIndex = 0;
 let panIndex = 0;
 let tiltIndex = 0;
 let goboIndex = 0;
@@ -238,7 +220,7 @@ function nextTilt() {
 }
 
 function nextTest() {
-  if (++testIndex > 4) testIndex = 0;
+  if (++testIndex > 0) testIndex = 0;
 
   setDefaultChannelData();
 
@@ -247,7 +229,13 @@ function nextTest() {
     case 0:
       // colors
       colorIndex = 0;
-      channelData[Beam.BeamChannel.ColorWheel] = testPans[colorIndex];
+      channelData[Beam.BeamChannel.ColorWheel] = testColors[colorIndex];
+
+      panIndex = 0;
+      channelData[Beam.BeamChannel.Pan] = testPans[panIndex];
+
+      tiltIndex = 0;
+      channelData[Beam.BeamChannel.Tilt] = testTilts[tiltIndex];
       break;
     case 1:
       // pan & tilt
@@ -290,50 +278,51 @@ function nextTest() {
   }
 }
 
-let pauseTime = 1000;
+let pauseTime = 500;
 
 function runNextTest() {
 
-  switch (testIndex)
-  {
-    case 0:
-      if (nextPan()) {
-        if (nextColor()) {
-          nextTest()
-        }
-      }
-      break;
-    case 1:
-      if (nextPan()) {
-        if (nextTilt()) {
-          nextTest()
-        }
-      }
-      break;
-    case 2:
-      if (nextPan()) {
-        if (nextGobo()) {
-           nextTest()
-        }
-      }
-      break;
-    case 3:
-      if (nextPan()) {
-        if (nextPrism()) {
-          if (nextPrismRoation()) {
-           nextTest()
-          }
-        }
-      }
-      break;
-    case 4:
-      if (nextPan()) {
-        if (nextStrobe()) {
-            nextTest()
-        }
-      }
-      break;
-  }
+//   switch (testIndex)
+//   {
+    // case 0:
+    //   if (nextPan()) {
+    //     nextTilt();
+    //     if (nextColor()) {
+    //       nextTest()
+    //     }
+    //   }
+    //   break;
+    // case 1:
+    //   if (nextPan()) {
+    //     if (nextTilt()) {
+    //       nextTest()
+    //     }
+    //   }
+    //   break;
+    // case 2:
+    //   if (nextPan()) {
+    //     if (nextGobo()) {
+    //        nextTest()
+    //     }
+    //   }
+    //   break;
+    // case 3:
+    //   if (nextPan()) {
+    //     if (nextPrism()) {
+    //       if (nextPrismRoation()) {
+    //        nextTest()
+    //       }
+    //     }
+    //   }
+    //   break;
+    // case 4:
+    //   if (nextPan()) {
+    //     if (nextStrobe()) {
+    //         nextTest()
+    //     }
+    //   }
+    //   break;
+  //}
   
   // channelData[Beam.BeamChannel.Strobe] = testStrobes[strobeIndex];
   // channelData[Beam.BeamChannel.Dimmer] = 0;
@@ -363,12 +352,15 @@ function runNextTest() {
     " l=", channelData[Beam.BeamChannel.Lamp]);
 
   for (var beamIndex = 0; beamIndex < beams.length; beamIndex++) {
-    artnet.setChannelData(beams[beamIndex].address, beams[beamIndex].universe, 1, channelData);
+    artnet.setChannelData(beams[beamIndex].address, beams[beamIndex].universe, beams[beamIndex].channel, channelData);
   }
   artnet.send(eastUniverseInfo.address, eastUniverseInfo.universe);
   artnet.send(westUniverseInfo.address, westUniverseInfo.universe);
 }
 
+for (let j = 0; j < process.argv.length; j++) {  
+  console.log(j + ' -> ' + (process.argv[j]));
+}
 runNextTest();
 
 setInterval(runNextTest, pauseTime);
