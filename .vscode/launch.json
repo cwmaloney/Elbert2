@@ -4,12 +4,20 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
-
     {
       "type": "node",
       "request": "launch",
       "name": "Launch BeamTest",
-      "program": "${workspaceFolder}/BeamTest.js"
+      "program": "${workspaceFolder}/beamShow.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Turn Lamps Off",
+      "program": "${workspaceFolder}/beamShow.js",
+      "args": [
+        "off"
+      ]
     }
   ]
 }
