@@ -7,7 +7,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch BeamTest",
+      "name": "Launch Beam Show",
       "program": "${workspaceFolder}/beamShow.js"
     },
     {
