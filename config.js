@@ -42,7 +42,8 @@ const Beam = {
     "Blue": 120, // correct
     "Magenta": 80, // correct
     "Pink": 60, // correct
-    "Lavender": 55
+    "Lavender": 55,
+    "Cyan": 87
   },
 
   "Gobo": {
