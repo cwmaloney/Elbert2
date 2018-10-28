@@ -75,25 +75,27 @@ const artnet = new ArtNet();
 
 const eastAddress = "10.7.84.55";
 const westAddress = "10.7.84.56";
+const eastUniverse = 1;
+const westUniverse = 1;
 
 const beams = [
-  { address: eastAddress, universe: 1, channel: (0 * Beam.ChannelsPerBeam)+1 },
-  { address: eastAddress, universe: 1, channel: (1 * Beam.ChannelsPerBeam)+1 },
-  { address: eastAddress, universe: 1, channel: (2 * Beam.ChannelsPerBeam)+1 },
-  { address: eastAddress, universe: 1, channel: (3 * Beam.ChannelsPerBeam)+1 },
-  { address: eastAddress, universe: 1, channel: (4 * Beam.ChannelsPerBeam)+1 },
-  { address: eastAddress, universe: 1, channel: (5 * Beam.ChannelsPerBeam)+1 },
-  { address: westAddress, universe: 1, channel: (0 * Beam.ChannelsPerBeam)+1 },
-  { address: westAddress, universe: 1, channel: (1 * Beam.ChannelsPerBeam)+1 },
-  { address: westAddress, universe: 1, channel: (2 * Beam.ChannelsPerBeam)+1 },
-  { address: westAddress, universe: 1, channel: (3 * Beam.ChannelsPerBeam)+1 },
-  { address: westAddress, universe: 1, channel: (4 * Beam.ChannelsPerBeam)+1 },
-  { address: westAddress, universe: 1, channel: (5 * Beam.ChannelsPerBeam)+1 }
+  { address: eastAddress, universe: eastUniverse, channel: (0 * Beam.ChannelsPerBeam)+1 },
+  // { address: eastAddress, universe: eastUniverse, channel: (1 * Beam.ChannelsPerBeam)+1 },
+  // { address: eastAddress, universe: eastUniverse, channel: (2 * Beam.ChannelsPerBeam)+1 },
+  // { address: eastAddress, universe: eastUniverse, channel: (3 * Beam.ChannelsPerBeam)+1 },
+  // { address: eastAddress, universe: eastUniverse, channel: (4 * Beam.ChannelsPerBeam)+1 },
+  // { address: eastAddress, universe: eastUniverse, channel: (5 * Beam.ChannelsPerBeam)+1 },
+  { address: westAddress, universe: westUniverse, channel: (0 * Beam.ChannelsPerBeam)+1 },
+  // { address: westAddress, universe: westUniverse, channel: (1 * Beam.ChannelsPerBeam)+1 },
+  // { address: westAddress, universe: westUniverse, channel: (2 * Beam.ChannelsPerBeam)+1 },
+  // { address: westAddress, universe: westUniverse, channel: (3 * Beam.ChannelsPerBeam)+1 },
+  // { address: westAddress, universe: westUniverse, channel: (4 * Beam.ChannelsPerBeam)+1 },
+  // { address: westAddress, universe: westUniverse, channel: (5 * Beam.ChannelsPerBeam)+1 }
 ]
 
 const eastUniverseInfo = {
   "address": eastAddress,
-  "universe": 1,
+  "universe": eastUniverse,
   "sourcePort": 6454,
   "sendOnlyChangeData": false,
   "sendSequenceNumbers": false,
@@ -102,7 +104,7 @@ const eastUniverseInfo = {
 
   const westUniverseInfo = {
     "address": westAddress,
-    "universe": 1,
+    "universe": westUniverse,
     "sourcePort": 6455,
     "sendOnlyChangeData": false,
     "sendSequenceNumbers": false,
