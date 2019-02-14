@@ -19,7 +19,6 @@ const standardColors = [
     Beam.Color.Red,
     Beam.Color.Magenta,
     Beam.Color.Pink,
-    Beam.Color.Lavender,
     Beam.Color.White,
     ];
 
