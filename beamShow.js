@@ -124,25 +124,42 @@ e131.configureUniverse(westUniverseInfo);
 
 let channelData = [];
 
-let defaultLamp = Beam.Lamp.On;
+const defaultChannelData = {
+  ColorWheel: Beam.Color.White,
+  Strobe: Beam.Strobe.Open,
+  Dimmer: Beam.Dimmer.Off,
+  Gobo: Beam.Gobo.Off,
+  Prism: Beam.Prism.Off,
+  PrismRotation: Beam.PrismRotation.Off,
+  EffectsMovement: Beam.Unused,
+  Frost: Beam.Frost.Off,
+  Focus: 127,
+  Pan: 0,
+  PanFine: 0,
+  Tilt: 45,
+  TiltFine: 0,
+  Macro: Beam.Unused,
+  Reset: Beam.Reset.None,
+  Lamp: Beam.Lamp.On
+};
 
 function setDefaultChannelData() {
-  channelData[Beam.BeamChannel.ColorWheel] = Beam.Color.White
-  channelData[Beam.BeamChannel.Strobe] = Beam.Strobe.Open;
-  channelData[Beam.BeamChannel.Dimmer] = Beam.Dimmer.Off;
-  channelData[Beam.BeamChannel.Gobo] = Beam.Gobo.Off;
-  channelData[Beam.BeamChannel.Prism] = Beam.Prism.Off;
-  channelData[Beam.BeamChannel.PrismRotation] = Beam.PrismRotation.Off;
-  channelData[Beam.BeamChannel.EffectsMovement] = Beam.Unused;
-  channelData[Beam.BeamChannel.Frost] = Beam.Frost.Off;
-  channelData[Beam.BeamChannel.Focus] = 127;
-  channelData[Beam.BeamChannel.Pan] = 0;
-  channelData[Beam.BeamChannel.PanFine] = 0;
-  channelData[Beam.BeamChannel.Tilt] = 45;
-  channelData[Beam.BeamChannel.TiltFine] = 0;
-  channelData[Beam.BeamChannel.Macro] = Beam.Unused;
-  channelData[Beam.BeamChannel.Reset] = Beam.Reset.None;
-  channelData[Beam.BeamChannel.Lamp] = defaultLamp;
+  channelData[Beam.BeamChannel.ColorWheel]      = defaultChannelData.ColorWheel;
+  channelData[Beam.BeamChannel.Strobe]          = defaultChannelData.Strobe;
+  channelData[Beam.BeamChannel.Dimmer]          = defaultChannelData.Dimmer;
+  channelData[Beam.BeamChannel.Gobo]            = defaultChannelData.Gobo;
+  channelData[Beam.BeamChannel.Prism]           = defaultChannelData.Prism;
+  channelData[Beam.BeamChannel.PrismRotation]   = defaultChannelData.PrismRotation;
+  channelData[Beam.BeamChannel.EffectsMovement] = defaultChannelData.EffectsMovement;
+  channelData[Beam.BeamChannel.Frost]           = defaultChannelData.Frost;
+  channelData[Beam.BeamChannel.Focus]           = defaultChannelData.Focus;
+  channelData[Beam.BeamChannel.Pan]             = defaultChannelData.Pan;
+  channelData[Beam.BeamChannel.PanFine]         = defaultChannelData.PanFine;
+  channelData[Beam.BeamChannel.Tilt]            = defaultChannelData.Tilt;
+  channelData[Beam.BeamChannel.TiltFine]        = defaultChannelData.TiltFine;
+  channelData[Beam.BeamChannel.Macro]           = defaultChannelData.Macro;
+  channelData[Beam.BeamChannel.Reset]           = defaultChannelData.Reset;
+  channelData[Beam.BeamChannel.Lamp]            = defaultChannelData.Lamp;
 }
 
 
@@ -343,7 +360,7 @@ function nextStep() {
 function sendChannelData()
 {
   console.log("--", Date.now()/1000,
-    " test=", sceneIndex,
+    " scene=", sceneIndex,
     " c=", channelData[Beam.BeamChannel.ColorWheel],
     " p=", channelData[Beam.BeamChannel.Pan],
     " t=", channelData[Beam.BeamChannel.Tilt],
@@ -364,12 +381,14 @@ function sendChannelData()
 for (let j = 0; j < process.argv.length; j++) {
   console.log(j + ':' + (process.argv[j]));
 
-  if (process.argv[j] == "off") {
-    defaultLamp = Beam.Lamp.Off;
-    setDefaultChannelData();
-    sendChannelData();
-    process.exit(0);
-  }
+  if (process.argv[j] === "off") {
+    defaultChannelData.Lamp = Beam.Lamp.Off;
+    defaultChannelData.Color = Beam.Color.Blue;
+    defaultChannelData.Pan = 120;
+    defaultChannelData.Tilt = 80;
+    sceneIndex = 100;
+    stepCounter = 0;
+    }
 }
 
 setDefaultChannelData();
