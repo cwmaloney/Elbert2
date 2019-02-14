@@ -1,6 +1,6 @@
 "use strict";
 
-const { ArtNet } = require("./ArtNet.js");
+const { E131 } = require("./E131.js");
 const { Beam } = require("./config.js");
 
 const standardColors = [
@@ -14,6 +14,15 @@ const standardColors = [
   Beam.Color.Pink,
   Beam.Color.Lavender
   ];
+
+  const valentineColors = [
+    Beam.Color.Red,
+    Beam.Color.Magenta,
+    Beam.Color.Pink,
+    Beam.Color.Lavender,
+    Beam.Color.White,
+    ];
+
 
   const halloweenColors = [
     Beam.Color.Magenta,
@@ -71,32 +80,32 @@ const standardColors = [
 //   // 100
 // ];
       
-const artnet = new ArtNet();
+const e131 = new E131();
 
-const eastAddress = "10.7.84.55";
-const westAddress = "10.7.84.56";
-const eastUniverse = 1;
-const westUniverse = 1;
+const eastAddress = "239.255.0.121";
+const westAddress = "239.255.0.121";
+const eastUniverse = 121;
+const westUniverse = 121;
 
 const beams = [
   { address: eastAddress, universe: eastUniverse, channel: (0 * Beam.ChannelsPerBeam)+1 },
-  // { address: eastAddress, universe: eastUniverse, channel: (1 * Beam.ChannelsPerBeam)+1 },
-  // { address: eastAddress, universe: eastUniverse, channel: (2 * Beam.ChannelsPerBeam)+1 },
-  // { address: eastAddress, universe: eastUniverse, channel: (3 * Beam.ChannelsPerBeam)+1 },
-  // { address: eastAddress, universe: eastUniverse, channel: (4 * Beam.ChannelsPerBeam)+1 },
-  // { address: eastAddress, universe: eastUniverse, channel: (5 * Beam.ChannelsPerBeam)+1 },
-  { address: westAddress, universe: westUniverse, channel: (0 * Beam.ChannelsPerBeam)+1 },
-  // { address: westAddress, universe: westUniverse, channel: (1 * Beam.ChannelsPerBeam)+1 },
-  // { address: westAddress, universe: westUniverse, channel: (2 * Beam.ChannelsPerBeam)+1 },
-  // { address: westAddress, universe: westUniverse, channel: (3 * Beam.ChannelsPerBeam)+1 },
-  // { address: westAddress, universe: westUniverse, channel: (4 * Beam.ChannelsPerBeam)+1 },
-  // { address: westAddress, universe: westUniverse, channel: (5 * Beam.ChannelsPerBeam)+1 }
+  { address: eastAddress, universe: eastUniverse, channel: (1 * Beam.ChannelsPerBeam)+1 },
+  { address: eastAddress, universe: eastUniverse, channel: (2 * Beam.ChannelsPerBeam)+1 },
+  { address: eastAddress, universe: eastUniverse, channel: (3 * Beam.ChannelsPerBeam)+1 },
+  { address: eastAddress, universe: eastUniverse, channel: (4 * Beam.ChannelsPerBeam)+1 },
+  { address: eastAddress, universe: eastUniverse, channel: (5 * Beam.ChannelsPerBeam)+1 },
+  { address: westAddress, universe: westUniverse, channel: (6 * Beam.ChannelsPerBeam)+1 },
+  { address: westAddress, universe: westUniverse, channel: (7 * Beam.ChannelsPerBeam)+1 },
+  { address: westAddress, universe: westUniverse, channel: (8 * Beam.ChannelsPerBeam)+1 },
+  { address: westAddress, universe: westUniverse, channel: (9 * Beam.ChannelsPerBeam)+1 },
+  { address: westAddress, universe: westUniverse, channel: (10 * Beam.ChannelsPerBeam)+1 },
+  { address: westAddress, universe: westUniverse, channel: (11 * Beam.ChannelsPerBeam)+1 }
 ]
 
 const eastUniverseInfo = {
   "address": eastAddress,
   "universe": eastUniverse,
-  "sourcePort": 6454,
+  "sourcePort": 5568,
   "sendOnlyChangeData": false,
   "sendSequenceNumbers": false,
   "refreshInterval": 1000
@@ -105,14 +114,14 @@ const eastUniverseInfo = {
   const westUniverseInfo = {
     "address": westAddress,
     "universe": westUniverse,
-    "sourcePort": 6455,
+    "sourcePort": 5568,
     "sendOnlyChangeData": false,
     "sendSequenceNumbers": false,
     "refreshInterval": 1000
   };
   
-artnet.configureUniverse(eastUniverseInfo);
-artnet.configureUniverse(westUniverseInfo);
+e131.configureUniverse(eastUniverseInfo);
+e131.configureUniverse(westUniverseInfo);
 
 let channelData = [];
 
@@ -235,16 +244,16 @@ function setScene() {
 
   switch (sceneIndex)
   {
-    case 1:
-      setPans();
-      setColors(halloweenColors);
-      break;
-
     case 0:
-      setPans(0, 160);
-      setTilts(25, 36, 4);
-      setColors(darkHalloweenColors);
-    break;
+      //pan from 70 to 175 in increments of 1
+      setPans(70, 175, 1);
+      //if you keep the number of tilt increments and colors different the each color will
+      //cycle through all the different tilt angles, in this case 6 tilts and 5 colors
+      //tilt from 35 to 110 in increments of 15 (6 total 35,50,65,80,95,110)
+      setTilts(35, 110, 15);
+      //set a palette of colors (valentine has 5)
+      setColors(valentineColors);
+      break;
 
     // case 2:
     //   // gobo
@@ -291,7 +300,7 @@ function nextStep() {
       if (nextPan()) {
         nextTilt();
         if (nextColor()) {
-          nextScene()
+          //nextScene()
         }
       }
       break;
@@ -347,10 +356,10 @@ function sendChannelData()
     " -- to=", stepInterval);
 
   for (var beamIndex = 0; beamIndex < beams.length; beamIndex++) {
-    artnet.setChannelData(beams[beamIndex].address, beams[beamIndex].universe, beams[beamIndex].channel, channelData);
+    e131.setChannelData(beams[beamIndex].address, beams[beamIndex].universe, beams[beamIndex].channel, channelData);
   }
-  artnet.send(eastUniverseInfo.address, eastUniverseInfo.universe);
-  artnet.send(westUniverseInfo.address, westUniverseInfo.universe);
+  e131.send(eastUniverseInfo.address, eastUniverseInfo.universe);
+  e131.send(westUniverseInfo.address, westUniverseInfo.universe);
 }
 
 for (let j = 0; j < process.argv.length; j++) {
