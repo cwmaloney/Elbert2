@@ -347,12 +347,12 @@ function sendChannelData()
     " c=", channelData[Beam.BeamChannel.ColorWheel],
     " p=", channelData[Beam.BeamChannel.Pan],
     " t=", channelData[Beam.BeamChannel.Tilt],
-    " -- s=", channelData[Beam.BeamChannel.Strobe],
-    " g=", channelData[Beam.BeamChannel.Gobo],
-    " pz=", channelData[Beam.BeamChannel.Prism],
-    " pr=", channelData[Beam.BeamChannel.PrismRotation],
-    " l=", channelData[Beam.BeamChannel.Lamp],
-    " -- to=", stepInterval);
+    " -- strobe=", channelData[Beam.BeamChannel.Strobe],
+    " gobo=", channelData[Beam.BeamChannel.Gobo],
+    " prizm=", channelData[Beam.BeamChannel.Prism],
+    " prismRotation=", channelData[Beam.BeamChannel.PrismRotation],
+    " lamp=", channelData[Beam.BeamChannel.Lamp],
+    " -- timeout=", stepInterval);
 
   for (var beamIndex = 0; beamIndex < beams.length; beamIndex++) {
     e131.setChannelData(beams[beamIndex].address, beams[beamIndex].universe, beams[beamIndex].channel, channelData);
@@ -364,13 +364,14 @@ function sendChannelData()
 for (let j = 0; j < process.argv.length; j++) {
   console.log(j + ':' + (process.argv[j]));
 
-  channelData[Beam.BeamChannel.Lamp] = Beam.Lamp.On;
   if (process.argv[j] == "off") {
     defaultLamp = Beam.Lamp.Off;
-    sceneIndex = 100;
-    stepCounter = 0;
+    setDefaultChannelData();
+    sendChannelData();
+    process.exit(0);
   }
 }
+
 setDefaultChannelData();
 
 setScene();
