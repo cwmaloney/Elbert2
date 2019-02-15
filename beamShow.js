@@ -15,12 +15,6 @@ const standardColors = [
   Beam.Color.Lavender
   ];
 
-  const valentineColors = [
-    Beam.Color.Red,
-    Beam.Color.Magenta,
-    Beam.Color.Pink,
-    Beam.Color.White,
-    ];
 
 
   const halloweenColors = [
@@ -248,27 +242,45 @@ let sceneIndex = 0;
 setTilts();
 
 function nextScene() {
-  if (++sceneIndex > 0) sceneIndex = 0;
+  if (++sceneIndex > 1) sceneIndex = 0;
 
   setScene();
 }
 
 let stepCounter = 0;
 
+const lowValentineColors = [
+  Beam.Color.Red,
+  Beam.Color.Magenta,
+  Beam.Color.Pink,
+  ];
+
+const highValentineColors = [
+  Beam.Color.Lavender,
+  Beam.Color.White,
+];
+  
 function setScene() {
   setDefaultChannelData();
 
   switch (sceneIndex)
   {
     case 0:
-      //pan from 70 to 175 in increments of 1
-      setPans(70, 175, 1);
-      //if you keep the number of tilt increments and colors different the each color will
-      //cycle through all the different tilt angles, in this case 6 tilts and 5 colors
-      //tilt from 35 to 110 in increments of 15 (6 total 35,50,65,80,95,110)
-      setTilts(35, 110, 15);
-      //set a palette of colors (valentine has 5)
-      setColors(valentineColors);
+      //pan from, to, increment
+      setPans(90, 150, 1);
+      //tilt from, to, increment - count 3
+      setTilts(36, 60, 12);
+      //set palette of 3 colors
+      setColors(lowValentineColors);
+      break;
+
+    case 1:
+      //pan from, to, increment
+      setPans(30, 190, 1);
+      //tilt from, to, increment - count 2
+      setTilts(72, 96, 12);
+      //set palette of 2 colors
+      setColors(highValentineColors);
       break;
 
     // case 2:
@@ -313,20 +325,14 @@ function nextStep() {
         process.exit(0);
       break;
     case 0:
+    case 1:
       if (nextPan()) {
         nextTilt();
         if (nextColor()) {
-          //nextScene()
+          nextScene()
         }
       }
       break;
-    // case 1:
-    //   if (nextPan()) {
-    //     if (nextTilt()) {
-    //       nextScene()
-    //     }
-    //   }
-    //   break;
     // case 2:
     //   if (nextPan()) {
     //     if (nextGobo()) {
