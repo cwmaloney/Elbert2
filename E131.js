@@ -40,8 +40,8 @@ class E131 extends EventEmitter {
 
   configureUniverse(configuration) {
 
-    // console.log("E131::configureUniverse, universe=" + configuration.universe);
-    // console.log("E131::configureUniverse", "configuration", configuration);
+    console.log("E131::configureUniverse, universe=" + configuration.universe);
+    console.log("E131::configureUniverse", "configuration", configuration);
     
     const { universe = 0,
             address = '10.0.0.0',
@@ -53,7 +53,7 @@ class E131 extends EventEmitter {
             minMessageInterval = 25, /* milliseconds */
             refreshInterval = 4000 /* milliseconds */ } = configuration;
 
-    //universe = this.checkUniverse(universe);
+    // universe = this.checkUniverse(universe);
 
     // close it if it is open
     this.closeUniverse(address, universe);
@@ -112,7 +112,7 @@ class E131 extends EventEmitter {
     });
 
     universeInfo.socket.on('close', function () {
-      //console.log("E131::socket closed, universe=" + universe);
+      console.log("E131::socket closed, universe=" + universe);
     });
 
     if (sourcePort) {
@@ -122,7 +122,7 @@ class E131 extends EventEmitter {
     const universeKey = this.getUniverseKey(address, universe);
     this.universeInfos.set(universeKey, universeInfo);
 
-    // console.log("E131::configureUniverse complete, universe=" + universe);
+    console.log("E131::configureUniverse complete, universe=" + universe);
   }
 
   checkUniverse(universe = 0) {

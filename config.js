@@ -1,7 +1,5 @@
 "use strict";
 
-// This file contains data we can modify without resubmitting the app for approval.
-//
 // we try to always make es-link "happy"
 /* eslint quote-props: ["error", "always"] */
 /* eslint quotes: ["error", "double"] */
@@ -101,9 +99,9 @@ const Beam = {
     "On": 217
   },
 
-  "ChannelsPerBeam": 16,
+  "ChannelCount": 16,
 
-  "BeamChannel": {
+  "Channel": {
     "ColorWheel": 0,
     "Strobe": 1,
     "Dimmer": 2,
@@ -121,42 +119,32 @@ const Beam = {
     "Reset": 14,
     "Lamp": 15
   }
-}
+};
 
-//////////////////////////////////////////////////////////////////////////////
-// DMX mapping
-//////////////////////////////////////////////////////////////////////////////
+const Washer = {
+  "ChannelCount": 6,
+  "Channel": {
+    "Intensity": 0,
+    "Red": 1,
+    "Blue": 2,
+    "Green": 3,
+    "Strobe": 4,
+    "tbd": 5
+  }
+};
 
-// const elements = {
-//   eastBeam: { elementType: "Beam", queueName: "beam", count: 6, universe: 0, startChannel: 1, channelsPerElement: 16},
-//   westBeam: { elementType: "Beam", queueName: "beam", count: 6, universe: 0, startChannel: 1, channelsPerElement: 16},
-//   beam:   { elementType: "beam", queueName: "beam",
-//     components: [
-//       { name: "Beam", number: 1 },
-//       { name: "Beam", number: 2 },
-//       { name: "Beam", number: 3 },
-//       { name: "Beam", number: 4 },
-//       { name: "Beam", number: 5 },
-//       { name: "Beam", number: 6 },
-//       { name: "Beam", number: 7 },
-//       { name: "Beam", number: 8 },
-//       { name: "Beam", number: 9 },
-//       { name: "Beam", number: 10 },
-//       { name: "Beam", number: 11 },
-//       { name: "Beam", number: 12 } ] },
-// };
-
-// const Universes = [
-//   { universe: 1, "address": "10.7.84.55"},
-//   { universe: 1, "address": "10.7.84.56"}
-// ];
-
-// const BeamUniverses = {
-//   east: { universe: 1, "address": "10.7.84.55"},
-//   west: { universe: 1, "address": "10.7.84.56"}
-// }
+const OutlinePixel = {
+  "ChannelCount": 3,
+  "Channel": {
+    "Red": 0,
+    "Green": 1,
+    "Blue": 2
+  }
+};
 
 
 module.exports = {
   Beam,
+  Washer,
+  OutlinePixel
 };

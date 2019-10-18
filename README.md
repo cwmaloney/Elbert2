@@ -1,6 +1,6 @@
 # DRCF NOLF
 
-This moves the beams for DRCF NOLF.
+This moving ligths, washers, and building outltine pixels for DRCF NOLF.
 
 ## Setup
 
@@ -81,7 +81,13 @@ npm installs packages in the folder "node_modules" withing the project folder.
 1. Start the service
     * Open a terminal or command line window
     * cd to project folder
-    * node BeamTest.js
+    * node beamShow.js
+
+1. Turn off the moving lights
+    * Stop the show
+    * Open a terminal or command line window
+    * cd to project folder
+    * node beamShow.js off
 
 ## Editing and Debugging using VS Code
 
