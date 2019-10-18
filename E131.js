@@ -122,7 +122,7 @@ class E131 extends EventEmitter {
     const universeKey = this.getUniverseKey(address, universe);
     this.universeInfos.set(universeKey, universeInfo);
 
-    console.log("E131::configureUniverse complete, universe=" + universe);
+    // console.log("E131::configureUniverse complete, universe=" + universe);
   }
 
   checkUniverse(universe = 0) {

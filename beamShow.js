@@ -1,7 +1,7 @@
 "use strict";
 
 const { E131 } = require("./E131.js");
-const { Beam } = require("./config.js");
+const { Beam, Washer, OutlinePixel } = require("./config.js");
 const { colorNameToRgb } = require("./config-colors.js");
 
 const standardColors = [
@@ -16,22 +16,33 @@ const standardColors = [
   Beam.Color.Lavender
 ];
 
-const lowHalloweenPan = { start: 30, stop: 190, step: 1 };
-const lowHalloweenTilt = { start: 36, stop: 60, step: 12 };
-const lowHalloweenColors = [
-  Beam.Color.Magenta,
-  Beam.Color.Red,
-  Beam.Color.Orange,
-  Beam.Color.Blue,
-  Beam.Color.Green,
+// const lowHalloweenPan = { start: 30, stop: 190, step: 1 };
+// const lowHalloweenTilt = { start: 36, stop: 60, step: 12 };
+// const lowHalloweenBeamColors = [
+//   Beam.Color.Magenta,
+//   Beam.Color.Red,
+//   Beam.Color.Orange,
+//   Beam.Color.Blue,
+//   Beam.Color.Green,
+// ];
+// const lowHalloweenPixelColors = [
+//   "Purple",
+//   "Red",
+//   "Orange",
+//   "Blue",
+//   "Green"
+// ];
+
+const halloweenScenes = [
+  { tilt: 36, beemColor: Beam.Color.Magenta,  pan: { start: 30, stop: 190, step: 1 }, pixelColor: "Purple" },
+  { tilt: 36, beemColor: Beam.Color.Red,      pan: { start: 30, stop: 190, step: 1 }, pixelColor: "Red" },
+  { tilt: 48, beemColor: Beam.Color.Orange,   pan: { start: 30, stop: 190, step: 1 }, pixelColor: "Orange" },
+  { tilt: 36, beemColor: Beam.Color.Blue,     pan: { start: 30, stop: 190, step: 1 }, pixelColor: "Blue" },
+  { tilt: 48, beemColor: Beam.Color.Green,    pan: { start: 30, stop: 190, step: 1 }, pixelColor: "Green"  },
+  { tilt: 72, beemColor: Beam.Color.Orange,   pan: { start: 30, stop: 190, step: 1 }, pixelColor: "Orange"  },
+  { tilt: 84, beemColor: Beam.Color.White,    pan: { start: 30, stop: 190, step: 1 }, pixelColor: "Yellow"  },
 ];
 
-const highHalloweenPan = { start: 30, stop: 190, step: 1 };
-const highHalloweenTilt = { start: 72, stop: 96, step: 12 };
-const highHalloweenColors = [
-  Beam.Color.Orange,
-  Beam.Color.White,
-];
 
 const lowValentinePan = { start: 90, stop: 150, step: 1 };
 const lowValentineTilt =  { start: 36, stop: 60, step: 12 };
@@ -61,72 +72,58 @@ const washersAddress = "192.168.1.72";
 // This is the universe of the washers 
 const washersUniverse = 122;
 // number of washers
-const washerCount = 12;
+const washerCount = 25;
 
 
-/// **** FIX OUTLINE DATA WHEN I GET TO THE FARMSTEAD ****
-
-// These is the IP addresses of the building outline pixel controllers
-const outlineAddresses = [ "192.168.1.101", "192.168.1.102", "192.168.1.103" ];
+// These are the IP addresses of the building outline pixel controllers
+const outlineAddresses = [ "192.168.1.60", "192.168.1.61", "192.168.1.62" ];
 // This is the universe of the outline pixels
-const outlineUniverses = [ 101, 102, 103 ];
+const outlineUniverses = [ [ 100, 101, 102 ], [ 104, 105, 106], [ 108, 109, 110] ];
 // number of pixels per controller
-const outlineCount = [512, 512, 512];
+const outlinePixelCount = [ [170, 170, 170], [170, 170, 170], [170, 170, 170] ];
 
 /////////////////////////////////////////////////////////////////////////////
 // Configure E.131 Universes
       
 const e131 = new E131();
 
-const beamsUniverseInfo = {
+// configure beams universe
+e131.configureUniverse({
   "address": beamsAddress,
   "universe": beamsUniverse,
   "sourcePort": 5568,
   "sendOnlyChangeData": false,
   "sendSequenceNumbers": true,
   "refreshInterval": 1000
-};
-e131.configureUniverse(beamsUniverseInfo);
+});
 
-const washersUniverseInfo = {
+// configure washers universe
+e131.configureUniverse({
   "address": washersAddress,
   "universe": washersUniverse,
   "sourcePort": 5568,
   "sendOnlyChangeData": false,
   "sendSequenceNumbers": false,
   "refreshInterval": 1000
-};
-e131.configureUniverse(washersUniverseInfo);
+});
 
-const outlineUniverseInfos = [
-  {
-    "address": outlineAddresses[0],
-    "universe": outlineUniverses[0],
-    "sourcePort": 5568,
-    "sendOnlyChangeData": false,
-    "sendSequenceNumbers": false,
-    "refreshInterval": 1000
-  },
-  {
-    "address": outlineAddresses[1],
-    "universe": outlineUniverses[1],
-    "sourcePort": 5568,
-    "sendOnlyChangeData": false,
-    "sendSequenceNumbers": false,
-    "refreshInterval": 1000
-  },
-  {
-    "address": outlineAddresses[2],
-    "universe": outlineUniverses[2],
-    "sourcePort": 5568,
-    "sendOnlyChangeData": false,
-    "sendSequenceNumbers": false,
-    "refreshInterval": 1000
+
+// configure pixel universes
+for (let addressIndex = 0; addressIndex < outlineAddresses.length; addressIndex++) {
+  const outlineAddress = outlineAddresses[addressIndex];
+  for (let universeIndex = 0; universeIndex < outlineUniverses[addressIndex].length; universeIndex++) {
+    const outlineUniverse = outlineUniverses[addressIndex][universeIndex];
+    e131.configureUniverse({
+      "address": outlineAddress,
+      "universe": outlineUniverse,
+      "sourcePort": 5568,
+      "sendOnlyChangeData": false,
+      "sendSequenceNumbers": false,
+      "refreshInterval": 1000
+    });
   }
-]
-for (let universeInfo in outlineUniverseInfos) {
-  e131.configureUniverse(universeInfo);
 }
+
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -147,6 +144,35 @@ const beams = [
   { address: beamsAddress, universe: beamsUniverse, channel: (13 * Beam.ChannelCount)+1 },
   { address: beamsAddress, universe: beamsUniverse, channel: (14 * Beam.ChannelCount)+1 },
   { address: beamsAddress, universe: beamsUniverse, channel: (15 * Beam.ChannelCount)+1 }
+];
+
+const washers = [
+  { address: washersAddress, universe: washersUniverse, channel: ( 0 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: ( 1 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: ( 2 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: ( 3 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: ( 4 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: ( 5 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: ( 6 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: ( 7 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: ( 8 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: ( 9 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: (10 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: (11 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: (12 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: (13 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: (14 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: (15 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: (16 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: (17 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: (18 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: (19 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: (20 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: (21 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: (22 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: (23 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: (24 * Washer.ChannelCount)+1 },
+  { address: washersAddress, universe: washersUniverse, channel: (25 * Washer.ChannelCount)+1 },
 ];
 
 /////////////////////////////////////////////////////////////////////////////
@@ -193,6 +219,11 @@ function setDefaultBeamChannelData() {
 
 /////////////////////////////////////////////////////////////////////////////
 
+let pixelColor = [ 100, 100, 100 ];
+let pixelChannelData = [];
+
+/////////////////////////////////////////////////////////////////////////////
+
 //  ====== Pan =====
 
 let panStart = 0;
@@ -209,11 +240,11 @@ function setPans(pan) {
 }
 
 function nextPan() {
-  let reset = false;
+  let done = false;
   panValue += panStep;
   if (panValue >= panStop) {
     panValue = panStart;
-    reset = true;
+    done = true;
   }
   if (panValue == 0) {
     stepInterval = 2000;
@@ -221,91 +252,40 @@ function nextPan() {
     stepInterval = 125;
   }
   beamsChannelData[Beam.Channel.Pan] = panValue;
-  return reset;
-}
-
-//  ====== Tilt =====
-
-let tiltStart = 38;
-let tiltStop = 58;
-let tiltStep = 10;
-let tiltIndex = tiltStart;
-
-function setTilts(tilt) {
-  tiltStart = tilt.start;
-  tiltStop = tilt.stop;
-  tiltStep = tilt.step;
-  tiltIndex = tiltStart;
-  beamsChannelData[Beam.Channel.Tilt] = tiltStart;
-}
-
-function nextTilt() {
-  let reset = false;
-  tiltIndex += tiltStep;
-  if (tiltIndex > tiltStop) {
-    tiltIndex = tiltStart;
-    reset = true;
-  }
-  beamsChannelData[Beam.Channel.Tilt] = tiltIndex;
-  return reset;
-}
-
-//  ====== Color =====
-
-let currentColors = standardColors;
-let colorIndex = tiltStart;
-
-function setColors(newcolors) {
-  currentColors = newcolors;
-  colorIndex = 0;
-  beamsChannelData[Beam.Channel.ColorWheel] = currentColors[colorIndex];
-}
-
-function nextColor() {
-  let reset = false;
-  if (++colorIndex >= currentColors.length) {
-    colorIndex = 0;
-    reset = true;
-  }
-  beamsChannelData[Beam.Channel.ColorWheel] = currentColors[colorIndex];
-  return reset;
+  return done;
 }
 
 /////////////////////////////////////////////////////////////////////////////
+let scenes = halloweenScenes;
 
-let sceneIndex = 0;
+let sceneIndex = -1;
+
+// current step in scene
+let sceneStep = 0;
 
 function nextScene() {
-  if (++sceneIndex > 1) sceneIndex = 0;
-
+  if (++sceneIndex >= scenes.length) {
+    sceneIndex = 0;
+    sceneStep = 0;
+  }
   setScene();
 }
-
-/////////////////////////////////////////////////////////////////////////////
- 
-let stepCounter = 0;
  
 function setScene() {
   setDefaultBeamChannelData();
 
-  switch (sceneIndex)
-  {
-    case 0:
-      setPans(lowHalloweenPan);
-      setTilts(lowHalloweenTilt);
-      setColors(lowHalloweenColors);
-      break;
+  const sceneData = scenes[sceneIndex];
+  setPans(sceneData.pan);
+  beamsChannelData[Beam.Channel.Tilt] = sceneData.tilt;
+  beamsChannelData[Beam.Channel.ColorWheel] = sceneData.beemColor;
+  pixelColor = colorNameToRgb[ sceneData.pixelColor ];
 
-    case 1:
-      setPans(highHalloweenPan);
-      setTilts(highHalloweenTilt);
-      setColors(highHalloweenColors);
-      break;
-  }
+  logScene();
 }
 
 /////////////////////////////////////////////////////////////////////////////
 
+// time until next step
 let stepInterval = 1000;
 
 function nextStep() {
@@ -314,29 +294,19 @@ function nextStep() {
   {
     // used by "off" command
     case 100:
-      if (++stepCounter > 10)
+      if (++sceneStep > 10)
         process.exit(0);
+        logScene();
       break;
 
     // used by scene that pan the beams
-    case 0:
-    case 1:
+    default:
+      sceneStep++;
       if (nextPan()) {
-        nextTilt();
-        if (nextColor()) {
           nextScene()
-        }
       }
       break;
   }
-
-  console.log("--", Date.now()/1000,
-    " scene=", sceneIndex,
-    " color=", beamsChannelData[Beam.Channel.ColorWheel],
-    " pan=", beamsChannelData[Beam.Channel.Pan],
-    " tilt=", beamsChannelData[Beam.Channel.Tilt],
-    " lamp=", beamsChannelData[Beam.Channel.Lamp],
-    " timeout=", stepInterval);
 
   sendBeamsChannelData();
   sendWasherChannelData();
@@ -344,31 +314,57 @@ function nextStep() {
 
   setTimeout(nextStep, stepInterval);
 }
-  
+
+function logScene() {
+  console.log("--", Date.now()/1000,
+    " scene=", sceneIndex,
+    " beams {color=", beamsChannelData[Beam.Channel.ColorWheel],
+    " tilt=", beamsChannelData[Beam.Channel.Tilt],
+    " lamp=", beamsChannelData[Beam.Channel.Lamp],
+    " } timeout=", stepInterval);
+}
+
 function sendBeamsChannelData()
 {
   for (var beamIndex = 0; beamIndex < beams.length; beamIndex++) {
     e131.setChannelData(beams[beamIndex].address, beams[beamIndex].universe, beams[beamIndex].channel, beamsChannelData);
   }
-  //e131.send(beamsUniverseInfo.address, beamsUniverseInfo.universe);
+  e131.send(beamsAddress, beamsUniverse);
 }
 
 function sendWasherChannelData()
 {
-  //e131.send(washerUniverseInfo.address, westUniverseInfo.universe);
+  for (var washerIndex = 0; washerIndex < washers.length; washerIndex++) {
+    const washerData = [255, pixelColor[0], pixelColor[1], pixelColor[2], 0, 0];
+    e131.setChannelData(washers[washerIndex].address, washers[washerIndex].universe, washers[washerIndex].channel, washerData);
+  }
+  e131.send(washersAddress, washersUniverse);
 }
 
 function sendOutlineChannelData()
 {
-  for (var outlineIndex = 0; outlineIndex < outlineUniverseInfos.length; outlineIndex++) {
-    //e131.send(washerUniverseInfo.address, westUniverseInfo.universe);
+  for (let addressIndex = 0; addressIndex < outlineAddresses.length; addressIndex++) {
+    const outlineAddress = outlineAddresses[addressIndex];
+    for (let universeIndex = 0; universeIndex < outlineUniverses[addressIndex].length; universeIndex++) {
+      const outlineUniverse = outlineUniverses[addressIndex][universeIndex];
+      let pixelCount = 0;
+      for (let pixelIndex = 0; pixelIndex < outlinePixelCount[addressIndex][universeIndex]; pixelIndex++) {
+        if (sceneStep > pixelCount) {
+          return;
+        }
+        const pixelChannel = (pixelIndex * OutlinePixel.ChannelCount) + 1;
+        const pixelData = [ pixelColor[0], pixelColor[1], pixelColor[2] ];
+        e131.setChannelData(outlineAddress, outlineUniverse, pixelChannel, pixelData);
+      }
+      e131.send(outlineAddress, outlineUniverse);
+    }
   }
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // start the "show"
 sceneIndex = 0;
-stepCounter = 0;
+sceneStep = 0;
 
 // check for the off command
 for (let j = 0; j < process.argv.length; j++) {

@@ -63,6 +63,7 @@ const colorNameToRgb = {
 
   "Blue Violet": [ 138, 43, 226 ],
   
+  Lavender: [ 75, 0, 128 ],
   Purple: [ 75, 0, 128 ],
   "Royal Purple": [ 102, 51, 153 ],
   "Horned Frog Purple": [ 77, 25, 121 ],
