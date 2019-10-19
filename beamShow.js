@@ -127,7 +127,7 @@ const outlinePixelMap1 = [
   { start:    0, end:  169, controller: 0, universe: 0},
   { start:  170, end:  335, controller: 0, universe: 1},
   { start:  336, end:  505, controller: 2, universe: 0},
-  { start:  506, end:  600, controller: 2, universe: 1}
+  { start:  506, end:  675, controller: 2, universe: 1}
 ];
 
 const outlinePixelMap2 = [
@@ -430,15 +430,15 @@ function sendOutlineChannelData()
     const pixelColor1Data = colorNameToRgb[ sceneData.pixelColor1 ];
     const pixelColor2Data = colorNameToRgb[ sceneData.pixelColor2 ];
 
-    for (let pixelNumber = 0; pixelNumber < outlinePixelMap1[outlinePixelMap2.length-1].end; pixelNumber++) {
-      const pixelData = (pixelNumber >= sceneStep*2) ? pixelColor1Data : pixelColor2Data;
+    for (let pixelNumber = 0; pixelNumber < outlinePixelMap1[outlinePixelMap1.length-1].end; pixelNumber++) {
+      const pixelData = (pixelNumber >= sceneStep*3.2) ? pixelColor1Data : pixelColor2Data;
       const { address, universe, pixelIndex } = getOutlinePixelAddress(pixelNumber, outlinePixelMap1);
       const pixelChannel = (pixelIndex * OutlinePixel.ChannelCount) + 1;
       e131.setChannelData(address, universe, pixelChannel, pixelData);
     }
 
     for (let pixelNumber = 0; pixelNumber < outlinePixelMap2[outlinePixelMap2.length-1].end; pixelNumber++) {
-      const pixelData = (pixelNumber >= sceneStep*3) ? pixelColor1Data : pixelColor2Data;
+      const pixelData = (pixelNumber >= sceneStep*2) ? pixelColor1Data : pixelColor2Data;
       const { address, universe, pixelIndex } = getOutlinePixelAddress(pixelNumber, outlinePixelMap2);
       const pixelChannel = (pixelIndex * OutlinePixel.ChannelCount) + 1;
       e131.setChannelData(address, universe, pixelChannel, pixelData);
