@@ -308,11 +308,13 @@ function nextScene() {
 function setScene() {
   setDefaultBeamChannelData();
 
-  const sceneData = scenes[sceneIndex];
-  setPans(sceneData.pan);
-  beamsChannelData[Beam.Channel.Tilt] = sceneData.tilt;
-  beamsChannelData[Beam.Channel.ColorWheel] = sceneData.beemColor;
-  pixelColor = colorNameToRgb[ sceneData.pixelColor ];
+  if (sceneIndex < 100) {
+    const sceneData = scenes[sceneIndex];
+    setPans(sceneData.pan);
+    beamsChannelData[Beam.Channel.Tilt] = sceneData.tilt;
+    beamsChannelData[Beam.Channel.ColorWheel] = sceneData.beemColor;
+    pixelColor = colorNameToRgb[ sceneData.pixelColor ];
+  }
 
   logScene();
 }
