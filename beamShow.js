@@ -68,30 +68,37 @@ const testColorsScenes = [
 ];
 
 const halloweenScenes = [
-  { tilt: 25, beemColor: Beam.Color.Magenta,  pan: { start: 5, stop: 190, step: 1 }, pixelColor: "Magenta" },
-  { tilt: 36, beemColor: Beam.Color.Red,      pan: { start: 5, stop: 190, step: 1 }, pixelColor: "Red" },
-  { tilt: 48, beemColor: Beam.Color.Blue,     pan: { start: 5, stop: 190, step: 1 }, pixelColor: "Blue" },
-  { tilt: 30, beemColor: Beam.Color.Violet,   pan: { start: 5, stop: 190, step: 1 }, pixelColor: "Violet" },
-  { tilt: 40, beemColor: Beam.Color.Green,    pan: { start: 5, stop: 190, step: 1 }, pixelColor: "Green"  },
-  { tilt: 72, beemColor: Beam.Color.Orange,   pan: { start: 5, stop: 190, step: 1 }, pixelColor: "Orange"  },
-  { tilt: 84, beemColor: Beam.Color.White,    pan: { start: 5, stop: 190, step: 1 }, pixelColor: "Yellow"  },
+  { tilt: 25, beemColor: Beam.Color.Magenta,  pan: { start: 5, stop: 190, step: 1 }, pixelColor1: "Yellow", pixelColor2: "Magenta" },
+  { tilt: 36, beemColor: Beam.Color.Red,      pan: { start: 5, stop: 190, step: 1 }, pixelColor1: "Magenta", pixelColor2: "Red" },
+  { tilt: 48, beemColor: Beam.Color.Blue,     pan: { start: 5, stop: 190, step: 1 }, pixelColor1: "Red", pixelColor2: "Blue" },
+  { tilt: 30, beemColor: Beam.Color.Violet,   pan: { start: 5, stop: 190, step: 1 }, pixelColor1: "Blue", pixelColor2: "Violet" },
+  { tilt: 40, beemColor: Beam.Color.Green,    pan: { start: 5, stop: 190, step: 1 }, pixelColor1: "Violet", pixelColor2: "Green"  },
+  { tilt: 72, beemColor: Beam.Color.Orange,   pan: { start: 5, stop: 190, step: 1 }, pixelColor1: "Green", pixelColor2: "Orange"  },
+  { tilt: 84, beemColor: Beam.Color.White,    pan: { start: 5, stop: 190, step: 1 }, pixelColor1: "Orange", pixelColor2: "Yellow"  },
 ];
 
 
-const lowValentinePan = { start: 90, stop: 150, step: 1 };
-const lowValentineTilt =  { start: 36, stop: 60, step: 12 };
-const lowValentineColors = [
-  Beam.Color.Red,
-  Beam.Color.Magenta,
-  Beam.Color.Pink,
+const valentineScenes = [
+  { tilt: 36, beemColor: Beam.Color.Red,      pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "White", pixelColor2: "Red" },
+  { tilt: 48, beemColor: Beam.Color.Magenta,  pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "Red", pixelColor2: "Magenta" },
+  { tilt: 24, beemColor: Beam.Color.Pink,     pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "Magenta", pixelColor2: "Pink" },
+  { tilt: 72, beemColor: Beam.Color.Violet,   pan: { start: 30, stop: 190, step: 1 }, pixelColor1: "Pink", pixelColor2: "Violet"  },
+  { tilt: 84, beemColor: Beam.Color.Lavender, pan: { start:  5, stop: 190, step: 1 }, pixelColor1: "Violet", pixelColor2: "Lavender"  },
+  { tilt: 90, beemColor: Beam.Color.White,    pan: { start:  5, stop: 190, step: 1 }, pixelColor1: "Lavender", pixelColor2: "White"  },
 ];
 
-const highValentinePan = { start: 30, stop: 190, step: 1 };
-const highValentineTilt = { start: 72, stop: 96, step:12 };
-const highValentineColors = [
-  Beam.Color.Lavender,
-  Beam.Color.White,
-];
+const beamStartTime = "14:20:00";
+const beamStopTime = "21:30:00";
+
+/////////////////////////////////////////////////////////////////////////////
+
+function parseTimeToMinutes(timeString) {
+  const timestamp = new Date('1970-01-01T' + timeString);
+  return timestamp.getHours()* 60 + timestamp.getMinutes();
+}
+
+const beamStartMinute = parseTimeToMinutes(beamStartTime);
+const beamStopMinute = parseTimeToMinutes(beamStopTime);
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -115,6 +122,32 @@ const outlineAddresses = [ "192.168.1.60", "192.168.1.61", "192.168.1.62" ];
 const outlineUniverses = [ [ 100, 101, 102 ], [ 104, 105, 106], [ 108, 109, 110] ];
 // number of pixels per controller
 const outlinePixelCount = [ [170, 170, 170], [170, 170, 170], [170, 170, 170] ];
+
+const outlinePixelMap1 = [
+  { start:    0, end:  169, controller: 0, universe: 0},
+  { start:  170, end:  335, controller: 0, universe: 1},
+  { start:  336, end:  505, controller: 2, universe: 0},
+  { start:  506, end:  600, controller: 2, universe: 1}
+];
+
+const outlinePixelMap2 = [
+  { start:    0, end:  169, controller: 1, universe: 0},
+  { start:  170, end:  339, controller: 1, universe: 1},
+  { start:  340, end:  372, controller: 1, universe: 2}
+];
+
+/////////////////////////////////////////////////////////////////////////////
+
+function getOutlinePixelAddress(pixelNumber, map) {
+  for (let segment of map) {
+    if (pixelNumber >= segment.start && pixelNumber <= segment.end) {
+      return { address: outlineAddresses[segment.controller],
+               universe: outlineUniverses[segment.controller][segment.universe],
+               pixelIndex: (pixelNumber - segment.start) };
+    }
+  }
+  return null;
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // Configure E.131 Universes
@@ -162,22 +195,22 @@ for (let addressIndex = 0; addressIndex < outlineAddresses.length; addressIndex+
 /////////////////////////////////////////////////////////////////////////////
 
 const beams = [
-  { address: beamsAddress, universe: beamsUniverse, channel: ( 0 * Beam.ChannelCount)+1 },
-  { address: beamsAddress, universe: beamsUniverse, channel: ( 1 * Beam.ChannelCount)+1 },
-  { address: beamsAddress, universe: beamsUniverse, channel: ( 2 * Beam.ChannelCount)+1 },
-  { address: beamsAddress, universe: beamsUniverse, channel: ( 3 * Beam.ChannelCount)+1 },
-  { address: beamsAddress, universe: beamsUniverse, channel: ( 4 * Beam.ChannelCount)+1 },
-  { address: beamsAddress, universe: beamsUniverse, channel: ( 5 * Beam.ChannelCount)+1 },
-  { address: beamsAddress, universe: beamsUniverse, channel: ( 6 * Beam.ChannelCount)+1 },
-  { address: beamsAddress, universe: beamsUniverse, channel: ( 7 * Beam.ChannelCount)+1 },
-  { address: beamsAddress, universe: beamsUniverse, channel: ( 8 * Beam.ChannelCount)+1 },
-  { address: beamsAddress, universe: beamsUniverse, channel: ( 9 * Beam.ChannelCount)+1 },
-  { address: beamsAddress, universe: beamsUniverse, channel: (10 * Beam.ChannelCount)+1 },
-  { address: beamsAddress, universe: beamsUniverse, channel: (11 * Beam.ChannelCount)+1 },
-  { address: beamsAddress, universe: beamsUniverse, channel: (12 * Beam.ChannelCount)+1 },
-  { address: beamsAddress, universe: beamsUniverse, channel: (13 * Beam.ChannelCount)+1 },
-  { address: beamsAddress, universe: beamsUniverse, channel: (14 * Beam.ChannelCount)+1 },
-  { address: beamsAddress, universe: beamsUniverse, channel: (15 * Beam.ChannelCount)+1 }
+  { address: beamsAddress, universe: beamsUniverse, channel: ( 0 * Beam.ChannelCount)+1, on: false },
+  { address: beamsAddress, universe: beamsUniverse, channel: ( 1 * Beam.ChannelCount)+1, on: true },
+  { address: beamsAddress, universe: beamsUniverse, channel: ( 2 * Beam.ChannelCount)+1, on: true },
+  { address: beamsAddress, universe: beamsUniverse, channel: ( 3 * Beam.ChannelCount)+1, on: true },
+  { address: beamsAddress, universe: beamsUniverse, channel: ( 4 * Beam.ChannelCount)+1, on: true },
+  { address: beamsAddress, universe: beamsUniverse, channel: ( 5 * Beam.ChannelCount)+1, on: true },
+  { address: beamsAddress, universe: beamsUniverse, channel: ( 6 * Beam.ChannelCount)+1, on: true },
+  { address: beamsAddress, universe: beamsUniverse, channel: ( 7 * Beam.ChannelCount)+1, on: true },
+  { address: beamsAddress, universe: beamsUniverse, channel: ( 8 * Beam.ChannelCount)+1, on: true },
+  { address: beamsAddress, universe: beamsUniverse, channel: ( 9 * Beam.ChannelCount)+1, on: true },
+  { address: beamsAddress, universe: beamsUniverse, channel: (10 * Beam.ChannelCount)+1, on: true },
+  { address: beamsAddress, universe: beamsUniverse, channel: (11 * Beam.ChannelCount)+1, on: true },
+  { address: beamsAddress, universe: beamsUniverse, channel: (12 * Beam.ChannelCount)+1, on: true },
+  { address: beamsAddress, universe: beamsUniverse, channel: (13 * Beam.ChannelCount)+1, on: true },
+  { address: beamsAddress, universe: beamsUniverse, channel: (14 * Beam.ChannelCount)+1, on: true },
+  { address: beamsAddress, universe: beamsUniverse, channel: (15 * Beam.ChannelCount)+1, on: false }
 ];
 
 const washers = [
@@ -253,8 +286,7 @@ function setDefaultBeamChannelData() {
 
 /////////////////////////////////////////////////////////////////////////////
 
-let pixelColor = [ 100, 100, 100 ];
-let pixelChannelData = [];
+// let pixelColor = [ 100, 100, 100 ];
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -313,7 +345,7 @@ function setScene() {
     setPans(sceneData.pan);
     beamsChannelData[Beam.Channel.Tilt] = sceneData.tilt;
     beamsChannelData[Beam.Channel.ColorWheel] = sceneData.beemColor;
-    pixelColor = colorNameToRgb[ sceneData.pixelColor ];
+    // pixelColor = colorNameToRgb[ sceneData.pixelColor ];
   }
 
   logScene();
@@ -356,44 +388,86 @@ function logScene() {
     " scene=", sceneIndex,
     " beams {color=", beamsChannelData[Beam.Channel.ColorWheel],
     " tilt=", beamsChannelData[Beam.Channel.Tilt],
-    " lamp=", beamsChannelData[Beam.Channel.Lamp],
     " } timeout=", stepInterval);
 }
 
 function sendBeamsChannelData()
 {
+  // get minute of day to see if beams should be on or off
+  const timestamp = new Date();
+  const minute = timestamp.getHours() * 60 + timestamp.getMinutes();
+
   for (var beamIndex = 0; beamIndex < beams.length; beamIndex++) {
+    if (minute < beamStartMinute || minute > beamStopMinute || beams[beamIndex].off) {
+      beamsChannelData[Beam.Channel.Lamp] = Beam.Lamp.Off;
+      beamsChannelData[Beam.Channel.ColorWheel] = Beam.Color.White;
+      beamsChannelData[Beam.Channel.Pan] = 0;
+      beamsChannelData[Beam.Channel.Tilt] = 0;
+    }
     e131.setChannelData(beams[beamIndex].address, beams[beamIndex].universe, beams[beamIndex].channel, beamsChannelData);
   }
+
   e131.send(beamsAddress, beamsUniverse);
 }
 
 function sendWasherChannelData()
 {
-  for (var washerIndex = 0; washerIndex < washers.length; washerIndex++) {
-    const washerData = [255, pixelColor[0], pixelColor[1], pixelColor[2], 0, 0];
-    e131.setChannelData(washers[washerIndex].address, washers[washerIndex].universe, washers[washerIndex].channel, washerData);
+  if (sceneIndex < 100) {
+    const sceneData = scenes[sceneIndex];
+    const pixelColorData = colorNameToRgb[ sceneData.pixelColor2 ]
+    for (var washerIndex = 0; washerIndex < washers.length; washerIndex++) {
+      const washerData = [255, pixelColorData[0], pixelColorData[1], pixelColorData[2], 0, 0];
+      e131.setChannelData(washers[washerIndex].address, washers[washerIndex].universe, washers[washerIndex].channel, washerData);
+    }
+    e131.send(washersAddress, washersUniverse);
   }
-  e131.send(washersAddress, washersUniverse);
 }
 
 function sendOutlineChannelData()
 {
-  for (let addressIndex = 0; addressIndex < outlineAddresses.length; addressIndex++) {
-    const outlineAddress = outlineAddresses[addressIndex];
-    for (let universeIndex = 0; universeIndex < outlineUniverses[addressIndex].length; universeIndex++) {
-      const outlineUniverse = outlineUniverses[addressIndex][universeIndex];
-      let pixelCount = 0;
-      for (let pixelIndex = 0; pixelIndex < outlinePixelCount[addressIndex][universeIndex]; pixelIndex++) {
-        if (pixelCount++ > sceneStep) {
-          break;
-        }
-        const pixelChannel = (pixelIndex * OutlinePixel.ChannelCount) + 1;
-        const pixelData = [ pixelColor[0], pixelColor[1], pixelColor[2] ];
-        e131.setChannelData(outlineAddress, outlineUniverse, pixelChannel, pixelData);
-      }
-      e131.send(outlineAddress, outlineUniverse);
+  if (sceneIndex < 100) {
+    const sceneData = scenes[sceneIndex];
+    const pixelColor1Data = colorNameToRgb[ sceneData.pixelColor1 ];
+    const pixelColor2Data = colorNameToRgb[ sceneData.pixelColor2 ];
+
+    for (let pixelNumber = 0; pixelNumber < outlinePixelMap1[outlinePixelMap2.length-1].end; pixelNumber++) {
+      const pixelData = (pixelNumber >= sceneStep*2) ? pixelColor1Data : pixelColor2Data;
+      const { address, universe, pixelIndex } = getOutlinePixelAddress(pixelNumber, outlinePixelMap1);
+      const pixelChannel = (pixelIndex * OutlinePixel.ChannelCount) + 1;
+      e131.setChannelData(address, universe, pixelChannel, pixelData);
     }
+
+    for (let pixelNumber = 0; pixelNumber < outlinePixelMap2[outlinePixelMap2.length-1].end; pixelNumber++) {
+      const pixelData = (pixelNumber >= sceneStep*3) ? pixelColor1Data : pixelColor2Data;
+      const { address, universe, pixelIndex } = getOutlinePixelAddress(pixelNumber, outlinePixelMap2);
+      const pixelChannel = (pixelIndex * OutlinePixel.ChannelCount) + 1;
+      e131.setChannelData(address, universe, pixelChannel, pixelData);
+    }
+
+    for (let addressIndex = 0; addressIndex < outlineAddresses.length; addressIndex++) {
+      const outlineAddress = outlineAddresses[addressIndex];
+      for (let universeIndex = 0; universeIndex < outlineUniverses[addressIndex].length; universeIndex++) {
+        const outlineUniverse = outlineUniverses[addressIndex][universeIndex];
+        e131.send(outlineAddress, outlineUniverse);
+      }
+    }
+
+    // for (let addressIndex = 0; addressIndex < outlineAddresses.length; addressIndex++) {
+    //   const outlineAddress = outlineAddresses[addressIndex];
+    //   for (let universeIndex = 0; universeIndex < outlineUniverses[addressIndex].length; universeIndex++) {
+    //     const outlineUniverse = outlineUniverses[addressIndex][universeIndex];
+    //     let pixelCount = 0;
+    //     for (let pixelIndex = 0; pixelIndex < outlinePixelCount[addressIndex][universeIndex]; pixelIndex++) {
+    //       if (pixelCount++ > sceneStep) {
+    //         break;
+    //       }
+    //       const pixelChannel = (pixelIndex * OutlinePixel.ChannelCount) + 1;
+    //       const pixelData = [ pixelColor[0], pixelColor[1], pixelColor[2] ];
+    //       e131.setChannelData(outlineAddress, outlineUniverse, pixelChannel, pixelData);
+    //     }
+    //     e131.send(outlineAddress, outlineUniverse);
+    //   }
+    // }
   }
 }
 
