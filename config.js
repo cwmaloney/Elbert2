@@ -32,16 +32,18 @@ const Beam = {
   "Unused": 0,
 
   "Color": {
-    "White": 0, // correct
-    "Red": 10, // correct
-    "Orange": 20, // close?
-    "Yellow": 70, // close?
-    "Green": 35, // correct
-    "Blue": 120, // correct
-    "Magenta": 80, // correct
-    "Pink": 60, // correct
-    "Lavender": 55,
-    "Cyan": 87
+    "White": 0,         // correct!
+    "Red": 10,          // correct!
+    "Orange": 20,       // correct! (a bit yellowish)
+    "PaleBlue": 27,     // correct!
+    "Green": 35,        // correct!
+    "PaleYellow": 45,   // correct!
+    "Lavender": 55,     // correct! 
+    "Pink": 60,         // correct!
+    "Yellow": 70,       // correct!
+    "Magenta": 80,      // correct!
+    "Blue": 87,         // correct!
+    "Violet": 120,      // correct!
   },
 
   "Gobo": {

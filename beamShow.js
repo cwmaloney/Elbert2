@@ -16,31 +16,65 @@ const standardColors = [
   Beam.Color.Lavender
 ];
 
-// const lowHalloweenPan = { start: 30, stop: 190, step: 1 };
-// const lowHalloweenTilt = { start: 36, stop: 60, step: 12 };
-// const lowHalloweenBeamColors = [
-//   Beam.Color.Magenta,
-//   Beam.Color.Red,
-//   Beam.Color.Orange,
-//   Beam.Color.Blue,
-//   Beam.Color.Green,
-// ];
-// const lowHalloweenPixelColors = [
-//   "Purple",
-//   "Red",
-//   "Orange",
-//   "Blue",
-//   "Green"
-// ];
+const testColorsScenes = [
+  { tilt: 25, beemColor: Beam.Color.White,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "White" },
+  { tilt: 25, beemColor: Beam.Color.Red,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Red" },
+  { tilt: 25, beemColor: Beam.Color.Orange,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Orange" },
+  { tilt: 25, beemColor: Beam.Color.Yellow,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Yellow" },
+  { tilt: 25, beemColor: Beam.Color.Green,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Green" },
+  { tilt: 25, beemColor: Beam.Color.Blue,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Blue" },
+  { tilt: 25, beemColor: Beam.Color.Violet,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Violet" },
+  { tilt: 25, beemColor: Beam.Color.Magenta,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Magenta" },
+  { tilt: 25, beemColor: Beam.Color.Pink,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Pink" },
+
+  // confirmed - single color
+  // { tilt: 25, beemColor:  0,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "White" },
+  // { tilt: 25, beemColor: 10,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Red" },
+  // { tilt: 25, beemColor: 20,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Orange" },
+  // { tilt: 25, beemColor: 27,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Blue" }, // very pale blue
+  // { tilt: 25, beemColor: 35,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Green" },
+  // { tilt: 25, beemColor: 45,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Yellow" }, // pale yellow
+  // { tilt: 25, beemColor: 55,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Lavender" },
+  // { tilt: 25, beemColor: 60,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Pink"  },
+  // { tilt: 25, beemColor: 70,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Yellow"  },
+  // { tilt: 25, beemColor: 80,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Magenta"  },
+  // { tilt: 25, beemColor: 87,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Cyan" }, // Cyan
+  // { tilt: 25, beemColor: 120, pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Purple"  },
+
+  // confirmed - two color
+  // { tilt: 25, beemColor:  5,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Red" }, // white & red
+  // { tilt: 25, beemColor: 15,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Red" }, // red & orange
+  // { tilt: 25, beemColor: 25,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Yellow" }, // orange & pale blue
+  // { tilt: 25, beemColor: 30,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Yellow" }, // pale blue & green
+  // { tilt: 25, beemColor: 40,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Green" }, // green & yellow
+  // { tilt: 25, beemColor: 50,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Yellow" }, // yellow & lavender
+  // { tilt: 25, beemColor: 65,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Lavender" }, // pink & yellow 
+  // { tilt: 25, beemColor: 75,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Yellow" }, // yellow & magenta 
+  // { tilt: 25, beemColor: 85,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Magenta" }, // magenta & cyan
+  // { tilt: 25, beemColor: 90,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Cyan"  }, // cyan & yellow
+
+  // yuck
+  // { tilt: 25, beemColor: 95,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Yellow" },  // yellow
+  // { tilt: 25, beemColor: 100, pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Yellow"  }, // yellow & pale brown
+  // { tilt: 25, beemColor: 105, pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Brown"  },  // pale brown
+  // { tilt: 25, beemColor: 110, pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Purple"  }, // pale brown & ?
+  // { tilt: 25, beemColor: 115, pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Purple"  }, // yuck
+  // { tilt: 25, beemColor: 120, pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Purple"  }, // yuck
+  // { tilt: 25, beemColor: 125, pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Purple"  }, // yuck
+  // { tilt: 25, beemColor: 130, pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Purple"  }, // yuck
+  // { tilt: 25, beemColor: 135, pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Purple"  }, // yuck
+  // { tilt: 25, beemColor: 140, pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Purple"  }, // yuck
+  // { tilt: 25, beemColor: 145, pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Purple"  }, // yuck
+];
 
 const halloweenScenes = [
-  { tilt: 36, beemColor: Beam.Color.Magenta,  pan: { start: 30, stop: 190, step: 1 }, pixelColor: "Purple" },
-  { tilt: 36, beemColor: Beam.Color.Red,      pan: { start: 30, stop: 190, step: 1 }, pixelColor: "Red" },
-  { tilt: 48, beemColor: Beam.Color.Orange,   pan: { start: 30, stop: 190, step: 1 }, pixelColor: "Orange" },
-  { tilt: 36, beemColor: Beam.Color.Blue,     pan: { start: 30, stop: 190, step: 1 }, pixelColor: "Blue" },
-  { tilt: 48, beemColor: Beam.Color.Green,    pan: { start: 30, stop: 190, step: 1 }, pixelColor: "Green"  },
-  { tilt: 72, beemColor: Beam.Color.Orange,   pan: { start: 30, stop: 190, step: 1 }, pixelColor: "Orange"  },
-  { tilt: 84, beemColor: Beam.Color.White,    pan: { start: 30, stop: 190, step: 1 }, pixelColor: "Yellow"  },
+  { tilt: 25, beemColor: Beam.Color.Magenta,  pan: { start: 5, stop: 190, step: 1 }, pixelColor: "Magenta" },
+  { tilt: 36, beemColor: Beam.Color.Red,      pan: { start: 5, stop: 190, step: 1 }, pixelColor: "Red" },
+  { tilt: 48, beemColor: Beam.Color.Blue,     pan: { start: 5, stop: 190, step: 1 }, pixelColor: "Blue" },
+  { tilt: 30, beemColor: Beam.Color.Violet,   pan: { start: 5, stop: 190, step: 1 }, pixelColor: "Violet" },
+  { tilt: 40, beemColor: Beam.Color.Green,    pan: { start: 5, stop: 190, step: 1 }, pixelColor: "Green"  },
+  { tilt: 72, beemColor: Beam.Color.Orange,   pan: { start: 5, stop: 190, step: 1 }, pixelColor: "Orange"  },
+  { tilt: 84, beemColor: Beam.Color.White,    pan: { start: 5, stop: 190, step: 1 }, pixelColor: "Yellow"  },
 ];
 
 
@@ -266,8 +300,8 @@ let sceneStep = 0;
 function nextScene() {
   if (++sceneIndex >= scenes.length) {
     sceneIndex = 0;
-    sceneStep = 0;
   }
+  sceneStep = 0;
   setScene();
 }
  
@@ -349,8 +383,8 @@ function sendOutlineChannelData()
       const outlineUniverse = outlineUniverses[addressIndex][universeIndex];
       let pixelCount = 0;
       for (let pixelIndex = 0; pixelIndex < outlinePixelCount[addressIndex][universeIndex]; pixelIndex++) {
-        if (sceneStep > pixelCount) {
-          return;
+        if (pixelCount++ > sceneStep) {
+          break;
         }
         const pixelChannel = (pixelIndex * OutlinePixel.ChannelCount) + 1;
         const pixelData = [ pixelColor[0], pixelColor[1], pixelColor[2] ];
@@ -378,8 +412,6 @@ for (let j = 0; j < process.argv.length; j++) {
     sceneIndex = 100;
     }
 }
-
-setDefaultBeamChannelData();
 
 setScene();
 
