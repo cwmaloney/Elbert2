@@ -87,8 +87,8 @@ const valentineScenes = [
   { tilt: 90, beemColor: Beam.Color.White,    pan: { start:  5, stop: 190, step: 1 }, pixelColor1: "Lavender", pixelColor2: "White"  },
 ];
 
-const beamStartTime = "14:20:00";
-const beamStopTime = "21:30:00";
+const beamStartTime = "19:30:00";
+const beamStopTime  = "20:00:00";
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -123,17 +123,17 @@ const outlineUniverses = [ [ 100, 101, 102 ], [ 104, 105, 106], [ 108, 109, 110]
 // number of pixels per controller
 const outlinePixelCount = [ [170, 170, 170], [170, 170, 170], [170, 170, 170] ];
 
-const outlinePixelMap1 = [
+const horizontalStringMap = [
   { start:    0, end:  169, controller: 0, universe: 0},
   { start:  170, end:  335, controller: 0, universe: 1},
   { start:  336, end:  505, controller: 2, universe: 0},
   { start:  506, end:  675, controller: 2, universe: 1}
 ];
 
-const outlinePixelMap2 = [
+const centerlStringMap = [
   { start:    0, end:  169, controller: 1, universe: 0},
   { start:  170, end:  339, controller: 1, universe: 1},
-  { start:  340, end:  372, controller: 1, universe: 2}
+  { start:  340, end:  360, controller: 1, universe: 2}
 ];
 
 /////////////////////////////////////////////////////////////////////////////
@@ -147,6 +147,10 @@ function getOutlinePixelAddress(pixelNumber, map) {
     }
   }
   return null;
+}
+
+function getOutlineStringLength(map) {
+  return map[map.length-1].end;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -430,16 +434,20 @@ function sendOutlineChannelData()
     const pixelColor1Data = colorNameToRgb[ sceneData.pixelColor1 ];
     const pixelColor2Data = colorNameToRgb[ sceneData.pixelColor2 ];
 
-    for (let pixelNumber = 0; pixelNumber < outlinePixelMap1[outlinePixelMap1.length-1].end; pixelNumber++) {
-      const pixelData = (pixelNumber >= sceneStep*3.2) ? pixelColor1Data : pixelColor2Data;
-      const { address, universe, pixelIndex } = getOutlinePixelAddress(pixelNumber, outlinePixelMap1);
+    const horizontalStringLength = getOutlineStringLength(horizontalStringMap);
+    for (let pixelNumber = 0; pixelNumber < horizontalStringLength; pixelNumber++) {
+      const pixelData = (pixelNumber >= (sceneStep*2) && pixelNumber <= (horizontalStringLength - (sceneStep*2)))
+                        ? pixelColor1Data : pixelColor2Data;
+      const { address, universe, pixelIndex } = getOutlinePixelAddress(pixelNumber, horizontalStringMap);
       const pixelChannel = (pixelIndex * OutlinePixel.ChannelCount) + 1;
       e131.setChannelData(address, universe, pixelChannel, pixelData);
     }
 
-    for (let pixelNumber = 0; pixelNumber < outlinePixelMap2[outlinePixelMap2.length-1].end; pixelNumber++) {
-      const pixelData = (pixelNumber >= sceneStep*2) ? pixelColor1Data : pixelColor2Data;
-      const { address, universe, pixelIndex } = getOutlinePixelAddress(pixelNumber, outlinePixelMap2);
+    const centerStringLength = getOutlineStringLength(centerlStringMap);
+    for (let pixelNumber = 0; pixelNumber < centerStringLength; pixelNumber++) {
+      const pixelData = (pixelNumber >= sceneStep && pixelNumber <= (centerStringLength - sceneStep))
+                          ? pixelColor1Data : pixelColor2Data;
+      const { address, universe, pixelIndex } = getOutlinePixelAddress(pixelNumber, centerlStringMap);
       const pixelChannel = (pixelIndex * OutlinePixel.ChannelCount) + 1;
       e131.setChannelData(address, universe, pixelChannel, pixelData);
     }
@@ -452,22 +460,6 @@ function sendOutlineChannelData()
       }
     }
 
-    // for (let addressIndex = 0; addressIndex < outlineAddresses.length; addressIndex++) {
-    //   const outlineAddress = outlineAddresses[addressIndex];
-    //   for (let universeIndex = 0; universeIndex < outlineUniverses[addressIndex].length; universeIndex++) {
-    //     const outlineUniverse = outlineUniverses[addressIndex][universeIndex];
-    //     let pixelCount = 0;
-    //     for (let pixelIndex = 0; pixelIndex < outlinePixelCount[addressIndex][universeIndex]; pixelIndex++) {
-    //       if (pixelCount++ > sceneStep) {
-    //         break;
-    //       }
-    //       const pixelChannel = (pixelIndex * OutlinePixel.ChannelCount) + 1;
-    //       const pixelData = [ pixelColor[0], pixelColor[1], pixelColor[2] ];
-    //       e131.setChannelData(outlineAddress, outlineUniverse, pixelChannel, pixelData);
-    //     }
-    //     e131.send(outlineAddress, outlineUniverse);
-    //   }
-    // }
   }
 }
 
