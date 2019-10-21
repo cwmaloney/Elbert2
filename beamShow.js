@@ -17,15 +17,15 @@ const standardColors = [
 ];
 
 const testColorsScenes = [
-  { tilt: 25, beemColor: Beam.Color.White,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "White" },
-  { tilt: 25, beemColor: Beam.Color.Red,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Red" },
-  { tilt: 25, beemColor: Beam.Color.Orange,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Orange" },
-  { tilt: 25, beemColor: Beam.Color.Yellow,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Yellow" },
-  { tilt: 25, beemColor: Beam.Color.Green,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Green" },
-  { tilt: 25, beemColor: Beam.Color.Blue,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Blue" },
-  { tilt: 25, beemColor: Beam.Color.Violet,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Violet" },
-  { tilt: 25, beemColor: Beam.Color.Magenta,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Magenta" },
-  { tilt: 25, beemColor: Beam.Color.Pink,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "Pink" },
+  { tilt: 25, beemColor: Beam.Color.White,  pan: { start: 50, stop: 80, step: 1 }, pixelColor1: "Black", pixelColor2: "White" },
+  { tilt: 25, beemColor: Beam.Color.Red,  pan: { start: 50, stop: 80, step: 1 }, pixelColor1: "Black", pixelColor2: "Red" },
+  { tilt: 25, beemColor: Beam.Color.Orange,  pan: { start: 50, stop: 80, step: 1 }, pixelColor1: "Black", pixelColor2: "Orange" },
+  { tilt: 25, beemColor: Beam.Color.Yellow,  pan: { start: 50, stop: 80, step: 1 }, pixelColor1: "Black", pixelColor2: "Yellow" },
+  { tilt: 25, beemColor: Beam.Color.Green,  pan: { start: 50, stop: 80, step: 1 }, pixelColor1: "Black", pixelColor2: "Green" },
+  { tilt: 25, beemColor: Beam.Color.Blue,  pan: { start: 50, stop: 80, step: 1 }, pixelColor1: "Black", pixelColor2: "Blue" },
+  { tilt: 25, beemColor: Beam.Color.Violet,  pan: { start: 50, stop: 80, step: 1 }, pixelColor1: "Black", pixelColor2: "Violet" },
+  { tilt: 25, beemColor: Beam.Color.Magenta,  pan: { start: 50, stop: 80, step: 1 }, pixelColor1: "Black", pixelColor2: "Magenta" },
+  { tilt: 25, beemColor: Beam.Color.Pink,  pan: { start: 50, stop: 80, step: 1 }, pixelColor1: "Black", pixelColor2: "Pink" },
 
   // confirmed - single color
   // { tilt: 25, beemColor:  0,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "White" },
@@ -68,13 +68,13 @@ const testColorsScenes = [
 ];
 
 const halloweenScenes = [
-  { tilt: 25, beemColor: Beam.Color.Magenta,  pan: { start: 5, stop: 190, step: 1 }, pixelColor1: "Yellow", pixelColor2: "Magenta" },
-  { tilt: 36, beemColor: Beam.Color.Red,      pan: { start: 5, stop: 190, step: 1 }, pixelColor1: "Magenta", pixelColor2: "Red" },
+  { tilt: 25, beemColor: Beam.Color.Magenta,  pan: { start: 5, stop: 190, step: 1 }, pixelColor1: "Orange", pixelColor2: "Magenta" },
+  { tilt: 72, beemColor: Beam.Color.Orange,   pan: { start: 5, stop: 190, step: 1 }, pixelColor1: "Magenta", pixelColor2: "Orange"  },
+  { tilt: 36, beemColor: Beam.Color.Red,      pan: { start: 5, stop: 190, step: 1 }, pixelColor1: "Orange", pixelColor2: "Red" },
   { tilt: 48, beemColor: Beam.Color.Blue,     pan: { start: 5, stop: 190, step: 1 }, pixelColor1: "Red", pixelColor2: "Blue" },
   { tilt: 30, beemColor: Beam.Color.Violet,   pan: { start: 5, stop: 190, step: 1 }, pixelColor1: "Blue", pixelColor2: "Violet" },
   { tilt: 40, beemColor: Beam.Color.Green,    pan: { start: 5, stop: 190, step: 1 }, pixelColor1: "Violet", pixelColor2: "Green"  },
-  { tilt: 72, beemColor: Beam.Color.Orange,   pan: { start: 5, stop: 190, step: 1 }, pixelColor1: "Green", pixelColor2: "Orange"  },
-  { tilt: 84, beemColor: Beam.Color.White,    pan: { start: 5, stop: 190, step: 1 }, pixelColor1: "Orange", pixelColor2: "Yellow"  },
+  { tilt: 84, beemColor: Beam.Color.White,    pan: { start: 5, stop: 190, step: 1 }, pixelColor1: "Black", pixelColor2: "Orange"  },
 ];
 
 
@@ -133,7 +133,7 @@ const horizontalStringMap = [
 const centerlStringMap = [
   { start:    0, end:  169, controller: 1, universe: 0},
   { start:  170, end:  339, controller: 1, universe: 1},
-  { start:  340, end:  360, controller: 1, universe: 2}
+  { start:  340, end:  355, controller: 1, universe: 2}
 ];
 
 /////////////////////////////////////////////////////////////////////////////
@@ -445,7 +445,7 @@ function sendOutlineChannelData()
 
     const centerStringLength = getOutlineStringLength(centerlStringMap);
     for (let pixelNumber = 0; pixelNumber < centerStringLength; pixelNumber++) {
-      const pixelData = (pixelNumber >= sceneStep && pixelNumber <= (centerStringLength - sceneStep))
+      const pixelData = (pixelNumber >= sceneStep && pixelNumber <= (centerStringLength - sceneStep - 8))
                           ? pixelColor1Data : pixelColor2Data;
       const { address, universe, pixelIndex } = getOutlinePixelAddress(pixelNumber, centerlStringMap);
       const pixelChannel = (pixelIndex * OutlinePixel.ChannelCount) + 1;
