@@ -40,8 +40,7 @@ class E131 extends EventEmitter {
 
   configureUniverse(configuration) {
 
-    console.log("E131::configureUniverse, universe=" + configuration.universe);
-    console.log("E131::configureUniverse", "configuration", configuration);
+    // console.log("E131::configureUniverse", "configuration", configuration);
     
     const { universe = 0,
             address = '10.0.0.0',
