@@ -87,8 +87,9 @@ const valentineScenes = [
   { tilt: 90, beemColor: Beam.Color.White,    pan: { start:  5, stop: 190, step: 1 }, pixelColor1: "Lavender", pixelColor2: "White"  },
 ];
 
-const beamStartTime = "19:30:00";
-const beamStopTime  = "20:00:00";
+const runBeams = false;
+const beamStartTime = "17:30:00";
+const beamStopTime  = "21:30:00";
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -402,7 +403,7 @@ function sendBeamsChannelData()
   const minute = timestamp.getHours() * 60 + timestamp.getMinutes();
 
   for (var beamIndex = 0; beamIndex < beams.length; beamIndex++) {
-    if (minute < beamStartMinute || minute > beamStopMinute || beams[beamIndex].off) {
+    if (!runBeams  || minute < beamStartMinute || minute > beamStopMinute || beams[beamIndex].off) {
       beamsChannelData[Beam.Channel.Lamp] = Beam.Lamp.Off;
       beamsChannelData[Beam.Channel.ColorWheel] = Beam.Color.White;
       beamsChannelData[Beam.Channel.Pan] = 0;
