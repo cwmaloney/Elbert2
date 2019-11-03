@@ -87,9 +87,12 @@ const valentineScenes = [
   { tilt: 90, beemColor: Beam.Color.White,    pan: { start:  5, stop: 190, step: 1 }, pixelColor1: "Lavender", pixelColor2: "White"  },
 ];
 
-const runBeams = false;
 const beamStartTime = "17:30:00";
 const beamStopTime  = "21:30:00";
+
+const runBeams = false;
+const runOutline = false;
+const runWashers = false;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -104,7 +107,7 @@ const beamStopMinute = parseTimeToMinutes(beamStopTime);
 /////////////////////////////////////////////////////////////////////////////
 
 // This is the IP address of the moving lights controller
-const beamsAddress = "192.168.1.71";
+const beamsAddress = "192.168.1.70";
 // This is the universe of the moving lights 
 const beamsUniverse = 121;
 
@@ -417,7 +420,7 @@ function sendBeamsChannelData()
 
 function sendWasherChannelData()
 {
-  if (sceneIndex < 100) {
+  if (sceneIndex < 100 && runWashers) {
     const sceneData = scenes[sceneIndex];
     const pixelColorData = colorNameToRgb[ sceneData.pixelColor2 ]
     for (var washerIndex = 0; washerIndex < washers.length; washerIndex++) {
@@ -430,7 +433,7 @@ function sendWasherChannelData()
 
 function sendOutlineChannelData()
 {
-  if (sceneIndex < 100) {
+  if (sceneIndex < 100 && runOutline) {
     const sceneData = scenes[sceneIndex];
     const pixelColor1Data = colorNameToRgb[ sceneData.pixelColor1 ];
     const pixelColor2Data = colorNameToRgb[ sceneData.pixelColor2 ];
@@ -460,7 +463,6 @@ function sendOutlineChannelData()
         e131.send(outlineAddress, outlineUniverse);
       }
     }
-
   }
 }
 
