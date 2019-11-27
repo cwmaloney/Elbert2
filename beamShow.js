@@ -16,16 +16,16 @@ const standardColors = [
   Beam.Color.Lavender
 ];
 
-const testColorsScenes = [
-  { tilt: 25, beemColor: Beam.Color.White,  pan: { start: 50, stop: 80, step: 1 }, pixelColor1: "Black", pixelColor2: "White" },
-  { tilt: 25, beemColor: Beam.Color.Red,  pan: { start: 50, stop: 80, step: 1 }, pixelColor1: "Black", pixelColor2: "Red" },
-  { tilt: 25, beemColor: Beam.Color.Orange,  pan: { start: 50, stop: 80, step: 1 }, pixelColor1: "Black", pixelColor2: "Orange" },
-  { tilt: 25, beemColor: Beam.Color.Yellow,  pan: { start: 50, stop: 80, step: 1 }, pixelColor1: "Black", pixelColor2: "Yellow" },
-  { tilt: 25, beemColor: Beam.Color.Green,  pan: { start: 50, stop: 80, step: 1 }, pixelColor1: "Black", pixelColor2: "Green" },
-  { tilt: 25, beemColor: Beam.Color.Blue,  pan: { start: 50, stop: 80, step: 1 }, pixelColor1: "Black", pixelColor2: "Blue" },
-  { tilt: 25, beemColor: Beam.Color.Violet,  pan: { start: 50, stop: 80, step: 1 }, pixelColor1: "Black", pixelColor2: "Violet" },
-  { tilt: 25, beemColor: Beam.Color.Magenta,  pan: { start: 50, stop: 80, step: 1 }, pixelColor1: "Black", pixelColor2: "Magenta" },
-  { tilt: 25, beemColor: Beam.Color.Pink,  pan: { start: 50, stop: 80, step: 1 }, pixelColor1: "Black", pixelColor2: "Pink" },
+const testScenes = [
+  { tilt: 25, beemColor: Beam.Color.White,  pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "Black", pixelColor2: "White" },
+  { tilt: 25, beemColor: Beam.Color.Red,  pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "Black", pixelColor2: "Red" },
+  { tilt: 25, beemColor: Beam.Color.Orange,  pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "Black", pixelColor2: "Orange" },
+  { tilt: 25, beemColor: Beam.Color.Yellow,  pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "Black", pixelColor2: "Yellow" },
+  { tilt: 25, beemColor: Beam.Color.Green,  pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "Black", pixelColor2: "Green" },
+  { tilt: 25, beemColor: Beam.Color.Blue,  pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "Black", pixelColor2: "Blue" },
+  { tilt: 25, beemColor: Beam.Color.Violet,  pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "Black", pixelColor2: "Violet" },
+  { tilt: 25, beemColor: Beam.Color.Magenta,  pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "Black", pixelColor2: "Magenta" },
+  { tilt: 25, beemColor: Beam.Color.Pink,  pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "Black", pixelColor2: "Pink" },
 
   // confirmed - single color
   // { tilt: 25, beemColor:  0,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "White" },
@@ -87,10 +87,10 @@ const valentineScenes = [
   { tilt: 90, beemColor: Beam.Color.White,    pan: { start:  5, stop: 190, step: 1 }, pixelColor1: "Lavender", pixelColor2: "White"  },
 ];
 
-const beamStartTime = "17:30:00";
+const beamStartTime = "00:01:00";
 const beamStopTime  = "21:30:00";
 
-const runBeams = false;
+const runBeams = true;
 const runOutline = false;
 const runWashers = false;
 
@@ -203,7 +203,7 @@ for (let addressIndex = 0; addressIndex < outlineAddresses.length; addressIndex+
 /////////////////////////////////////////////////////////////////////////////
 
 const beams = [
-  { address: beamsAddress, universe: beamsUniverse, channel: ( 0 * Beam.ChannelCount)+1, on: false },
+  { address: beamsAddress, universe: beamsUniverse, channel: ( 0 * Beam.ChannelCount)+1, on: true },
   { address: beamsAddress, universe: beamsUniverse, channel: ( 1 * Beam.ChannelCount)+1, on: true },
   { address: beamsAddress, universe: beamsUniverse, channel: ( 2 * Beam.ChannelCount)+1, on: true },
   { address: beamsAddress, universe: beamsUniverse, channel: ( 3 * Beam.ChannelCount)+1, on: true },
@@ -218,7 +218,7 @@ const beams = [
   { address: beamsAddress, universe: beamsUniverse, channel: (12 * Beam.ChannelCount)+1, on: true },
   { address: beamsAddress, universe: beamsUniverse, channel: (13 * Beam.ChannelCount)+1, on: true },
   { address: beamsAddress, universe: beamsUniverse, channel: (14 * Beam.ChannelCount)+1, on: true },
-  { address: beamsAddress, universe: beamsUniverse, channel: (15 * Beam.ChannelCount)+1, on: false }
+  { address: beamsAddress, universe: beamsUniverse, channel: (15 * Beam.ChannelCount)+1, on: true }
 ];
 
 const washers = [
@@ -330,7 +330,7 @@ function nextPan() {
 }
 
 /////////////////////////////////////////////////////////////////////////////
-let scenes = halloweenScenes;
+let scenes = testScenes;
 
 let sceneIndex = -1;
 
@@ -396,26 +396,30 @@ function logScene() {
     " scene=", sceneIndex,
     " beams {color=", beamsChannelData[Beam.Channel.ColorWheel],
     " tilt=", beamsChannelData[Beam.Channel.Tilt],
+    " on=", beamsChannelData[Beam.Channel.Lamp],
     " } timeout=", stepInterval);
 }
 
 function sendBeamsChannelData()
 {
-  // get minute of day to see if beams should be on or off
-  const timestamp = new Date();
-  const minute = timestamp.getHours() * 60 + timestamp.getMinutes();
+  if (runBeams) {
+    // get minute of day to see if beams should be on or off
+    const timestamp = new Date();
+    const minute = timestamp.getHours() * 60 + timestamp.getMinutes();
 
-  for (var beamIndex = 0; beamIndex < beams.length; beamIndex++) {
-    if (!runBeams  || minute < beamStartMinute || minute > beamStopMinute || beams[beamIndex].off) {
+    if (minute < beamStartMinute || minute > beamStopMinute) {
       beamsChannelData[Beam.Channel.Lamp] = Beam.Lamp.Off;
       beamsChannelData[Beam.Channel.ColorWheel] = Beam.Color.White;
       beamsChannelData[Beam.Channel.Pan] = 0;
       beamsChannelData[Beam.Channel.Tilt] = 0;
     }
-    e131.setChannelData(beams[beamIndex].address, beams[beamIndex].universe, beams[beamIndex].channel, beamsChannelData);
-  }
+
+    for (var beamIndex = 0; beamIndex < beams.length; beamIndex++) {
+      e131.setChannelData(beams[beamIndex].address, beams[beamIndex].universe, beams[beamIndex].channel, beamsChannelData);
+    }
 
   e131.send(beamsAddress, beamsUniverse);
+  }
 }
 
 function sendWasherChannelData()
@@ -471,17 +475,27 @@ function sendOutlineChannelData()
 sceneIndex = 0;
 sceneStep = 0;
 
+let turnOff = false;
 // check for the off command
 for (let j = 0; j < process.argv.length; j++) {
   console.log(j + ':' + (process.argv[j]));
 
   if (process.argv[j] === "off") {
-    defaultbeamsChannelData.Lamp = Beam.Lamp.Off;
-    defaultbeamsChannelData.Color = Beam.Color.Blue;
-    defaultbeamsChannelData.Pan = 120;
-    defaultbeamsChannelData.Tilt = 80;
-    sceneIndex = 100;
+    turnOff = true;
     }
+}
+
+defaultbeamsChannelData.Lamp = Beam.Lamp.On;
+defaultbeamsChannelData.Color = Beam.Color.Blue;
+defaultbeamsChannelData.Pan = 120;
+defaultbeamsChannelData.Tilt = 80;
+
+if (turnOff) {
+  defaultbeamsChannelData.Lamp = Beam.Lamp.Off;
+  defaultbeamsChannelData.Color = Beam.Color.Blue;
+  defaultbeamsChannelData.Pan = 120;
+  defaultbeamsChannelData.Tilt = 80;
+  sceneIndex = 100;
 }
 
 setScene();

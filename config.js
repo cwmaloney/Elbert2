@@ -97,8 +97,9 @@ const Beam = {
   },
 
   "Lamp": {
+    "Zero": 0,
     "Off": 63,
-    "On": 217
+    "On": 255
   },
 
   "ChannelCount": 16,
