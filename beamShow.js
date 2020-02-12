@@ -17,15 +17,15 @@ const standardColors = [
 ];
 
 const testScenes = [
-  { tilt: 25, beemColor: Beam.Color.White,  pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "Black", pixelColor2: "White" },
-  { tilt: 25, beemColor: Beam.Color.Red,  pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "Black", pixelColor2: "Red" },
-  { tilt: 25, beemColor: Beam.Color.Orange,  pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "Black", pixelColor2: "Orange" },
-  { tilt: 25, beemColor: Beam.Color.Yellow,  pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "Black", pixelColor2: "Yellow" },
-  { tilt: 25, beemColor: Beam.Color.Green,  pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "Black", pixelColor2: "Green" },
-  { tilt: 25, beemColor: Beam.Color.Blue,  pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "Black", pixelColor2: "Blue" },
-  { tilt: 25, beemColor: Beam.Color.Violet,  pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "Black", pixelColor2: "Violet" },
-  { tilt: 25, beemColor: Beam.Color.Magenta,  pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "Black", pixelColor2: "Magenta" },
-  { tilt: 25, beemColor: Beam.Color.Pink,  pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "Black", pixelColor2: "Pink" },
+  { tilt: 25, beemColor: Beam.Color.White,  pan: { start: 80, stop: 150, step:  1 }, pixelColor1: "Black", pixelColor2: "White" },
+  { tilt: 25, beemColor: Beam.Color.Red,    pan: { start: 80, stop: 150, step:  2 }, pixelColor1: "Black", pixelColor2: "Red" },
+  { tilt: 25, beemColor: Beam.Color.Orange, pan: { start: 80, stop: 150, step:  4 }, pixelColor1: "Black", pixelColor2: "Orange" },
+  { tilt: 25, beemColor: Beam.Color.Yellow, pan: { start: 80, stop: 150, step:  8 }, pixelColor1: "Black", pixelColor2: "Yellow" },
+  { tilt: 25, beemColor: Beam.Color.Green,  pan: { start: 80, stop: 150, step: 10 }, pixelColor1: "Black", pixelColor2: "Green" },
+  { tilt: 25, beemColor: Beam.Color.Blue,   pan: { start: 80, stop: 150, step: 13 }, pixelColor1: "Black", pixelColor2: "Blue" },
+  { tilt: 25, beemColor: Beam.Color.Violet, pan: { start: 80, stop: 150, step: 16 }, pixelColor1: "Black", pixelColor2: "Violet" },
+  { tilt: 25, beemColor: Beam.Color.Magenta,pan: { start: 80, stop: 150, step: 19 }, pixelColor1: "Black", pixelColor2: "Magenta" },
+  { tilt: 25, beemColor: Beam.Color.Pink,   pan: { start: 80, stop: 150, step: 22 }, pixelColor1: "Black", pixelColor2: "Pink" },
 
   // confirmed - single color
   // { tilt: 25, beemColor:  0,  pan: { start: 50, stop: 80, step: 1 }, pixelColor: "White" },
@@ -87,8 +87,8 @@ const valentineScenes = [
   { tilt: 90, beemColor: Beam.Color.White,    pan: { start:  5, stop: 190, step: 1 }, pixelColor1: "Lavender", pixelColor2: "White"  },
 ];
 
-const beamStartTime = "00:01:00";
-const beamStopTime  = "21:30:00";
+const beamStartTime = "17:50:00";
+const beamStopTime  = "21:00:00";
 
 const runBeams = true;
 const runOutline = false;
@@ -330,7 +330,7 @@ function nextPan() {
 }
 
 /////////////////////////////////////////////////////////////////////////////
-let scenes = testScenes;
+let scenes = valentineScenes;
 
 let sceneIndex = -1;
 
@@ -396,7 +396,7 @@ function logScene() {
     " scene=", sceneIndex,
     " beams {color=", beamsChannelData[Beam.Channel.ColorWheel],
     " tilt=", beamsChannelData[Beam.Channel.Tilt],
-    " on=", beamsChannelData[Beam.Channel.Lamp],
+    " lamp=", beamsChannelData[Beam.Channel.Lamp],
     " } timeout=", stepInterval);
 }
 

@@ -98,7 +98,7 @@ const Beam = {
 
   "Lamp": {
     "Zero": 0,
-    "Off": 63,
+    "Off": 10,
     "On": 255
   },
 
