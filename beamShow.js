@@ -3,18 +3,17 @@
 const { E131 } = require("./E131.js");
 const { Beam, Washer, OutlinePixel } = require("./config.js");
 const { colorNameToRgb } = require("./config-colors.js");
+const
+  {
+  setDefaultBeamChannelData,
+  sendBeamsChannelData,
 
-const standardColors = [
-  Beam.Color.White,
-  Beam.Color.Red,
-  Beam.Color.Orange,
-  Beam.Color.Yellow,
-  Beam.Color.Green,
-  Beam.Color.Blue,
-  Beam.Color.Magenta,
-  Beam.Color.Pink,
-  Beam.Color.Lavender
-];
+  sendWasherChannelData,
+  sendOutlineChannelData,
+
+  sendBeamsOff,
+  } = require("./config-farmstead.js");
+
 
 const testScenes = [
   { tilt: 25, beemColor: Beam.Color.White,  pan: { start: 80, stop: 150, step:  1 }, pixelColor1: "Black", pixelColor2: "White" },
@@ -89,12 +88,44 @@ const valentineScenes = [
   { tilt: 90, beemColor: Beam.Color.White,    pan: { start: 30, stop: 160, step: 1 }, pixelColor1: "Violet", pixelColor2: "White"  },
 ];
 
-const beamStartTime = "17:50:00";
-const beamStopTime  = "21:00:00";
+
+const blueScene = [
+  { beam: 1, beemColor: Beam.Color.White, center: { tilt: 90, pan: 150}, radius: 10, speed: 1, frost: 255, prism: 255, focus: 255 },
+  { beam: 2, beemColor: Beam.Color.Blue,  center: { tilt: 50, pan: 90}, radius: 10, speed: 1, frost: 255, prism: 255, focus: 255 },
+];
+
+/////////////////////////////////////////////////////////////////////////////
+// all data that changes to choose a show should be in this section
+
+const beamStartTime = "20:15:00";
+const beamStopTime  = "22:00:00";
 
 const runBeams = true;
 const runOutline = true;
 const runWashers = true;
+
+let scenes = valentineScenes;
+
+let sceneStartTimeout = 2000;
+// time between beam movements in milliseconds
+let stepInterval = 125;
+
+/////////////////////////////////////////////////////////////////////////////
+
+// current step index
+let sceneIndex = -1;
+
+// pan limits for current scene
+let panStart = 0;
+let panStop = 160;
+let panStep = 1;
+
+let panValue = panStart;
+let panCount = 0;
+
+let beamChannelData = [];
+
+let beamState = "unknown";
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -102,405 +133,176 @@ function parseTimeToMinutes(timeString) {
   const timestamp = new Date('1970-01-01T' + timeString);
   return timestamp.getHours()* 60 + timestamp.getMinutes();
 }
+/////////////////////////////////////////////////////////////////////////////
 
 const beamStartMinute = parseTimeToMinutes(beamStartTime);
 const beamStopMinute = parseTimeToMinutes(beamStopTime);
 
 /////////////////////////////////////////////////////////////////////////////
 
-// This is the IP address of the moving lights controller
-const beamsAddress = "192.168.1.70";
-// This is the universe of the moving lights 
-const beamsUniverse = 121;
-
-
-// This is the IP address of the washers controller
-const washersAddress = "192.168.1.72";
-// This is the universe of the washers 
-const washersUniverse = 122;
-// number of washers
-const washerCount = 25;
-
-
-// These are the IP addresses of the building outline pixel controllers
-const outlineAddresses = [ "192.168.1.60", "192.168.1.61", "192.168.1.62" ];
-// This is the universe of the outline pixels
-const outlineUniverses = [ [ 100, 101, 102 ], [ 104, 105, 106], [ 108, 109, 110] ];
-// number of pixels per controller
-const outlinePixelCount = [ [170, 170, 170], [170, 170, 170], [170, 170, 170] ];
-
-const horizontalStringMap = [
-  { start:    0, end:  169, controller: 0, universe: 0},
-  { start:  170, end:  335, controller: 0, universe: 1},
-  { start:  336, end:  505, controller: 2, universe: 0},
-  { start:  506, end:  675, controller: 2, universe: 1}
-];
-
-const centerlStringMap = [
-  { start:    0, end:  169, controller: 1, universe: 0},
-  { start:  170, end:  339, controller: 1, universe: 1},
-  { start:  340, end:  355, controller: 1, universe: 2}
-];
-
-/////////////////////////////////////////////////////////////////////////////
-
-function getOutlinePixelAddress(pixelNumber, map) {
-  for (let segment of map) {
-    if (pixelNumber >= segment.start && pixelNumber <= segment.end) {
-      return { address: outlineAddresses[segment.controller],
-               universe: outlineUniverses[segment.controller][segment.universe],
-               pixelIndex: (pixelNumber - segment.start) };
-    }
-  }
-  return null;
-}
-
-function getOutlineStringLength(map) {
-  return map[map.length-1].end;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// Configure E.131 Universes
-      
-const e131 = new E131();
-
-// configure beams universe
-e131.configureUniverse({
-  "address": beamsAddress,
-  "universe": beamsUniverse,
-  "sourcePort": 5568,
-  "sendOnlyChangeData": false,
-  "sendSequenceNumbers": true,
-  "refreshInterval": 1000
-});
-
-// configure washers universe
-e131.configureUniverse({
-  "address": washersAddress,
-  "universe": washersUniverse,
-  "sourcePort": 5568,
-  "sendOnlyChangeData": false,
-  "sendSequenceNumbers": false,
-  "refreshInterval": 1000
-});
-
-
-// configure pixel universes
-for (let addressIndex = 0; addressIndex < outlineAddresses.length; addressIndex++) {
-  const outlineAddress = outlineAddresses[addressIndex];
-  for (let universeIndex = 0; universeIndex < outlineUniverses[addressIndex].length; universeIndex++) {
-    const outlineUniverse = outlineUniverses[addressIndex][universeIndex];
-    e131.configureUniverse({
-      "address": outlineAddress,
-      "universe": outlineUniverse,
-      "sourcePort": 5568,
-      "sendOnlyChangeData": false,
-      "sendSequenceNumbers": false,
-      "refreshInterval": 1000
-    });
-  }
-}
-
-
-/////////////////////////////////////////////////////////////////////////////
-
-const beams = [
-  { address: beamsAddress, universe: beamsUniverse, channel: ( 0 * Beam.ChannelCount)+1, on: true },
-  { address: beamsAddress, universe: beamsUniverse, channel: ( 1 * Beam.ChannelCount)+1, on: true },
-  { address: beamsAddress, universe: beamsUniverse, channel: ( 2 * Beam.ChannelCount)+1, on: true },
-  { address: beamsAddress, universe: beamsUniverse, channel: ( 3 * Beam.ChannelCount)+1, on: true },
-  { address: beamsAddress, universe: beamsUniverse, channel: ( 4 * Beam.ChannelCount)+1, on: true },
-  { address: beamsAddress, universe: beamsUniverse, channel: ( 5 * Beam.ChannelCount)+1, on: true },
-  { address: beamsAddress, universe: beamsUniverse, channel: ( 6 * Beam.ChannelCount)+1, on: true },
-  { address: beamsAddress, universe: beamsUniverse, channel: ( 7 * Beam.ChannelCount)+1, on: true },
-  { address: beamsAddress, universe: beamsUniverse, channel: ( 8 * Beam.ChannelCount)+1, on: true },
-  { address: beamsAddress, universe: beamsUniverse, channel: ( 9 * Beam.ChannelCount)+1, on: true },
-  { address: beamsAddress, universe: beamsUniverse, channel: (10 * Beam.ChannelCount)+1, on: true },
-  { address: beamsAddress, universe: beamsUniverse, channel: (11 * Beam.ChannelCount)+1, on: true },
-  { address: beamsAddress, universe: beamsUniverse, channel: (12 * Beam.ChannelCount)+1, on: true },
-  { address: beamsAddress, universe: beamsUniverse, channel: (13 * Beam.ChannelCount)+1, on: true },
-  { address: beamsAddress, universe: beamsUniverse, channel: (14 * Beam.ChannelCount)+1, on: true },
-  { address: beamsAddress, universe: beamsUniverse, channel: (15 * Beam.ChannelCount)+1, on: true }
-];
-
-const washers = [
-  { address: washersAddress, universe: washersUniverse, channel: ( 0 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: ( 1 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: ( 2 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: ( 3 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: ( 4 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: ( 5 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: ( 6 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: ( 7 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: ( 8 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: ( 9 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: (10 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: (11 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: (12 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: (13 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: (14 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: (15 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: (16 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: (17 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: (18 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: (19 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: (20 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: (21 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: (22 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: (23 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: (24 * Washer.ChannelCount)+1 },
-  { address: washersAddress, universe: washersUniverse, channel: (25 * Washer.ChannelCount)+1 },
-];
-
-/////////////////////////////////////////////////////////////////////////////
-
-let beamsChannelData = [];
-
-const defaultbeamsChannelData = {
-  ColorWheel: Beam.Color.White,
-  Strobe: Beam.Strobe.Open,
-  Dimmer: Beam.Dimmer.Off,
-  Gobo: Beam.Gobo.Off,
-  Prism: Beam.Prism.Off,
-  PrismRotation: Beam.PrismRotation.Off,
-  EffectsMovement: Beam.Unused,
-  Frost: Beam.Frost.Off,
-  Focus: 127,
-  Pan: 0,
-  PanFine: 0,
-  Tilt: 45,
-  TiltFine: 0,
-  Macro: Beam.Unused,
-  Reset: Beam.Reset.None,
-  Lamp: Beam.Lamp.On
-};
-
-function setDefaultBeamChannelData() {
-  beamsChannelData[Beam.Channel.ColorWheel]      = defaultbeamsChannelData.ColorWheel;
-  beamsChannelData[Beam.Channel.Strobe]          = defaultbeamsChannelData.Strobe;
-  beamsChannelData[Beam.Channel.Dimmer]          = defaultbeamsChannelData.Dimmer;
-  beamsChannelData[Beam.Channel.Gobo]            = defaultbeamsChannelData.Gobo;
-  beamsChannelData[Beam.Channel.Prism]           = defaultbeamsChannelData.Prism;
-  beamsChannelData[Beam.Channel.PrismRotation]   = defaultbeamsChannelData.PrismRotation;
-  beamsChannelData[Beam.Channel.EffectsMovement] = defaultbeamsChannelData.EffectsMovement;
-  beamsChannelData[Beam.Channel.Frost]           = defaultbeamsChannelData.Frost;
-  beamsChannelData[Beam.Channel.Focus]           = defaultbeamsChannelData.Focus;
-  beamsChannelData[Beam.Channel.Pan]             = defaultbeamsChannelData.Pan;
-  beamsChannelData[Beam.Channel.PanFine]         = defaultbeamsChannelData.PanFine;
-  beamsChannelData[Beam.Channel.Tilt]            = defaultbeamsChannelData.Tilt;
-  beamsChannelData[Beam.Channel.TiltFine]        = defaultbeamsChannelData.TiltFine;
-  beamsChannelData[Beam.Channel.Macro]           = defaultbeamsChannelData.Macro;
-  beamsChannelData[Beam.Channel.Reset]           = defaultbeamsChannelData.Reset;
-  beamsChannelData[Beam.Channel.Lamp]            = defaultbeamsChannelData.Lamp;
+function isTimeToShowBeams()
+{
+  const timestamp = new Date();
+  const minute = timestamp.getHours() * 60 + timestamp.getMinutes();
+  return (minute >= beamStartMinute && minute >= beamStopMinute);
 }
 
 /////////////////////////////////////////////////////////////////////////////
 
-// let pixelColor = [ 100, 100, 100 ];
-
-/////////////////////////////////////////////////////////////////////////////
-
-//  ====== Pan =====
-
-let panStart = 0;
-let panStop = 160;
-let panStep = 1;
-let panValue = panStart;
-
-function setPans(pan) {
+function setPanLimits(pan) {
   panStart = pan.start;
   panStop = pan.stop;
   panStep = pan.step;
-  panValue = panStart;
-  beamsChannelData[Beam.Channel.Pan] = panValue;
-}
 
-function nextPan() {
-  let done = false;
-  panValue += panStep;
-  if (panValue >= panStop) {
-    panValue = panStart;
-    done = true;
-  }
-  if (panValue == 0) {
-    stepInterval = 2000;
-  } else {
-    stepInterval = 125;
-  }
-  beamsChannelData[Beam.Channel.Pan] = panValue;
-  return done;
+  panValue = panStart;
+  panCount = 0;
+
+  beamChannelData[Beam.Channel.Pan] = panValue;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-let scenes = valentineScenes;
 
-let sceneIndex = -1;
+function setBeamLamp() {
+  const isItTimeToShowBeams = isTimeToShowBeams();
+  if (isItTimeToShowBeams) {
+    if (beamState !== "on") {
+      stopBeamLamps();
+      setTimeout(loop, lampChangeTimeout);
+    } else {
+      startBeamLamps();
+      setTimeout(loop, lampChangeTimeout);
+    }
+  }
+  else {
+    if (beamState !== "off") {
+      startBeamLamps();
+      setTimeout(loop, lampChangeTimeout);
+    } else {
+      stopBeamsOn();
+      setTimeout(loop, lampChangeTimeout);
+    }
+  } if (!isItTimeToShowBeams && beamState != "off") {
+  
+  return 0;
+}
 
-// current step in scene
-let sceneStep = 0;
+/////////////////////////////////////////////////////////////////////////////
+
+function loop() {
+
+  const wait = checkBeamLampState();
+  if (wait) {
+    setTimeout(loop, wait);
+  }
+ 
+  panCount++;
+  panValue += panStep;
+  
+  if (panValue >= panStop) {
+    nextScene();
+    setTimeout(loop, sceneStartTimeout);
+  } 
+
+  beamChannelData[Beam.Channel.Pan] = panValue;
+  updateShow();
+  setTimeout(loop, stepInterval);
+}
+
+/////////////////////////////////////////////////////////////////////////////
 
 function nextScene() {
   if (++sceneIndex >= scenes.length) {
     sceneIndex = 0;
   }
-  sceneStep = 0;
-  setScene();
+  startScene();
 }
- 
-function setScene() {
-  setDefaultBeamChannelData();
 
-  if (sceneIndex < 100) {
-    const sceneData = scenes[sceneIndex];
-    setPans(sceneData.pan);
-    beamsChannelData[Beam.Channel.Tilt] = sceneData.tilt;
-    beamsChannelData[Beam.Channel.ColorWheel] = sceneData.beemColor;
-    // pixelColor = colorNameToRgb[ sceneData.pixelColor ];
-  }
+/////////////////////////////////////////////////////////////////////////////
 
+function startScene() {
+  setDefaultBeamChannelData(beamChannelData);
+
+  const sceneData = scenes[sceneIndex];
+  setPanLimits(sceneData.pan);
+  beamChannelData[Beam.Channel.Tilt] = sceneData.tilt;
+  beamChannelData[Beam.Channel.ColorWheel] = sceneData.beemColor;
+
+  updateShow();
   logScene();
 }
 
 /////////////////////////////////////////////////////////////////////////////
 
-// time until next step
-let stepInterval = 1000;
+function updateShow() {
+  const sceneData = scenes[sceneIndex];
 
-function nextStep() {
-
-  switch (sceneIndex)
-  {
-    // used by "off" command
-    case 100:
-      if (++sceneStep > 10)
-        process.exit(0);
-        logScene();
-      break;
-
-    // used by scene that pan the beams
-    default:
-      sceneStep++;
-      if (nextPan()) {
-          nextScene()
-      }
-      break;
-  }
-
-  sendBeamsChannelData();
-  sendWasherChannelData();
-  sendOutlineChannelData();
-
-  setTimeout(nextStep, stepInterval);
-}
-
-function logScene() {
-  console.log("--", Date.now()/1000,
-    " scene=", sceneIndex,
-    " beams {color=", beamsChannelData[Beam.Channel.ColorWheel],
-    " tilt=", beamsChannelData[Beam.Channel.Tilt],
-    " lamp=", beamsChannelData[Beam.Channel.Lamp],
-    " } timeout=", stepInterval);
-}
-
-function sendBeamsChannelData()
-{
-  if (runBeams) {
-    // get minute of day to see if beams should be on or off
-    const timestamp = new Date();
-    const minute = timestamp.getHours() * 60 + timestamp.getMinutes();
-
-    if (minute < beamStartMinute || minute > beamStopMinute) {
-      beamsChannelData[Beam.Channel.Lamp] = Beam.Lamp.Off;
-      beamsChannelData[Beam.Channel.ColorWheel] = Beam.Color.Red;
-      beamsChannelData[Beam.Channel.Pan] = 128;
-      beamsChannelData[Beam.Channel.Tilt] = 0;
-      stepInterval = 3000;
-    }
-
-    for (var beamIndex = 0; beamIndex < beams.length; beamIndex++) {
-      e131.setChannelData(beams[beamIndex].address, beams[beamIndex].universe, beams[beamIndex].channel, beamsChannelData);
-    }
-
-  e131.send(beamsAddress, beamsUniverse);
-  }
-}
-
-function sendWasherChannelData()
-{
-  if (sceneIndex < 100 && runWashers) {
-    const sceneData = scenes[sceneIndex];
-    const pixelColorData = colorNameToRgb[ sceneData.pixelColor2 ]
-    for (var washerIndex = 0; washerIndex < washers.length; washerIndex++) {
-      const washerData = [255, pixelColorData[0], pixelColorData[1], pixelColorData[2], 0, 0];
-      e131.setChannelData(washers[washerIndex].address, washers[washerIndex].universe, washers[washerIndex].channel, washerData);
-    }
-    e131.send(washersAddress, washersUniverse);
-  }
-}
-
-function sendOutlineChannelData()
-{
-  if (sceneIndex < 100 && runOutline) {
-    const sceneData = scenes[sceneIndex];
-    const pixelColor1Data = colorNameToRgb[ sceneData.pixelColor1 ];
-    const pixelColor2Data = colorNameToRgb[ sceneData.pixelColor2 ];
-
-    const horizontalStringLength = getOutlineStringLength(horizontalStringMap);
-    for (let pixelNumber = 0; pixelNumber < horizontalStringLength; pixelNumber++) {
-      const pixelData = (pixelNumber >= (sceneStep*2) && pixelNumber <= (horizontalStringLength - (sceneStep*2)))
-                        ? pixelColor1Data : pixelColor2Data;
-      const { address, universe, pixelIndex } = getOutlinePixelAddress(pixelNumber, horizontalStringMap);
-      const pixelChannel = (pixelIndex * OutlinePixel.ChannelCount) + 1;
-      e131.setChannelData(address, universe, pixelChannel, pixelData);
-    }
-
-    const centerStringLength = getOutlineStringLength(centerlStringMap);
-    for (let pixelNumber = 0; pixelNumber < centerStringLength; pixelNumber++) {
-      const pixelData = (pixelNumber >= sceneStep && pixelNumber <= (centerStringLength - sceneStep - 8))
-                          ? pixelColor1Data : pixelColor2Data;
-      const { address, universe, pixelIndex } = getOutlinePixelAddress(pixelNumber, centerlStringMap);
-      const pixelChannel = (pixelIndex * OutlinePixel.ChannelCount) + 1;
-      e131.setChannelData(address, universe, pixelChannel, pixelData);
-    }
-
-    for (let addressIndex = 0; addressIndex < outlineAddresses.length; addressIndex++) {
-      const outlineAddress = outlineAddresses[addressIndex];
-      for (let universeIndex = 0; universeIndex < outlineUniverses[addressIndex].length; universeIndex++) {
-        const outlineUniverse = outlineUniverses[addressIndex][universeIndex];
-        e131.send(outlineAddress, outlineUniverse);
-      }
+  if (runBeams) { 
+    if (isTimeToShowBeams()) {
+      sendBeamsChannelData(beamChannelData);
+    } else {
+      sendBeamsOff();
+      console.log(" -- beams off -- ");
     }
   }
+  if (runWashers) { sendWasherChannelData(sceneData.pixelColor2); }
+  if (runOutline) { sendOutlineChannelData(sceneData.pixelColor1, sceneData.pixelColor2, panCount); }
 }
 
 /////////////////////////////////////////////////////////////////////////////
+
+function logScene(timeout) {
+  console.log("--", Date.now()/1000,
+    " scene=", sceneIndex,
+    " beams color=", beamChannelData[Beam.Channel.ColorWheel],
+    " tilt=", beamChannelData[Beam.Channel.Tilt],
+    " lamp=", beamChannelData[Beam.Channel.Lamp]);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// turn beams off
+
+/////////////////////////////////////////////////////////////////////////////
+// turn beams on
+
+/////////////////////////////////////////////////////////////////////////////
 // start the "show"
+
 sceneIndex = 0;
-sceneStep = 0;
 
-let turnOff = false;
-// check for the off command
-for (let j = 0; j < process.argv.length; j++) {
-  console.log(j + ':' + (process.argv[j]));
+startScene();
+updateShow();
 
-  if (process.argv[j] === "off") {
-    turnOff = true;
-    }
+setTimeout(loop, sceneStartTimeout);
+
+/////////////////////////////////////////////////////////////////////////////
+
+//  ====== Rotate =====
+
+let beamStatus = [];
+const directions = { N: 1, NE: 2, E: 3, SE: 4, S: 5, SW: 6, W: 7, NW: 8 };
+
+function setBeamStatus(beamNumber, status) {
+  beamsStatus[beamNumber] = status;
 }
 
-defaultbeamsChannelData.Lamp = Beam.Lamp.On;
-defaultbeamsChannelData.Color = Beam.Color.Blue;
-defaultbeamsChannelData.Pan = 120;
-defaultbeamsChannelData.Tilt = 80;
-
-if (turnOff) {
-  defaultbeamsChannelData.Lamp = Beam.Lamp.Off;
-  defaultbeamsChannelData.Color = Beam.Color.White;
-  defaultbeamsChannelData.Pan = 120;
-  defaultbeamsChannelData.Tilt = 80;
-  sceneIndex = 100;
+function getBeamStatus(beamNumber, status) {
+  return beamsStatus[beamNumber];
 }
 
-setScene();
+function moveBeam(beamNumber)
+{
+  let status = beamStatus[beamNumber];
+  const config = blueScene[beamnumber];
 
-setTimeout(nextStep, stepInterval);
+  status.angle += config.speed;
+
+  if (angle >= Math.PI*2) {
+    angle = 0;
+  }
+
+  status.pan = config.center.pan + cos(status.angle) * config.radius;
+  status.tilt = config.center.pan + sin(status.angle) * config.radius;
+
+  beamsChannelData[Beam.Channel.Pan] = status.pan;
+  beamsChannelData[Beam.Channel.Tilt] = status.tilt;
+}
