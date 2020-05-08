@@ -80,19 +80,21 @@ const halloweenScenes = [
 
 const valentineScenes = [
   { tilt: 36, beemColor: Beam.Color.Red,      pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "White", pixelColor2: "Red" },
-  { tilt: 48, beemColor: Beam.Color.Magenta,  pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "Red", pixelColor2: "Magenta" },
-  { tilt: 24, beemColor: Beam.Color.Pink,     pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "Magenta", pixelColor2: "Pink" },
-  { tilt: 72, beemColor: Beam.Color.Violet,   pan: { start: 30, stop: 190, step: 1 }, pixelColor1: "Pink", pixelColor2: "Violet"  },
-  { tilt: 84, beemColor: Beam.Color.Lavender, pan: { start:  5, stop: 190, step: 1 }, pixelColor1: "Violet", pixelColor2: "Lavender"  },
-  { tilt: 90, beemColor: Beam.Color.White,    pan: { start:  5, stop: 190, step: 1 }, pixelColor1: "Lavender", pixelColor2: "White"  },
+  { tilt: 75, beemColor: Beam.Color.White,    pan: { start: 30, stop: 160, step: 1 }, pixelColor1: "Red", pixelColor2: "White"  },
+  { tilt: 48, beemColor: Beam.Color.Magenta,  pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "White", pixelColor2: "Magenta" },
+  { tilt: 90, beemColor: Beam.Color.White,    pan: { start: 30, stop: 160, step: 1 }, pixelColor1: "Magenta", pixelColor2: "White"  },
+  { tilt: 28, beemColor: Beam.Color.Pink,     pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "White", pixelColor2: "Pink" },
+  { tilt: 75, beemColor: Beam.Color.White,    pan: { start: 30, stop: 160, step: 1 }, pixelColor1: "Pink", pixelColor2: "White"  },
+  { tilt: 72, beemColor: Beam.Color.Violet,   pan: { start: 90, stop: 150, step: 1 }, pixelColor1: "White", pixelColor2: "Violet"  },
+  { tilt: 90, beemColor: Beam.Color.White,    pan: { start: 30, stop: 160, step: 1 }, pixelColor1: "Violet", pixelColor2: "White"  },
 ];
 
 const beamStartTime = "17:50:00";
 const beamStopTime  = "21:00:00";
 
 const runBeams = true;
-const runOutline = false;
-const runWashers = false;
+const runOutline = true;
+const runWashers = true;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -409,9 +411,10 @@ function sendBeamsChannelData()
 
     if (minute < beamStartMinute || minute > beamStopMinute) {
       beamsChannelData[Beam.Channel.Lamp] = Beam.Lamp.Off;
-      beamsChannelData[Beam.Channel.ColorWheel] = Beam.Color.White;
-      beamsChannelData[Beam.Channel.Pan] = 0;
+      beamsChannelData[Beam.Channel.ColorWheel] = Beam.Color.Red;
+      beamsChannelData[Beam.Channel.Pan] = 128;
       beamsChannelData[Beam.Channel.Tilt] = 0;
+      stepInterval = 3000;
     }
 
     for (var beamIndex = 0; beamIndex < beams.length; beamIndex++) {
@@ -492,7 +495,7 @@ defaultbeamsChannelData.Tilt = 80;
 
 if (turnOff) {
   defaultbeamsChannelData.Lamp = Beam.Lamp.Off;
-  defaultbeamsChannelData.Color = Beam.Color.Blue;
+  defaultbeamsChannelData.Color = Beam.Color.White;
   defaultbeamsChannelData.Pan = 120;
   defaultbeamsChannelData.Tilt = 80;
   sceneIndex = 100;
