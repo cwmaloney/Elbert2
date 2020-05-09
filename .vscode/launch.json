@@ -13,11 +13,8 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Turn Lamps Off",
-      "program": "${workspaceFolder}/beamShow.js",
-      "args": [
-        "off"
-      ]
+      "name": "Launch Blue Show",
+      "program": "${workspaceFolder}/blueShow.js"
     }
   ]
 }

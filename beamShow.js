@@ -2,16 +2,20 @@
 
 const { E131 } = require("./E131.js");
 const { Beam, Washer, OutlinePixel } = require("./config.js");
-const { colorNameToRgb } = require("./config-colors.js");
 const
   {
+  parseTimeToMinutes,
+  isTimeToShowBeams,
+  checkBeamLampState,
+
   setDefaultBeamChannelData,
   sendBeamsChannelData,
+  sendBeamsOn,
+  sendBeamsOff,
 
   sendWasherChannelData,
   sendOutlineChannelData,
 
-  sendBeamsOff,
   } = require("./config-farmstead.js");
 
 
@@ -97,7 +101,7 @@ const blueScene = [
 /////////////////////////////////////////////////////////////////////////////
 // all data that changes to choose a show should be in this section
 
-const beamStartTime = "20:15:00";
+const beamStartTime = "19:30:00";
 const beamStopTime  = "22:00:00";
 
 const runBeams = true;
@@ -127,25 +131,8 @@ let beamChannelData = [];
 
 let beamState = "unknown";
 
-/////////////////////////////////////////////////////////////////////////////
-
-function parseTimeToMinutes(timeString) {
-  const timestamp = new Date('1970-01-01T' + timeString);
-  return timestamp.getHours()* 60 + timestamp.getMinutes();
-}
-/////////////////////////////////////////////////////////////////////////////
-
 const beamStartMinute = parseTimeToMinutes(beamStartTime);
 const beamStopMinute = parseTimeToMinutes(beamStopTime);
-
-/////////////////////////////////////////////////////////////////////////////
-
-function isTimeToShowBeams()
-{
-  const timestamp = new Date();
-  const minute = timestamp.getHours() * 60 + timestamp.getMinutes();
-  return (minute >= beamStartMinute && minute >= beamStopMinute);
-}
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -162,50 +149,34 @@ function setPanLimits(pan) {
 
 /////////////////////////////////////////////////////////////////////////////
 
-function setBeamLamp() {
-  const isItTimeToShowBeams = isTimeToShowBeams();
-  if (isItTimeToShowBeams) {
-    if (beamState !== "on") {
-      stopBeamLamps();
-      setTimeout(loop, lampChangeTimeout);
-    } else {
-      startBeamLamps();
-      setTimeout(loop, lampChangeTimeout);
-    }
-  }
-  else {
-    if (beamState !== "off") {
-      startBeamLamps();
-      setTimeout(loop, lampChangeTimeout);
-    } else {
-      stopBeamsOn();
-      setTimeout(loop, lampChangeTimeout);
-    }
-  } if (!isItTimeToShowBeams && beamState != "off") {
-  
-  return 0;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-
 function loop() {
 
-  const wait = checkBeamLampState();
-  if (wait) {
-    setTimeout(loop, wait);
+  const temp = checkBeamLampState(beamState, beamStartMinute, beamStopMinute);
+  beamState = temp.beamState;
+  const timeout = temp.timeout;
+  if (timeout)
+  {
+    setTimeout(loop, timeout);
   }
- 
-  panCount++;
-  panValue += panStep;
-  
-  if (panValue >= panStop) {
+  else if (sceneIndex == -1)
+  {
     nextScene();
     setTimeout(loop, sceneStartTimeout);
-  } 
+  }
+  else
+  {
+    panCount++;
+    panValue += panStep;
+    
+    if (panValue >= panStop) {
+      nextScene();
+      setTimeout(loop, sceneStartTimeout);
+    } 
 
-  beamChannelData[Beam.Channel.Pan] = panValue;
-  updateShow();
-  setTimeout(loop, stepInterval);
+    beamChannelData[Beam.Channel.Pan] = panValue;
+    updateShow();
+    setTimeout(loop, stepInterval);
+  }
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -236,14 +207,7 @@ function startScene() {
 function updateShow() {
   const sceneData = scenes[sceneIndex];
 
-  if (runBeams) { 
-    if (isTimeToShowBeams()) {
-      sendBeamsChannelData(beamChannelData);
-    } else {
-      sendBeamsOff();
-      console.log(" -- beams off -- ");
-    }
-  }
+  if (runBeams)   { sendBeamsChannelData(beamChannelData); }
   if (runWashers) { sendWasherChannelData(sceneData.pixelColor2); }
   if (runOutline) { sendOutlineChannelData(sceneData.pixelColor1, sceneData.pixelColor2, panCount); }
 }
@@ -259,50 +223,41 @@ function logScene(timeout) {
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// turn beams off
-
-/////////////////////////////////////////////////////////////////////////////
-// turn beams on
-
-/////////////////////////////////////////////////////////////////////////////
 // start the "show"
 
-sceneIndex = 0;
+sceneIndex = -1;
 
-startScene();
-updateShow();
-
-setTimeout(loop, sceneStartTimeout);
+loop();
 
 /////////////////////////////////////////////////////////////////////////////
 
 //  ====== Rotate =====
 
-let beamStatus = [];
-const directions = { N: 1, NE: 2, E: 3, SE: 4, S: 5, SW: 6, W: 7, NW: 8 };
+// let beamStatus = [];
+// const directions = { N: 1, NE: 2, E: 3, SE: 4, S: 5, SW: 6, W: 7, NW: 8 };
 
-function setBeamStatus(beamNumber, status) {
-  beamsStatus[beamNumber] = status;
-}
+// function setBeamStatus(beamNumber, status) {
+//   beamsStatus[beamNumber] = status;
+// }
 
-function getBeamStatus(beamNumber, status) {
-  return beamsStatus[beamNumber];
-}
+// function getBeamStatus(beamNumber, status) {
+//   return beamsStatus[beamNumber];
+// }
 
-function moveBeam(beamNumber)
-{
-  let status = beamStatus[beamNumber];
-  const config = blueScene[beamnumber];
+// function moveBeam(beamNumber)
+// {
+//   let status = beamStatus[beamNumber];
+//   const config = blueScene[beamnumber];
 
-  status.angle += config.speed;
+//   status.angle += config.speed;
 
-  if (angle >= Math.PI*2) {
-    angle = 0;
-  }
+//   if (angle >= Math.PI*2) {
+//     angle = 0;
+//   }
 
-  status.pan = config.center.pan + cos(status.angle) * config.radius;
-  status.tilt = config.center.pan + sin(status.angle) * config.radius;
+//   status.pan = config.center.pan + cos(status.angle) * config.radius;
+//   status.tilt = config.center.pan + sin(status.angle) * config.radius;
 
-  beamsChannelData[Beam.Channel.Pan] = status.pan;
-  beamsChannelData[Beam.Channel.Tilt] = status.tilt;
-}
+//   beamsChannelData[Beam.Channel.Pan] = status.pan;
+//   beamsChannelData[Beam.Channel.Tilt] = status.tilt;
+// }

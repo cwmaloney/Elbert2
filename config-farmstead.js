@@ -4,6 +4,8 @@ const { E131 } = require("./E131.js");
 const { Beam, Washer, OutlinePixel } = require("./config.js");
 const { colorNameToRgb } = require("./config-colors.js");
 
+const lampChangeTimeout = 5500;
+
 /////////////////////////////////////////////////////////////////////////////
 
 // This is the IP address of the moving lights controller
@@ -292,19 +294,73 @@ function sendOutlineChannelData(pixelColor1, pixelColor2, step) {
   }
 }
 
+/////////////////////////////////////////////////////////////////////////////
 
+function parseTimeToMinutes(timeString) {
+  const timestamp = new Date('1970-01-01T' + timeString);
+  return timestamp.getHours()* 60 + timestamp.getMinutes();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+function isTimeToShowBeams(beamStartMinute, beamStopMinute)
+{
+  const timestamp = new Date();
+  const minute = timestamp.getHours() * 60 + timestamp.getMinutes();
+  return (minute >= beamStartMinute && minute <= beamStopMinute);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+function checkBeamLampState(beamState, beamStartMinute, beamStopMinute) {
+  const isItTimeToShowBeams = isTimeToShowBeams(beamStartMinute, beamStopMinute);
+  if (isItTimeToShowBeams) {
+    // if (beamState == "unknown") {
+    //   sendBeamsOff();
+    //   return {beamState: "off", timeout: lampChangeTimeout};
+    //   return lampChangeTimeout;
+    //} else
+    if (beamState !== "on") {
+      sendBeamsOn();
+      beamState = "on";
+      return {beamState: "on", timeout: lampChangeTimeout*3};
+    }
+  } else {
+    if (beamState == "unknown") {
+      sendBeamsOn();
+      beamState = "on";
+      return {beamState: "on", timeout: lampChangeTimeout};
+    } else if (beamState !== "off") {
+      sendBeamsOff();
+      beamState = "off";
+      return {beamState: "off", timeout: lampChangeTimeout};
+    }
+  }
+  
+  return {beamState: beamState, timeout: 0};
+}
+
+/////////////////////////////////////////////////////////////////////////////
 
 module.exports = {
   Beam,
   Washer,
   OutlinePixel,
+
+  parseTimeToMinutes,
+  isTimeToShowBeams,
+  checkBeamLampState,
+
+  // lampChangeTimeout,
   
   setDefaultBeamChannelData,
   setBeamOffChannelData,
 
-  sendBeamsChannelData,
   sendBeamsOff,
+  sendBeamsOn,
 
+  sendBeamChannelData,
+  sendBeamsChannelData,
   sendWasherChannelData,
   sendOutlineChannelData
 };
