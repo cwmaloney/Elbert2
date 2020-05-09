@@ -219,17 +219,17 @@ function setBeamOffChannelData(beamChannelData) {
 /////////////////////////////////////////////////////////////////////////////
 
 function sendBeamChannelData(beamIndex, beamChannelData) {
-  const time = new Date();
-  const second = time.getHours() * 360 + time.getMinutes() * 60 + time.getSeconds();
-  console.log(" ", second,
-      " beam=", beamIndex,
-      " color=", beamChannelData[Beam.Channel.ColorWheel],
-      " tilt=", beamChannelData[Beam.Channel.Tilt],
-      " pan=", beamChannelData[Beam.Channel.Pan],
-      " prism=", beamChannelData[Beam.Channel.Prism],
-      " p. rotation=", beamChannelData[Beam.Channel.PrismRotation],
-      " focus=", beamChannelData[Beam.Channel.Focus],
-      " lamp=", beamChannelData[Beam.Channel.Lamp]);
+  // const time = new Date();
+  // const second = time.getHours() * 360 + time.getMinutes() * 60 + time.getSeconds();
+  // console.log(" ", second,
+  //     " beam=", beamIndex,
+  //     " color=", beamChannelData[Beam.Channel.ColorWheel],
+  //     " tilt=", beamChannelData[Beam.Channel.Tilt],
+  //     " pan=", beamChannelData[Beam.Channel.Pan],
+  //     " prism=", beamChannelData[Beam.Channel.Prism],
+  //     " p. rotation=", beamChannelData[Beam.Channel.PrismRotation],
+  //     " focus=", beamChannelData[Beam.Channel.Focus],
+  //     " lamp=", beamChannelData[Beam.Channel.Lamp]);
   e131.setChannelData(beams[beamIndex].address, beams[beamIndex].universe, beams[beamIndex].channel, beamChannelData);
   e131.send(beamsAddress, beamsUniverse);
 }
