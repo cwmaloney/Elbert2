@@ -20,20 +20,20 @@ const
   } = require("./config-farmstead.js");
 
 const beamConfig = [
-  { beam: 1, beemColor: Beam.Color.White, center: { tilt: 128, pan:  10},  radius: 2, step: 0, frost: 0, prism: 0, focus: 128 },
-  { beam: 2, beemColor: Beam.Color.Blue,  center: { tilt: 60,  pan: 106},  radius: 5, step: 30, frost: 255, prism: 255, focus: 255 },
-  { beam: 3, beemColor: Beam.Color.Blue,  center: { tilt: 70,  pan: 112},  radius: 5, step: -30, frost: 255, prism: 255, focus: 255 },
-  { beam: 4, beemColor: Beam.Color.Blue,  center: { tilt: 75,  pan: 118},  radius: 5, step: 30, frost: 255, prism: 255, focus: 255 },
-  { beam: 5, beemColor: Beam.Color.Blue,  center: { tilt: 75,  pan: 136},  radius: 5, step: -30, frost: 255, prism: 255, focus: 255 },
-  { beam: 6, beemColor: Beam.Color.Blue,  center: { tilt: 70,  pan: 142},  radius: 5, step: 30, frost: 255, prism: 255, focus: 255 },
-  { beam: 7, beemColor: Beam.Color.Blue,  center: { tilt: 60,  pan: 148},  radius: 5, step: -30, frost: 255, prism: 255, focus: 255 },
-  { beam: 8, beemColor: Beam.Color.White, center: { tilt: 128, pan: 10},   radius: 2, step: 0, frost: 0, prism: 0, focus: 128 },
+  { beam: 1, beemColor: Beam.Color.White, center: { tilt: 128, pan:  10}, radius: 2, step:   0, frost:   0, prism:   0, prismRoation: Beam.PrismRotation.Off, focus: 128 },
+  { beam: 2, beemColor: Beam.Color.Blue,  center: { tilt: 60,  pan: 106}, radius: 5, step:  30, frost: 255, prism: 255, prismRoation: Beam.PrismRotation.Fast, focus: 255 },
+  { beam: 3, beemColor: Beam.Color.Blue,  center: { tilt: 70,  pan: 112}, radius: 5, step: -30, frost: 255, prism: 255, prismRoation: Beam.PrismRotation.Fast, focus: 255 },
+  { beam: 4, beemColor: Beam.Color.Blue,  center: { tilt: 75,  pan: 118}, radius: 5, step:  30, frost: 255, prism: 255, prismRoation: Beam.PrismRotation.Fast, focus: 255 },
+  { beam: 5, beemColor: Beam.Color.Blue,  center: { tilt: 75,  pan: 136}, radius: 5, step: -30, frost: 255, prism: 255, prismRoation: Beam.PrismRotation.Fast, focus: 255 },
+  { beam: 6, beemColor: Beam.Color.Blue,  center: { tilt: 70,  pan: 142}, radius: 5, step:  30, frost: 255, prism: 255, prismRoation: Beam.PrismRotation.Fast, focus: 255 },
+  { beam: 7, beemColor: Beam.Color.Blue,  center: { tilt: 60,  pan: 148}, radius: 5, step: -30, frost: 255, prism: 255, prismRoation: Beam.PrismRotation.Fast, focus: 255 },
+  { beam: 8, beemColor: Beam.Color.White, center: { tilt: 128, pan: 10},  radius: 2, step:   0, frost:   0, prism:   0, prismRoation: Beam.PrismRotation.Off, focus: 128 },
 ];
 
 /////////////////////////////////////////////////////////////////////////////
 
-const beamStartTime = "20:00:00";
-const beamStopTime  = "23:30:00";
+const beamStartTime = "20:15:00";
+const beamStopTime  = "22:00:00";
 
 // time between beam movements in milliseconds
 let stepInterval = 500;
@@ -76,6 +76,7 @@ function loop()
         message += " ";
       }
     }
+    console.log(message + '\x1b[0G');
     //process.stdout.write('\x1b[0G');
     process.stdout.write(message + '\x1b[0G');
     setTimeout(loop, stepInterval);
@@ -128,6 +129,7 @@ function moveBeam(beamNumber)
   beamChannelData[Beam.Channel.ColorWheel] = config.beemColor;
   beamChannelData[Beam.Channel.Focus] = config.focus;
   beamChannelData[Beam.Channel.Prism] = config.prism;
+  beamChannelData[Beam.Channel.PrismRotaion] = config.prismRoation;
   beamChannelData[Beam.Channel.Frost] = config.frost;
 
   sendBeamChannelData(beamNumber, beamChannelData);
