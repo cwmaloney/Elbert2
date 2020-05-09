@@ -20,23 +20,23 @@ const
   } = require("./config-farmstead.js");
 
 const beamConfig = [
-  { beam: 1, beemColor: Beam.Color.White, center: { tilt: 128, pan:  10},  radius: 2, speed: 0, frost: 0, prism: 0, focus: 128 },
-  { beam: 2, beemColor: Beam.Color.Blue,  center: { tilt: 60,  pan: 106},  radius: 4, speed: 1, frost: 255, prism: 255, focus: 255 },
-  { beam: 3, beemColor: Beam.Color.Blue,  center: { tilt: 70,  pan: 112},  radius: 4, speed: 1, frost: 255, prism: 255, focus: 255 },
-  { beam: 4, beemColor: Beam.Color.Blue,  center: { tilt: 75,  pan: 118},  radius: 4, speed: 1, frost: 255, prism: 255, focus: 255 },
-  { beam: 5, beemColor: Beam.Color.Blue,  center: { tilt: 75,  pan: 136},  radius: 4, speed: 1, frost: 255, prism: 255, focus: 255 },
-  { beam: 6, beemColor: Beam.Color.Blue,  center: { tilt: 70,  pan: 142},  radius: 4, speed: 1, frost: 255, prism: 255, focus: 255 },
-  { beam: 7, beemColor: Beam.Color.Blue,  center: { tilt: 60,  pan: 148},  radius: 4, speed: 1, frost: 255, prism: 255, focus: 255 },
-  { beam: 8, beemColor: Beam.Color.White, center: { tilt: 128, pan: 10},   radius: 2, speed: 0, frost: 0, prism: 0, focus: 128 },
+  { beam: 1, beemColor: Beam.Color.White, center: { tilt: 128, pan:  10},  radius: 2, step: 0, frost: 0, prism: 0, focus: 128 },
+  { beam: 2, beemColor: Beam.Color.Blue,  center: { tilt: 60,  pan: 106},  radius: 5, step: 30, frost: 255, prism: 255, focus: 255 },
+  { beam: 3, beemColor: Beam.Color.Blue,  center: { tilt: 70,  pan: 112},  radius: 5, step: -30, frost: 255, prism: 255, focus: 255 },
+  { beam: 4, beemColor: Beam.Color.Blue,  center: { tilt: 75,  pan: 118},  radius: 5, step: 30, frost: 255, prism: 255, focus: 255 },
+  { beam: 5, beemColor: Beam.Color.Blue,  center: { tilt: 75,  pan: 136},  radius: 5, step: -30, frost: 255, prism: 255, focus: 255 },
+  { beam: 6, beemColor: Beam.Color.Blue,  center: { tilt: 70,  pan: 142},  radius: 5, step: 30, frost: 255, prism: 255, focus: 255 },
+  { beam: 7, beemColor: Beam.Color.Blue,  center: { tilt: 60,  pan: 148},  radius: 5, step: -30, frost: 255, prism: 255, focus: 255 },
+  { beam: 8, beemColor: Beam.Color.White, center: { tilt: 128, pan: 10},   radius: 2, step: 0, frost: 0, prism: 0, focus: 128 },
 ];
 
 /////////////////////////////////////////////////////////////////////////////
 
-const beamStartTime = "20:30:00";
-const beamStopTime  = "22:01:00";
+const beamStartTime = "08:20:00";
+const beamStopTime  = "23:30:00";
 
 // time between beam movements in milliseconds
-let stepInterval = 1000;
+let stepInterval = 500;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -54,17 +54,23 @@ function loop()
   const timeout = temp.timeout;
   if (timeout)
   {
+    console.log("Waiting for lamp...");
     setTimeout(loop, timeout);
+  }
+  else if (beamState == "off") {
+    console.log("Sleeping...");
+    setTimeout(loop, 10000);
   }
   else
   {
-    const beamIndex = Math.round(Math.random()*6.1) + 1;
-    //moveBeam(beamIndex);
-    // for (let beamIndex=0; beamIndex < 8; beamIndex++)
-    // {
-    //   moveBeam(beamIndex);
-    // }
-    //setTimeout(loop, stepInterval);
+    //const beamIndex = Math.round(Math.random()*6.1) + 1;
+    for (let beamIndex=0; beamIndex < 8; beamIndex++)
+    {
+      if (Math.random() > 0.3) {
+        moveBeam(beamIndex);
+      }
+    }
+    setTimeout(loop, stepInterval);
   }
 }
 
@@ -101,24 +107,23 @@ function moveBeam(beamNumber)
 {
   const beamChannelData = [];
   setDefaultBeamChannelData(beamChannelData);
- 
-  let status = beamStatus[beamNumber];
-  if (!status) {
-    status = { angle:0 };
-  }
   const config = beamConfig[beamNumber];
 
-  let angle = status.angle + config.speed;
+  let status = beamStatus[beamNumber];
 
+  let angle = (status) ? (status.angle + config.step) : 0;
   if (angle >= 360) {
     angle = 0;
   }
-  status.angle = angle;
 
+  status = { angle };
   beamStatus[beamNumber] = status;
 
-  const pan = config.center.pan + Math.cos(angle) * config.radius;
-  const tilt = config.center.tilt + Math.sin(angle) * config.radius;
+  const angleInRadians = (angle*Math.PI)/180;
+  const pan = Math.round(config.center.pan + Math.cos(angleInRadians) * config.radius);
+  const tilt = Math.round(config.center.tilt + Math.sin(angleInRadians) * config.radius);
+
+  // console.log(`   - offset x=${pan - config.center.pan}  y=${tilt - config.center.tilt}`); 
 
   beamChannelData[Beam.Channel.Pan] = pan;
   beamChannelData[Beam.Channel.Tilt] = tilt;
@@ -128,6 +133,5 @@ function moveBeam(beamNumber)
   beamChannelData[Beam.Channel.Prism] = config.prism;
   beamChannelData[Beam.Channel.Frost] = config.frost;
 
-  //sendBeamChannelData(0, beamChannelData);
   sendBeamChannelData(beamNumber, beamChannelData);
 }

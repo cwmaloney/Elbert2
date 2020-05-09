@@ -219,6 +219,14 @@ function setBeamOffChannelData(beamChannelData) {
 /////////////////////////////////////////////////////////////////////////////
 
 function sendBeamChannelData(beamIndex, beamChannelData) {
+    const time = new Date();
+    const second = time.getHours() * 360 + time.getMinutes() * 60 + time.getSeconds();
+    console.log(" ", second,
+    " beam=", beamIndex,
+    " color=", beamChannelData[Beam.Channel.ColorWheel],
+    " tilt=", beamChannelData[Beam.Channel.Tilt],
+    " pan=", beamChannelData[Beam.Channel.Tilt],
+    " lamp=", beamChannelData[Beam.Channel.Lamp]);
   e131.setChannelData(beams[beamIndex].address, beams[beamIndex].universe, beams[beamIndex].channel, beamChannelData);
   e131.send(beamsAddress, beamsUniverse);
 }
@@ -235,6 +243,7 @@ function sendBeamsChannelData(beamChannelData) {
 /////////////////////////////////////////////////////////////////////////////
 
 function sendBeamsOn() {
+  console.log("   sendBeamsOn()");
   const channelData = [];
   setDefaultBeamChannelData(channelData);
   setBeamOnChannelData(channelData);
@@ -244,6 +253,7 @@ function sendBeamsOn() {
 /////////////////////////////////////////////////////////////////////////////
 
 function sendBeamsOff() {
+  console.log("   sendBeamsOff()");
   const channelData = [];
   setDefaultBeamChannelData(channelData);
   setBeamOffChannelData(channelData);
@@ -323,7 +333,7 @@ function checkBeamLampState(beamState, beamStartMinute, beamStopMinute) {
     if (beamState !== "on") {
       sendBeamsOn();
       beamState = "on";
-      return {beamState: "on", timeout: lampChangeTimeout*3};
+      return {beamState: "on", timeout: lampChangeTimeout};
     }
   } else {
     // if (beamState == "unknown") {
