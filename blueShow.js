@@ -32,7 +32,7 @@ const beamConfig = [
 
 /////////////////////////////////////////////////////////////////////////////
 
-const beamStartTime = "08:20:00";
+const beamStartTime = "20:00:00";
 const beamStopTime  = "23:30:00";
 
 // time between beam movements in milliseconds
@@ -63,26 +63,23 @@ function loop()
   }
   else
   {
+    let message = "";
     //const beamIndex = Math.round(Math.random()*6.1) + 1;
     for (let beamIndex=0; beamIndex < 8; beamIndex++)
     {
       if (Math.random() > 0.3) {
         moveBeam(beamIndex);
+        message += beamIndex;
+      }
+      else
+      {
+        message += " ";
       }
     }
+    //process.stdout.write('\x1b[0G');
+    process.stdout.write(message + '\x1b[0G');
     setTimeout(loop, stepInterval);
   }
-}
-
-/////////////////////////////////////////////////////////////////////////////
-
-function logScene() {
-  console.log("--", Date.now()/1000,
-    " scene=", sceneIndex,
-    " color=", beamChannelData[Beam.Channel.ColorWheel],
-    " tilt=", beamChannelData[Beam.Channel.Tilt],
-    " pan=", beamChannelData[Beam.Channel.Tilt],
-    " lamp=", beamChannelData[Beam.Channel.Lamp]);
 }
 
 /////////////////////////////////////////////////////////////////////////////
