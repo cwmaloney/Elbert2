@@ -33,7 +33,7 @@ const beamConfig = [
 /////////////////////////////////////////////////////////////////////////////
 
 const beamStartTime = "20:30:00";
-const beamStopTime  = "23:59:00";
+const beamStopTime  = "22:01:00";
 
 // time between beam movements in milliseconds
 let stepInterval = 1000;
