@@ -362,8 +362,6 @@ module.exports = {
   isTimeToShowBeams,
   checkBeamLampState,
 
-  // lampChangeTimeout,
-  
   setDefaultBeamChannelData,
   setBeamOffChannelData,
 
