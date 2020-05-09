@@ -72,8 +72,10 @@ const Beam = {
 
   "PrismRotation": {
     "Fast": 128,
+    "Medium": 160,
     "Slow": 190,
     "SlowReverse": 193,
+    "MediumReverse": 228,
     "FastReverse": 255,
     "Off": 0
   },
