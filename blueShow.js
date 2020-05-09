@@ -59,12 +59,12 @@ function loop()
   else
   {
     const beamIndex = Math.round(Math.random()*6.1) + 1;
-    moveBeam(beamIndex);
+    //moveBeam(beamIndex);
     // for (let beamIndex=0; beamIndex < 8; beamIndex++)
     // {
     //   moveBeam(beamIndex);
     // }
-    setTimeout(loop, stepInterval);
+    //setTimeout(loop, stepInterval);
   }
 }
 

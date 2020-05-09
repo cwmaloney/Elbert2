@@ -326,11 +326,12 @@ function checkBeamLampState(beamState, beamStartMinute, beamStopMinute) {
       return {beamState: "on", timeout: lampChangeTimeout*3};
     }
   } else {
-    if (beamState == "unknown") {
-      sendBeamsOn();
-      beamState = "on";
-      return {beamState: "on", timeout: lampChangeTimeout};
-    } else if (beamState !== "off") {
+    // if (beamState == "unknown") {
+    //   sendBeamsOn();
+    //   beamState = "on";
+    //   return {beamState: "on", timeout: lampChangeTimeout};
+    // } else
+    if (beamState !== "off") {
       sendBeamsOff();
       beamState = "off";
       return {beamState: "off", timeout: lampChangeTimeout};
