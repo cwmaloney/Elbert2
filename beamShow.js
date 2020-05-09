@@ -93,15 +93,10 @@ const valentineScenes = [
 ];
 
 
-const blueScene = [
-  { beam: 1, beemColor: Beam.Color.White, center: { tilt: 90, pan: 150}, radius: 10, speed: 1, frost: 255, prism: 255, focus: 255 },
-  { beam: 2, beemColor: Beam.Color.Blue,  center: { tilt: 50, pan: 90}, radius: 10, speed: 1, frost: 255, prism: 255, focus: 255 },
-];
-
 /////////////////////////////////////////////////////////////////////////////
 // all data that changes to choose a show should be in this section
 
-const beamStartTime = "19:30:00";
+const beamStartTime = "12:00:00";
 const beamStopTime  = "22:00:00";
 
 const runBeams = true;
@@ -228,36 +223,3 @@ function logScene(timeout) {
 sceneIndex = -1;
 
 loop();
-
-/////////////////////////////////////////////////////////////////////////////
-
-//  ====== Rotate =====
-
-// let beamStatus = [];
-// const directions = { N: 1, NE: 2, E: 3, SE: 4, S: 5, SW: 6, W: 7, NW: 8 };
-
-// function setBeamStatus(beamNumber, status) {
-//   beamsStatus[beamNumber] = status;
-// }
-
-// function getBeamStatus(beamNumber, status) {
-//   return beamsStatus[beamNumber];
-// }
-
-// function moveBeam(beamNumber)
-// {
-//   let status = beamStatus[beamNumber];
-//   const config = blueScene[beamnumber];
-
-//   status.angle += config.speed;
-
-//   if (angle >= Math.PI*2) {
-//     angle = 0;
-//   }
-
-//   status.pan = config.center.pan + cos(status.angle) * config.radius;
-//   status.tilt = config.center.pan + sin(status.angle) * config.radius;
-
-//   beamsChannelData[Beam.Channel.Pan] = status.pan;
-//   beamsChannelData[Beam.Channel.Tilt] = status.tilt;
-// }
