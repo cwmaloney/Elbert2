@@ -20,23 +20,25 @@ const
   } = require("./config-farmstead.js");
 
 const beamConfig = [
-  { beam: 1, beemColor: Beam.Color.White, center: { tilt: 100, pan: 127}, radius: 2, step:   0, frost:   0, prism:   0, prismRotation: Beam.PrismRotation.Off, focus: 128 },
-  { beam: 2, beemColor: Beam.Color.Blue,  center: { tilt: 60,  pan: 106}, radius: 5, step:  5, frost: 255, prism: 255, prismRotation: Beam.PrismRotation.Medium, focus: 255 },
-  { beam: 3, beemColor: Beam.Color.Blue,  center: { tilt: 66,  pan: 112}, radius: 5, step: -5, frost: 255, prism: 255, prismRotation: Beam.PrismRotation.Medium, focus: 255 },
-  { beam: 4, beemColor: Beam.Color.Blue,  center: { tilt: 73,  pan: 118}, radius: 5, step:  5, frost: 255, prism: 255, prismRotation: Beam.PrismRotation.Medium, focus: 255 },
-  { beam: 5, beemColor: Beam.Color.Blue,  center: { tilt: 73,  pan: 136}, radius: 5, step: -5, frost: 255, prism: 255, prismRotation: Beam.PrismRotation.Medium, focus: 255 },
-  { beam: 6, beemColor: Beam.Color.Blue,  center: { tilt: 66,  pan: 142}, radius: 5, step:  5, frost: 255, prism: 255, prismRotation: Beam.PrismRotation.Medium, focus: 255 },
-  { beam: 7, beemColor: Beam.Color.Blue,  center: { tilt: 60,  pan: 148}, radius: 5, step: -5, frost: 255, prism: 255, prismRotation: Beam.PrismRotation.Medium, focus: 255 },
-  { beam: 8, beemColor: Beam.Color.White, center: { tilt: 100, pan: 127}, radius: 2, step:   0, frost:   0, prism:   0, prismRotation: Beam.PrismRotation.Off, focus: 128 },
+  { beam: 1, beemColor: Beam.Color.White, center: { tilt: 100, pan: 127}, radius: 120, step: 0, frost:   0, prism:   0, prismRotation: Beam.PrismRotation.Off, focus: 128 },
+  { beam: 2, beemColor: Beam.Color.Blue,  center: { tilt: 53,  pan: 123}, radius: 120, step: 1, frost: 255, prism: 255, prismRotation: Beam.PrismRotation.Fast, focus: 255 },
+  { beam: 3, beemColor: Beam.Color.Blue,  center: { tilt: 60,  pan: 117}, radius: 120, step: -1, frost: 255, prism: 255, prismRotation: Beam.PrismRotation.Fast, focus: 255 },
+  { beam: 4, beemColor: Beam.Color.Blue,  center: { tilt: 80,  pan: 120}, radius: 120, step: 1, frost: 255, prism: 255, prismRotation: Beam.PrismRotation.Fast, focus: 255 },
+  { beam: 5, beemColor: Beam.Color.Blue,  center: { tilt: 70,  pan: 134}, radius: 120, step: -1, frost: 255, prism: 255, prismRotation: Beam.PrismRotation.Fast, focus: 255 },
+  { beam: 6, beemColor: Beam.Color.Blue,  center: { tilt: 54,  pan: 138}, radius: 120, step: 1, frost: 255, prism: 255, prismRotation: Beam.PrismRotation.Fast, focus: 255 },
+  { beam: 7, beemColor: Beam.Color.Blue,  center: { tilt: 50,  pan: 132}, radius: 120, step: -1, frost: 255, prism: 255, prismRotation: Beam.PrismRotation.Fast, focus: 255 },
+  { beam: 8, beemColor: Beam.Color.White, center: { tilt: 100, pan: 127}, radius: 120, step: 0, frost:   0, prism:   0, prismRotation: Beam.PrismRotation.Off, focus: 128 },
 ];
 
 /////////////////////////////////////////////////////////////////////////////
 
-const beamStartTime = "20:15:00";
-const beamStopTime  = "22:00:00";
+// const beamStartTime = "20:20:00";
+// const beamStopTime  = "23:00:00";
+const beamStartTime = "22:14:00";
+const beamStopTime  = "23:00:00";
 
 // time between beam movements in milliseconds
-let stepInterval = 1000;
+let stepInterval = 2000;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -64,21 +66,20 @@ function loop()
   else
   {
     let message = "";
-    //const beamIndex = Math.round(Math.random()*6.1) + 1;
     for (let beamIndex=0; beamIndex < 8; beamIndex++)
     {
-      if (Math.random() > 0.3)
+      // if (Math.random() > 0.5)
       {
         moveBeam(beamIndex);
         message += beamIndex;
       }
-      else
-      {
-        message += " ";
-      }
+      // else
+      // {
+      //   message += " ";
+      // }
     }
-    //console.log(message + '\x1b[0G');
-    process.stdout.write(message + '\x1b[0G');
+    //console.log(message);
+    //process.stdout.write(message + '\x1b[0G');
     setTimeout(loop, stepInterval);
   }
 }
@@ -109,22 +110,55 @@ function moveBeam(beamNumber)
 
   let status = beamStatus[beamNumber];
 
-  let angle = (status) ? (status.angle + config.step) : 0;
-  if (angle >= 360) {
-    angle = 0;
-  }
+  // let angle = (status) ? (status.angle + config.step) : 0;
+  // if (angle >= 360) {
+  //   angle = 0;
+  // }
+  //status = { angle };
 
-  status = { angle };
+  let step = (status) ? (status.step + 1) : 0;
+  if (step >= 4) {
+    step = 0;
+  }
+  status = { step };
+
   beamStatus[beamNumber] = status;
 
-  const angleInRadians = (angle*Math.PI)/180;
-  const pan = Math.round(config.center.pan + Math.cos(angleInRadians) * config.radius);
-  const tilt = Math.round(config.center.tilt + Math.sin(angleInRadians) * config.radius);
+  // const angleInRadians = (angle*Math.PI)/180;
+  // const pan = Math.round(config.center.pan + Math.cos(angleInRadians) * config.radius);
+  // const tilt = Math.round(config.center.tilt + Math.sin(angleInRadians) * config.radius);
 
+  let pan = config.center.pan;
+  let tilt = config.center.tilt;
+
+  switch (step)
+  {
+    case 0:
+      break;
+    case 1:
+      tilt += config.step;
+      break;
+    case 2:
+      pan -= config.step;
+      break;
+    case 3:
+      tilt -= config.step;
+      break;
+    case 4:
+      pan += config.step;
+      break
+  }
   // console.log(`   - offset x=${pan - config.center.pan}  y=${tilt - config.center.tilt}`); 
+
+  // const panFine = Math.round(127 + Math.cos(angleInRadians) * config.radius);
+  // const tiltFine = Math.round(127 + Math.sin(angleInRadians) * config.radius);
+  // console.log(`   - offset x=${panFine - 127}  y=${tiltFine - 127}`); 
 
   beamChannelData[Beam.Channel.Pan] = pan;
   beamChannelData[Beam.Channel.Tilt] = tilt;
+
+  // beamChannelData[Beam.Channel.PanFine] = panFine;
+  // beamChannelData[Beam.Channel.TiltFine] = tiltFine;
 
   beamChannelData[Beam.Channel.ColorWheel] = config.beemColor;
   beamChannelData[Beam.Channel.Focus] = config.focus;

@@ -4,7 +4,7 @@ const { E131 } = require("./E131.js");
 const { Beam, Washer, OutlinePixel } = require("./config.js");
 const { colorNameToRgb } = require("./config-colors.js");
 
-const lampChangeTimeout = 5500;
+const lampChangeTimeout = 15500;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -334,7 +334,7 @@ function checkBeamLampState(beamState, beamStartMinute, beamStopMinute) {
     //   return lampChangeTimeout;
     //} else
     if (beamState !== "on") {
-      sendBeamsOff();
+      sendBeamsOn();
       beamState = "on";
       return {beamState: "on", timeout: lampChangeTimeout};
     }
