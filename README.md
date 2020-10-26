@@ -1,6 +1,8 @@
-# DRCF NOLF
+# ELbert2
 
-This moving ligths, washers, and building outltine pixels for DRCF NOLF.
+This runs the (Night of the Living Farm) NOLF and "blue" light shows for Deanna Rose Children's Farmstead
+
+This runs the moving ligths, washers, building outltine pixel, and "ornaments".
 
 ## Setup
 
@@ -29,7 +31,7 @@ This project (like many other projects) uses it to create an HTTP server.
 
 1. Go to <https://nodejs.org/en/>
 
-2. Download LTS or current version (8.4) for Windows or Mac
+2. Download LTS or current version (12.19) for Windows or Mac
 
 3. Run the installer; accept the defaults
 
@@ -71,7 +73,7 @@ npm installs packages in the folder "node_modules" withing the project folder.
      * "cd" to project folder
      * npm install
 
-## Running the NOLF server
+## Running the Elbert2 server
 
 1. Optional - Update the software from github.com
     * Open a terminal or command line window
@@ -81,13 +83,13 @@ npm installs packages in the folder "node_modules" withing the project folder.
 1. Start the service
     * Open a terminal or command line window
     * cd to project folder
-    * node beamShow.js
+    * node nolfShow.js
 
 1. Turn off the moving lights
     * Stop the show
     * Open a terminal or command line window
     * cd to project folder
-    * node beamShow.js off
+    * node nolfShow.js off
 
 ## Editing and Debugging using VS Code
 

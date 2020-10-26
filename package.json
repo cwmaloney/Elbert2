@@ -1,12 +1,12 @@
 {
-  "name": "farmstead-lights-nolf",
-  "description": "Children's Farmstead NOLF",
-  "version": "2018.10.25",
+  "name": "elbert2",
+  "description": "Server for Holiday Lights at Deanna Rose Children's Farmstead; NOLF & Blue",
+  "version": "2020.10.26",
   "private": true,
-  "author": "Chris Maloney",
+  "author": "Chris Maloney, Blake Stewart",
   "engines": {
-    "node": ">= 8.11.0",
-    "npm": ">= 6.0.0"
+    "node": ">= 12.19.0",
+    "npm": ">= 6.14.8"
   },
   "scripts": {
     "lint": "eslint \"**/*.js\"",
@@ -14,15 +14,15 @@
     "beamTest": "node beamTest.js"
   },
   "dependencies": {
-    "express": "^4.16.4"
+    "express": "^4.17.1"
   },
   "devDependencies": {
-    "eslint": "^5.7.0",
-    "eslint-config-semistandard": "^13.0.0",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-node": "^7.0.1",
-    "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-standard": "^4.0.0"
+    "eslint": "^7.12.0",
+    "eslint-config-semistandard": "^15.0.1",
+    "eslint-config-standard": "^15.0.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.2"
   }
 }
