@@ -42,6 +42,43 @@ const centerlStringMap = [
   { start: 340, end: 355, controller: 1, universe: 2 }
 ];
 
+const ornaments = [
+  {
+    name: "east",
+    controllers: [
+      {
+        name: "east",
+        address: "192.168.1.100",
+        universes: [190, 191, 192, 193]
+      },
+      {
+        name: "west",
+        address: "192.168.1.101",
+        universes: [194, 195, 196, 197]
+      }
+    ]
+  },
+  {
+    name: "east",
+    controllers: [
+      {
+        name: "east",
+        address: "192.168.1.106",
+        universes: [212, 213, 214, 215]
+      },
+      {
+        name: "west",
+        address: "192.168.1.107",
+        universes: [216, 217, 218, 219]
+      }
+    ]
+  }
+];
+
+const ornamentRadials = 16;
+const ornamentPixelPerRadial = 21;
+
+
 /////////////////////////////////////////////////////////////////////////////
 
 function getOutlinePixelAddress(pixelNumber, map) {
@@ -95,6 +132,23 @@ for (let addressIndex = 0; addressIndex < outlineAddresses.length; addressIndex+
     e131.configureUniverse({
       "address": outlineAddress,
       "universe": outlineUniverse,
+      "sourcePort": 5568,
+      "sendOnlyChangeData": false,
+      "sendSequenceNumbers": false,
+      "refreshInterval": 1000
+    });
+  }
+}
+
+// configure ornament universes
+for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
+  const ornament = ornaments[ornamentIndex];
+  const universeCount = ornament.universes.length;
+  for (let universeIndex = 0; universeIndex < universeCount; universeIndex++) {
+    const universe = ornament.universes[universeIndex];
+    e131.configureUniverse({
+      "address": ornament.address,
+      "universe": universe,
       "sourcePort": 5568,
       "sendOnlyChangeData": false,
       "sendSequenceNumbers": false,
