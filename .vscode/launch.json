@@ -7,8 +7,8 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Beam Show",
-      "program": "${workspaceFolder}/beamShow.js"
+      "name": "Launch NOLF Show",
+      "program": "${workspaceFolder}/nolfShow.js"
     },
     {
       "type": "node",
