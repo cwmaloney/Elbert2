@@ -75,9 +75,13 @@ const ornaments = [
   }
 ];
 
-const ornamentRadials = 16;
-const ornamentPixelPerRadial = 21;
-
+const ornamentCount = 2;
+const controllersPerOrnament = 2;
+const ornamentRadialsPerController = 32;
+const ornamentPixelsPerRadial = 21;
+const ornamentPixelsPerController = ornamentRadialsPerController * ornamentPixelsPerRadial;
+const ornamentPixelsPerUniverse = ornamentPixelsPerController/4;
+const pixelsPerOrnament = ornamentPixelsPerController * controllersPerOrnament;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -96,6 +100,23 @@ function getOutlinePixelAddress(pixelNumber, map) {
 
 function getOutlineStringLength(map) {
   return map[map.length - 1].end;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+function getOrnamentPixelAddress(ornamentIndex, pixelNumber) {
+  const ornament = ornaments[ornamentIndex];
+  const controllerIndex = Math.floor(pixelNumber / ornamentPixelsPerController);
+  const controllerPixelIndex = pixelNumber % ornamentPixelsPerController;
+  const controller = ornament.controllers[controllerIndex];
+  const universeIndex = Math.floor(controllerPixelIndex / ornamentPixelsPerUniverse);
+  const universePixelIndex = controllerPixelIndex % ornamentPixelsPerUniverse;
+  return {
+    address: controller.address,
+    universe: controller.universes[universeIndex],
+    pixelIndex: universePixelIndex
+  };
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -143,17 +164,19 @@ for (let addressIndex = 0; addressIndex < outlineAddresses.length; addressIndex+
 // configure ornament universes
 for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
   const ornament = ornaments[ornamentIndex];
-  const universeCount = ornament.universes.length;
-  for (let universeIndex = 0; universeIndex < universeCount; universeIndex++) {
-    const universe = ornament.universes[universeIndex];
-    e131.configureUniverse({
-      "address": ornament.address,
-      "universe": universe,
-      "sourcePort": 5568,
-      "sendOnlyChangeData": false,
-      "sendSequenceNumbers": false,
-      "refreshInterval": 1000
-    });
+  for (let controllerIndex = 0; controllerIndex < ornament.controllers.length; controllerIndex++) {
+    const controller = ornament.controllers[controllerIndex];
+     for (let universeIndex = 0; universeIndex < controller.universes.length; universeIndex++) {
+      const universe = controller.universes[universeIndex];
+      e131.configureUniverse({
+        "address": controller.address,
+        "universe": universe,
+        "sourcePort": 5568,
+        "sendOnlyChangeData": false,
+        "sendSequenceNumbers": false,
+        "refreshInterval": 1000
+      });
+    }
   }
 }
 
@@ -363,6 +386,36 @@ function sendOutlineChannelData(pixelColor1, pixelColor2, step) {
 
 /////////////////////////////////////////////////////////////////////////////
 
+function sendOrnamentChannelData(pixelColor1, pixelColor2, stepCount, stepIndex) {
+  const pixelColor1Data = colorNameToRgb[pixelColor1];
+  const pixelColor2Data = colorNameToRgb[pixelColor2];
+
+  const pixelsPerStep = Math.floor(pixelsPerOrnament / stepCount);
+  const changeIndex = pixelsPerStep * stepIndex;
+  for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
+    const ornament = ornaments[ornamentIndex];
+    for (let pixelNumber = 167; pixelNumber < pixelsPerOrnament; pixelNumber++) {
+      const pixelData = (pixelNumber <= changeIndex) ? pixelColor1Data : pixelColor2Data;
+      const { address, universe, pixelIndex } = getOrnamentPixelAddress(ornamentIndex, pixelNumber);
+      const pixelChannel = (pixelIndex * OutlinePixel.ChannelCount) + 1;
+      e131.setChannelData(address, universe, pixelChannel, pixelData);
+    }
+  }
+
+  for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
+    const ornament = ornaments[ornamentIndex];
+    for (let controllerIndex = 0; controllerIndex < ornament.controllers.length; controllerIndex++) {
+      const controller = ornament.controllers[controllerIndex];
+      for (let universeIndex = 0; universeIndex < controller.universes.length; universeIndex++) {
+        const universe = controller.universes[universeIndex];
+        e131.send(controller.address, universe);
+      }
+    }
+  }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
 function parseTimeToMinutes(timeString) {
   const timestamp = new Date('1970-01-01T' + timeString);
   return timestamp.getHours()* 60 + timestamp.getMinutes();
@@ -382,22 +435,12 @@ function isTimeToShowBeams(beamStartMinute, beamStopMinute)
 function checkBeamLampState(beamState, beamStartMinute, beamStopMinute) {
   const isItTimeToShowBeams = isTimeToShowBeams(beamStartMinute, beamStopMinute);
   if (isItTimeToShowBeams) {
-    // if (beamState == "unknown") {
-    //   sendBeamsOff();
-    //   return {beamState: "off", timeout: lampChangeTimeout};
-    //   return lampChangeTimeout;
-    //} else
     if (beamState !== "on") {
       sendBeamsOn();
       beamState = "on";
       return {beamState: "on", timeout: lampChangeTimeout};
     }
   } else {
-    // if (beamState == "unknown") {
-    //   sendBeamsOn();
-    //   beamState = "on";
-    //   return {beamState: "on", timeout: lampChangeTimeout};
-    // } else
     if (beamState !== "off") {
       sendBeamsOff();
       beamState = "off";
@@ -428,5 +471,6 @@ module.exports = {
   sendBeamChannelData,
   sendBeamsChannelData,
   sendWasherChannelData,
-  sendOutlineChannelData
+  sendOutlineChannelData,
+  sendOrnamentChannelData
 };
