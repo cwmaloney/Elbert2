@@ -96,14 +96,14 @@ const valentineScenes = [
 /////////////////////////////////////////////////////////////////////////////
 // all data that changes to choose a show should be in this section
 
-const beamStartTime = "12:00:00";
-const beamStopTime  = "22:00:00";
+const beamStartTime = "17:00:00";
+const beamStopTime  = "21:30:00";
 
 const runBeams = true;
 const runOutline = true;
 const runWashers = true;
 
-let scenes = valentineScenes;
+let scenes = halloweenScenes;
 
 let sceneStartTimeout = 2000;
 // time between beam movements in milliseconds
