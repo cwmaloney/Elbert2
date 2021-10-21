@@ -20,6 +20,7 @@ const
   } = require("./config-farmstead.js");
 
 
+// if pan has a step property, it is the size of each pan movement - the default is 1
 const testScenes = [
   { beamTilt: 25, beemColor: Beam.Color.White,  pan: { start: 80, stop: 150, step:  1 }, pixelColor1: "Black", pixelColor2: "White" },
   { beamTilt: 25, beemColor: Beam.Color.Red,    pan: { start: 80, stop: 150, step:  2 }, pixelColor1: "Black", pixelColor2: "Red" },
@@ -96,7 +97,7 @@ const valentineScenes = [
 /////////////////////////////////////////////////////////////////////////////
 // all data that changes to choose a show should be in this section
 
-const beamStartTime = "17:00:00";
+const beamStartTime = "16:30:00";
 const beamStopTime  = "21:30:00";
 
 const runBeams = false;
@@ -133,10 +134,7 @@ let beamState = "unknown";
 
 function setScene(newScene) {
   let stepCount;
-  if (stepCount in newScene) {
-    newScene.stepCount;
-  }
-  else if (!stepCount && newScene.pan.step) {
+  if (newScene.pan.step) {
     stepCount = (newScene.pan.stop - newScene.pan.start + 1) / newScene.pan.step;
   } else {
     stepCount = (newScene.pan.stop - newScene.pan.start + 1);
@@ -195,7 +193,7 @@ function startScene() {
 
   setScene(scenes[sceneIndex]);
 
-  beamChannelData[Beam.Channel.beamTilt] = scene.beamTilt;
+  beamChannelData[Beam.Channel.Tilt] = scene.beamTilt;
   beamChannelData[Beam.Channel.ColorWheel] = scene.beemColor;
   beamChannelData[Beam.Channel.Pan] = scene.panIndex;
 
