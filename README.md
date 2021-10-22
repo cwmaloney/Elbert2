@@ -2,7 +2,7 @@
 
 This runs the (Night of the Living Farm) NOLF and "blue" light shows for Deanna Rose Children's Farmstead
 
-This runs the moving ligths, washers, building outltine pixel, and "ornaments".
+This runs the moving ligths, washers, building outltine pixel, and ornaments.
 
 ## Setup
 
