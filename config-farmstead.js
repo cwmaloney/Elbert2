@@ -4,8 +4,8 @@ const { E131 } = require("./E131.js");
 const { Beam, Washer, OutlinePixel } = require("./config.js");
 const { colorNameToRgb } = require("./config-colors.js");
 
-const lampChangeWait = 15500;
-//const lampChangeWait = 100; // for debugging
+//const lampChangeWait = 15500;
+const lampChangeWait = 100; // for debugging
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -83,6 +83,20 @@ const ornamentPixelsPerRadial = 21;
 const ornamentPixelsPerController = ornamentRadialsPerController * ornamentPixelsPerRadial;
 const ornamentPixelsPerUniverse = ornamentPixelsPerController/4;
 const pixelsPerOrnament = ornamentPixelsPerController * controllersPerOrnament;
+
+
+
+// These are the IP addresses of the spider controllers
+const spiderAddresses = ["192.168.1.54", "192.168.1.55"];
+
+// This is the universe of the spider pixels
+const spidersPerController = 7;
+const spiderUniverses = [[60, 61, 62, 63, 64, 65, 66, 67], [70, 71, 72, 73, 74, 75, 76, 77]];
+
+// number of pixels per spider
+const pixelsPerSpider = 189;
+const pixelsPerUniverse = 170;
+const channelsPerSpiderUniverse = 510
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -178,6 +192,22 @@ for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
         "refreshInterval": 1000
       });
     }
+  }
+}
+
+// configure spider universes
+for (let controllerIndex = 0; controllerIndex < spiderAddresses.length; controllerIndex++) {
+  const universes = spiderUniverses[controllerIndex];
+  for (let universeIndex = 0; universeIndex < universes.length; universeIndex++) {
+    const universe = universes[universeIndex];
+    e131.configureUniverse({
+      "address": spiderAddresses[controllerIndex],
+      "universe": universe,
+      "sourcePort": 5568,
+      "sendOnlyChangeData": false,
+      "sendSequenceNumbers": false,
+      "refreshInterval": 1000
+    });
   }
 }
 
@@ -354,6 +384,34 @@ function sendWasherChannelData(pixelColor) {
 
 /////////////////////////////////////////////////////////////////////////////
 
+function sendSpiderChannelData(pixelColor) {
+  const pixelColorData = colorNameToRgb[pixelColor];
+  const pixelData = [pixelColorData[0], pixelColorData[1], pixelColorData[2]];
+
+  for (var spiderControllerIndex = 0; spiderControllerIndex < spiderAddresses.length; spiderControllerIndex++) {
+    const address = spiderAddresses[spiderControllerIndex];
+    let channel = 1;
+    let universe = spiderUniverses[spiderControllerIndex][0];
+ 
+    for (var spiderIndex = 0; spiderIndex < spidersPerController; spiderIndex++) {
+      for (var pixelIndex = 0; pixelIndex < pixelsPerSpider; pixelIndex++) {
+        e131.setChannelData(address, universe, channel, pixelData);
+        channel += pixelColorData.length;
+        if (channel >= channelsPerSpiderUniverse) {
+          e131.send(address, universe);
+          channel = 1;
+          universe++;
+        }
+      }
+      if (spiderIndex == (spidersPerController-1)) {
+        e131.send(address, universe);
+      }
+    }
+  }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
 function sendOutlineChannelData(pixelColor1, pixelColor2, stepCount, stepIndex) {
   const pixelColor1Data = colorNameToRgb[pixelColor1];
   const pixelColor2Data = colorNameToRgb[pixelColor2];
@@ -472,5 +530,6 @@ module.exports = {
   sendBeamsChannelData,
   sendWasherChannelData,
   sendOutlineChannelData,
-  sendOrnamentChannelData
+  sendOrnamentChannelData,
+  sendSpiderChannelData
 };
