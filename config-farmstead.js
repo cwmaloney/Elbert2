@@ -40,7 +40,7 @@ const horizontalStringMap = [
 const centerStringMap = [
   { start: 0, end: 169, controller: 1, universe: 0 },
   { start: 170, end: 339, controller: 1, universe: 1 },
-  { start: 340, end: 355, controller: 1, universe: 2 }
+  { start: 340, end: 365, controller: 1, universe: 2 }
 ];
 
 const ornaments = [
