@@ -101,7 +101,7 @@ const beamStartTime = "16:30:00";
 const beamStopTime  = "21:30:00";
 
 const runBeams = false;
-const runOutline = false;
+const runOutline = true;
 const runWashers = true;
 const runOrnaments = true;
 
@@ -110,7 +110,9 @@ let scenes = halloweenScenes;
 let sceneStartTimeout = 2000;
 
 // time between beam movements in milliseconds
-let stepInterval = 125;
+//let stepInterval = 125;
+let stepInterval = 50;
+//let stepInterval = 1000;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -133,18 +135,18 @@ let beamState = "unknown";
 /////////////////////////////////////////////////////////////////////////////
 
 function setScene(newScene) {
-  let stepCount;
-  if (newScene.pan.step) {
-    stepCount = (newScene.pan.stop - newScene.pan.start + 1) / newScene.pan.step;
-  } else {
-    stepCount = (newScene.pan.stop - newScene.pan.start + 1);
-  }
+
+  let stepCount = (newScene.pan.step)
+    ? (newScene.pan.stop - newScene.pan.start + 1) / newScene.pan.step
+    : (newScene.pan.stop - newScene.pan.start + 1);
 
   scene = {
-    stepCount,
-    panIncrement: (newScene.pan.stop - newScene.pan.start + 1) / stepCount,
-    panIndex: newScene.pan.start,
     stepIndex: 0,
+    stepCount,
+
+    beamPanIndex: newScene.pan.start,
+    beamPanIncrement: (newScene.pan.stop - newScene.pan.start + 1) / stepCount,
+
     ...newScene,
    };
 }
@@ -153,10 +155,13 @@ function setScene(newScene) {
 
 function loop() {
 
-  const beamLampState = checkBeamLampState(beamState, beamStartMinute, beamStopMinute);
-  beamState = beamLampState.beamState && beamLampState.timeout == 0;
-
-  if (sceneIndex == -1)
+  const checkBeamLampStateResults = checkBeamLampState(beamState, beamStartMinute, beamStopMinute);
+  beamState = checkBeamLampStateResults.beamState;
+  if (checkBeamLampStateResults.timeout > 0) {
+    console.log("   waiting for beam lamp to turn " + beamState + "...");
+    setTimeout(loop, checkBeamLampStateResults.timeout);
+  }
+  else if (sceneIndex == -1)
   {
     nextScene();
     setTimeout(loop, sceneStartTimeout);
@@ -164,16 +169,17 @@ function loop() {
   else
   {
     scene.stepIndex++;
-    scene.panIndex += scene.panIncrement;
+    scene.beamPanIndex += scene.beamPanIncrement;
     
     if (scene.stepIndex >= scene.stepCount) {
       nextScene();
       setTimeout(loop, sceneStartTimeout);
+    } else {
+      beamChannelData[Beam.Channel.Pan] = scene.beamPanIndex;
+      logStep()
+      updateShow();
+      setTimeout(loop, stepInterval);
     }
-
-    beamChannelData[Beam.Channel.Pan] = scene.panIndex;
-    updateShow();
-    setTimeout(loop, stepInterval);
   }
 }
 
@@ -195,7 +201,7 @@ function startScene() {
 
   beamChannelData[Beam.Channel.Tilt] = scene.beamTilt;
   beamChannelData[Beam.Channel.ColorWheel] = scene.beemColor;
-  beamChannelData[Beam.Channel.Pan] = scene.panIndex;
+  beamChannelData[Beam.Channel.Pan] = scene.beamPanIndex;
 
   updateShow();
   logScene();
@@ -204,22 +210,31 @@ function startScene() {
 /////////////////////////////////////////////////////////////////////////////
 
 function updateShow() {
-  const sceneData = scenes[sceneIndex];
-
   if (runBeams)     { sendBeamsChannelData(beamChannelData); }
-  if (runWashers)   { sendWasherChannelData(sceneData.pixelColor2); }
-  if (runOutline)   { sendOutlineChannelData(sceneData.pixelColor1, sceneData.pixelColor2, panIndex); }
-  if (runOrnaments) { sendOrnamentChannelData(sceneData.pixelColor1, sceneData.pixelColor2, scene.stepCount, scene.stepIndex); }
+  if (runWashers)   { sendWasherChannelData(scene.pixelColor2); }
+  if (runOutline)   { sendOutlineChannelData(scene.pixelColor1, scene.pixelColor2, scene.stepCount, scene.stepIndex); }
+  if (runOrnaments) { sendOrnamentChannelData(scene.pixelColor1, scene.pixelColor2, scene.stepCount, scene.stepIndex); }
 }
 
 /////////////////////////////////////////////////////////////////////////////
 
-function logScene(timeout) {
-  console.log("--", Date.now()/1000,
-    " scene=", sceneIndex,
-    " beams color=", beamChannelData[Beam.Channel.ColorWheel],
-    " beamTilt=", beamChannelData[Beam.Channel.beamTilt],
-    " lamp=", beamChannelData[Beam.Channel.Lamp]);
+function logScene() {
+  const now = new Date();
+  console.log("--", now.toLocaleTimeString('en-US'), (now % 60) /1000,
+    "scene="+sceneIndex,
+    "steps="+scene.stepCount,
+    "time="+(scene.stepCount * stepInterval)/1000,
+    "beam color="+beamChannelData[Beam.Channel.ColorWheel],
+    "tilt="+beamChannelData[Beam.Channel.Tilt],
+    "lamp="+beamChannelData[Beam.Channel.Lamp]
+  );
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+function logStep() {
+  const msg = " " + scene.stepIndex + "/" + scene.beamPanIndex;
+  //console.log(msg);
 }
 
 /////////////////////////////////////////////////////////////////////////////

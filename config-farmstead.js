@@ -4,7 +4,8 @@ const { E131 } = require("./E131.js");
 const { Beam, Washer, OutlinePixel } = require("./config.js");
 const { colorNameToRgb } = require("./config-colors.js");
 
-const lampChangeTimeout = 15500;
+const lampChangeWait = 15500;
+//const lampChangeWait = 100; // for debugging
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -36,7 +37,7 @@ const horizontalStringMap = [
   { start: 506, end: 675, controller: 2, universe: 1 }
 ];
 
-const centerlStringMap = [
+const centerStringMap = [
   { start: 0, end: 169, controller: 1, universe: 0 },
   { start: 170, end: 339, controller: 1, universe: 1 },
   { start: 340, end: 355, controller: 1, universe: 2 }
@@ -353,24 +354,24 @@ function sendWasherChannelData(pixelColor) {
 
 /////////////////////////////////////////////////////////////////////////////
 
-function sendOutlineChannelData(pixelColor1, pixelColor2, step) {
+function sendOutlineChannelData(pixelColor1, pixelColor2, stepCount, stepIndex) {
   const pixelColor1Data = colorNameToRgb[pixelColor1];
   const pixelColor2Data = colorNameToRgb[pixelColor2];
 
   const horizontalStringLength = getOutlineStringLength(horizontalStringMap);
   for (let pixelNumber = 0; pixelNumber < horizontalStringLength; pixelNumber++) {
-    const pixelData = (pixelNumber >= (step * 2) && pixelNumber <= (horizontalStringLength - (step * 2)))
+    const pixelData = (pixelNumber >= (stepIndex * 2) && pixelNumber <= (horizontalStringLength - (stepIndex * 2)))
       ? pixelColor1Data : pixelColor2Data;
     const { address, universe, pixelIndex } = getOutlinePixelAddress(pixelNumber, horizontalStringMap);
     const pixelChannel = (pixelIndex * OutlinePixel.ChannelCount) + 1;
     e131.setChannelData(address, universe, pixelChannel, pixelData);
   }
 
-  const centerStringLength = getOutlineStringLength(centerlStringMap);
+  const centerStringLength = getOutlineStringLength(centerStringMap);
   for (let pixelNumber = 0; pixelNumber < centerStringLength; pixelNumber++) {
-    const pixelData = (pixelNumber >= step && pixelNumber <= (centerStringLength - step - 8))
+    const pixelData = (pixelNumber >= stepIndex && pixelNumber <= (centerStringLength - stepIndex - 8))
       ? pixelColor1Data : pixelColor2Data;
-    const { address, universe, pixelIndex } = getOutlinePixelAddress(pixelNumber, centerlStringMap);
+    const { address, universe, pixelIndex } = getOutlinePixelAddress(pixelNumber, centerStringMap);
     const pixelChannel = (pixelIndex * OutlinePixel.ChannelCount) + 1;
     e131.setChannelData(address, universe, pixelChannel, pixelData);
   }
@@ -438,16 +439,15 @@ function checkBeamLampState(beamState, beamStartMinute, beamStopMinute) {
     if (beamState !== "on") {
       sendBeamsOn();
       beamState = "on";
-      return {beamState: "on", timeout: lampChangeTimeout};
+      return {beamState: "on", timeout: lampChangeWait};
     }
   } else {
     if (beamState !== "off") {
       sendBeamsOff();
       beamState = "off";
-      return {beamState: "off", timeout: lampChangeTimeout};
+      return {beamState: "off", timeout: lampChangeWait};
     }
-  }
-  
+  }  
   return {beamState: beamState, timeout: 0};
 }
 
