@@ -385,8 +385,6 @@ function sendWasherChannelData(pixelColor) {
 /////////////////////////////////////////////////////////////////////////////
 
 function sendSpiderChannelData(pixelColor) {
-  const pixelColorData = colorNameToRgb[pixelColor];
-  const pixelData = [pixelColorData[0], pixelColorData[1], pixelColorData[2]];
 
   for (var spiderControllerIndex = 0; spiderControllerIndex < spiderAddresses.length; spiderControllerIndex++) {
     const address = spiderAddresses[spiderControllerIndex];
@@ -395,6 +393,10 @@ function sendSpiderChannelData(pixelColor) {
  
     for (var spiderIndex = 0; spiderIndex < spidersPerController; spiderIndex++) {
       for (var pixelIndex = 0; pixelIndex < pixelsPerSpider; pixelIndex++) {
+        const eyeOrHourglass = ((pixelIndex >= 176 && pixelIndex <= 188) || pixelIndex == 88 || pixelIndex == 89);
+        const color = eyeOrHourglass ? ((pixelColor == 'Red') ? 'Yellow' : 'Red') : pixelColor;
+        const pixelColorData = colorNameToRgb[color];
+        const pixelData = [pixelColorData[0], pixelColorData[1], pixelColorData[2]];
         e131.setChannelData(address, universe, channel, pixelData);
         channel += pixelColorData.length;
         if (channel >= channelsPerSpiderUniverse) {
