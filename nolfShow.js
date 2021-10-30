@@ -74,13 +74,13 @@ const testScenes = [
 ];
 
 const halloweenScenes = [
-  { beamTilt: 25, beemColor: Beam.Color.Magenta,  pan: { start: 5, stop: 190 }, pixelColor1: "Orange", pixelColor2: "Magenta" },
-  { beamTilt: 72, beemColor: Beam.Color.Orange,   pan: { start: 5, stop: 190 }, pixelColor1: "Magenta", pixelColor2: "Orange"  },
-  { beamTilt: 36, beemColor: Beam.Color.Red,      pan: { start: 5, stop: 190 }, pixelColor1: "Orange", pixelColor2: "Red" },
-  { beamTilt: 48, beemColor: Beam.Color.Blue,     pan: { start: 5, stop: 190 }, pixelColor1: "Red", pixelColor2: "Blue" },
-  { beamTilt: 30, beemColor: Beam.Color.Violet,   pan: { start: 5, stop: 190 }, pixelColor1: "Blue", pixelColor2: "Violet" },
-  { beamTilt: 40, beemColor: Beam.Color.Green,    pan: { start: 5, stop: 190 }, pixelColor1: "Violet", pixelColor2: "Green"  },
-  { beamTilt: 84, beemColor: Beam.Color.White,    pan: { start: 5, stop: 190 }, pixelColor1: "Black", pixelColor2: "Orange"  },
+  { beamTilt: 25, beemColor: Beam.Color.Magenta,  pan: { start: 120, stop: 170 }, pixelColor1: "Orange", pixelColor2: "Magenta" },
+  { beamTilt: 72, beemColor: Beam.Color.Orange,   pan: { start: 120, stop: 170 }, pixelColor1: "Magenta", pixelColor2: "Orange"  },
+  { beamTilt: 36, beemColor: Beam.Color.Red,      pan: { start: 120, stop: 170 }, pixelColor1: "Orange", pixelColor2: "Red" },
+//  { beamTilt: 48, beemColor: Beam.Color.Blue,     pan: { start: 120, stop: 170 }, pixelColor1: "Red", pixelColor2: "Dark Blue" },
+  { beamTilt: 30, beemColor: Beam.Color.Violet,   pan: { start: 120, stop: 170 }, pixelColor1: "Dark Blue", pixelColor2: "Violet" },
+  { beamTilt: 40, beemColor: Beam.Color.Green,    pan: { start: 120, stop: 170 }, pixelColor1: "Violet", pixelColor2: "Green"  },
+  { beamTilt: 84, beemColor: Beam.Color.White,    pan: { start: 120, stop: 170 }, pixelColor1: "Black", pixelColor2: "Orange"  },
 ];
 
 const valentineScenes = [
@@ -98,8 +98,8 @@ const valentineScenes = [
 /////////////////////////////////////////////////////////////////////////////
 // all data that changes to choose a show should be in this section
 
-const beamStartTime = "22:30:00";
-const beamStopTime  = "22:40:00";
+const beamStartTime = "17:00:00";
+const beamStopTime  = "21:40:00";
 
 const runBeams = false;
 const runOutline = false;
@@ -107,13 +107,13 @@ const runWashers = false;
 const runOrnaments = false;
 const runSpiders = true;
 
-let scenes = halloweenScenes;
+const scenes = halloweenScenes;
 
-let sceneStartTimeout = 2000;
+const sceneStartTimeout = 2000;
 
 // time between beam movements in milliseconds
-//let stepInterval = 125;
-let stepInterval = 50;
+const stepInterval = 125;
+//let stepInterval = 50;
 //let stepInterval = 1000;
 
 /////////////////////////////////////////////////////////////////////////////
