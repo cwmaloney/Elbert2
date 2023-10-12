@@ -81,51 +81,77 @@ const Beam = {
   },
 
   "Frost": {
-    "On": 128,
+    "On": 255,
     "Off": 0
   },
 
-  "Strobe": {
+  // "Strobe": {
+  //   "Open": 255,
+  //   "Slow": 10,
+  //   "Medium": 50,
+  //   "Fast": 100
+  // },
+
+  "Shutter": {
     "Open": 255,
     "Slow": 10,
     "Medium": 50,
-    "Fast": 100
+    "Fast": 95
   },
 
   "Dimmer": {
     "Off": 255
   },
 
-  "Reset": {
+  "Function": {
     "None": 0,
   },
 
   "Lamp": {
     "Zero": 0,
-    "Off": 63,
-    "On": 218
+    "Off": 160,
+    "On": 255
   },
 
   "ChannelCount": 16,
 
   "Channel": {
     "ColorWheel": 0,
-    "Strobe": 1,
+    "Shutter": 1,
     "Dimmer": 2,
     "Gobo": 3,
     "Prism": 4,
     "PrismRotation": 5,
-    "EffectsMovement": 6,
+    "Zoom": 6,
     "Frost": 7,
     "Focus": 8,
     "Pan": 9,
     "PanFine": 10,
     "Tilt": 11,
     "TiltFine": 12,
-    "Macro": 13,
-    "Reset": 14,
+    "PtTime": 13,
+    "Function": 14,
     "Lamp": 15
   }
+
+  // "Channel": {
+  //   "ColorWheel": 0,
+  //   "Strobe": 1,
+  //   "Dimmer": 2,
+  //   "Gobo": 3,
+  //   "Prism": 4,
+  //   "PrismRotation": 5,
+  //   "EffectsMovement": 6,
+  //   "Frost": 7,
+  //   "Focus": 8,
+  //   "Pan": 9,
+  //   "PanFine": 10,
+  //   "Tilt": 11,
+  //   "TiltFine": 12,
+  //   "Macro": 13,
+  //   "Reset": 14,
+  //   "Lamp": 15
+  // }
 };
 
 const Washer = {

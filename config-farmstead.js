@@ -4,8 +4,7 @@ const { E131 } = require("./E131.js");
 const { Beam, Washer, OutlinePixel } = require("./config.js");
 const { colorNameToRgb } = require("./config-colors.js");
 
-//const lampChangeWait = 15500;
-const lampChangeWait = 100; // for debugging
+const lampChangeWait = 15500;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -91,12 +90,12 @@ const spiderAddresses = ["192.168.1.54", "192.168.1.55"];
 
 // This is the universe of the spider pixels
 const spidersPerController = 7;
-const spiderUniverses = [[60, 61, 62, 63, 64, 65, 66, 67], [70, 71, 72, 73, 74, 75, 76, 77]];
+const spiderUniverses = [[60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71], [72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83]];
 
 // number of pixels per spider
 const pixelsPerSpider = 189;
 const pixelsPerUniverse = 170;
-const channelsPerSpiderUniverse = 510
+const channelsPerSpiderUniverse = 510;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -266,20 +265,20 @@ const washers = [
 
 const defaultBeamChannelData = {
   ColorWheel: Beam.Color.White,
-  Strobe: Beam.Strobe.Open,
+  Shutter: Beam.Shutter.Open,
   Dimmer: Beam.Dimmer.Off,
   Gobo: Beam.Gobo.Off,
   Prism: Beam.Prism.Off,
   PrismRotation: Beam.PrismRotation.Off,
-  EffectsMovement: Beam.Unused,
+  Zoom: 0,
   Frost: Beam.Frost.Off,
   Focus: 127,
   Pan: 0,
   PanFine: 0,
   Tilt: 45,
   TiltFine: 0,
-  Macro: Beam.Unused,
-  Reset: Beam.Reset.None,
+  PtTime: 128,
+  Function: Beam.Function.None,
   Lamp: Beam.Lamp.On
 };
 
@@ -288,20 +287,20 @@ const defaultBeamChannelData = {
 
 function setDefaultBeamChannelData(beamChannelData) {
   beamChannelData[Beam.Channel.ColorWheel] = defaultBeamChannelData.ColorWheel;
-  beamChannelData[Beam.Channel.Strobe] = defaultBeamChannelData.Strobe;
+  beamChannelData[Beam.Channel.Shutter] = defaultBeamChannelData.Shutter;
   beamChannelData[Beam.Channel.Dimmer] = defaultBeamChannelData.Dimmer;
   beamChannelData[Beam.Channel.Gobo] = defaultBeamChannelData.Gobo;
   beamChannelData[Beam.Channel.Prism] = defaultBeamChannelData.Prism;
   beamChannelData[Beam.Channel.PrismRotation] = defaultBeamChannelData.PrismRotation;
-  beamChannelData[Beam.Channel.EffectsMovement] = defaultBeamChannelData.EffectsMovement;
+  beamChannelData[Beam.Channel.Zoom] = defaultBeamChannelData.Zoom;
   beamChannelData[Beam.Channel.Frost] = defaultBeamChannelData.Frost;
   beamChannelData[Beam.Channel.Focus] = defaultBeamChannelData.Focus;
   beamChannelData[Beam.Channel.Pan] = defaultBeamChannelData.Pan;
   beamChannelData[Beam.Channel.PanFine] = defaultBeamChannelData.PanFine;
   beamChannelData[Beam.Channel.Tilt] = defaultBeamChannelData.Tilt;
   beamChannelData[Beam.Channel.TiltFine] = defaultBeamChannelData.TiltFine;
-  beamChannelData[Beam.Channel.Macro] = defaultBeamChannelData.Macro;
-  beamChannelData[Beam.Channel.Reset] = defaultBeamChannelData.Reset;
+  beamChannelData[Beam.Channel.PtTime] = defaultBeamChannelData.PtTime;
+  beamChannelData[Beam.Channel.Function] = defaultBeamChannelData.Function;
   beamChannelData[Beam.Channel.Lamp] = defaultBeamChannelData.Lamp;
 }
 
@@ -405,8 +404,10 @@ function sendSpiderChannelData(pixelColor) {
           universe++;
         }
       }
-      if (spiderIndex == (spidersPerController-1)) {
+      if (spiderIndex%2 == 1 || spiderIndex == spidersPerController-1) {
         e131.send(address, universe);
+        channel = 1;
+        universe++;
       }
     }
   }
