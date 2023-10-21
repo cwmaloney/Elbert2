@@ -176,8 +176,30 @@ const OutlinePixel = {
 };
 
 
+const OrnamentPixel = {
+  "ChannelCount": 3,
+  "Channel": {
+    "Red": 0,
+    "Green": 1,
+    "Blue": 2
+  }
+};
+
+
+const OrnamentOutlinePixel = {
+  "ChannelCount": 3,
+  "Channel": {
+    "Red": 0,
+    "Blue": 1,
+    "Green": 2
+  }
+};
+
+
 module.exports = {
   Beam,
   Washer,
-  OutlinePixel
+  OutlinePixel,
+  OrnamentPixel,
+  OrnamentOutlinePixel
 };
