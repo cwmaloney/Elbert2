@@ -10,7 +10,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // const commands = {
 //   command: {
-//     fixutre: {
+//     fixture: {
 //       directives: [
 //         { channelData: [ 255, 255, 0, 0, 0, 0, 255, 0 ], duration: 500 },
 //         { channelData: [ 255,   0, 0, 0, 0, 0, 255, 0 ], duration: 250 },
