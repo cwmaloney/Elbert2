@@ -1,7 +1,7 @@
 "use strict";
 
 const { E131 } = require("./E131.js");
-const { Beam, Washer, OutlinePixel } = require("./config.js");
+const { Beam, Washer, OutlinePixel, OrnamentPixel } = require("./config.js");
 const
   {
   parseTimeToMinutes,
@@ -16,6 +16,7 @@ const
   sendWasherChannelData,
   sendOutlineChannelData,
   sendOrnamentChannelData,
+  sendPumpkinChannelData,
   sendSpiderChannelData
 
   } = require("./config-farmstead.js");
@@ -74,13 +75,13 @@ const testScenes = [
 ];
 
 const halloweenScenes = [
-  { beamTilt: 25, beamColor: Beam.Color.Magenta,  pan: { start: 130, stop: 210 }, pixelColor1: "Orange", pixelColor2: "Magenta" },
-  { beamTilt: 72, beamColor: Beam.Color.Orange,   pan: { start: 130, stop: 210 }, pixelColor1: "Magenta", pixelColor2: "Orange"  },
-  { beamTilt: 36, beamColor: Beam.Color.Red,      pan: { start: 130, stop: 210 }, pixelColor1: "Orange", pixelColor2: "Red" },
-  { beamTilt: 48, beamColor: Beam.Color.Blue,     pan: { start: 130, stop: 210 }, pixelColor1: "Red", pixelColor2: "Dark Blue" },
-  { beamTilt: 30, beamColor: Beam.Color.Violet,   pan: { start: 130, stop: 210 }, pixelColor1: "Dark Blue", pixelColor2: "Violet" },
-  { beamTilt: 40, beamColor: Beam.Color.Green,    pan: { start: 130, stop: 210 }, pixelColor1: "Violet", pixelColor2: "Green"  },
-  { beamTilt: 84, beamColor: Beam.Color.White,    pan: { start: 130, stop: 210 }, pixelColor1: "Black", pixelColor2: "Orange"  },
+  { beamTilt: 25, beamColor: Beam.Color.Magenta,  pan: { start: 85, stop: 170, step:  1 }, pixelColor1: "Orange", pixelColor2: "Magenta" },
+  { beamTilt: 72, beamColor: Beam.Color.Orange,   pan: { start: 85, stop: 170, step:  1 }, pixelColor1: "Magenta", pixelColor2: "Orange"  },
+  { beamTilt: 36, beamColor: Beam.Color.Red,      pan: { start: 85, stop: 170, step:  1 }, pixelColor1: "Orange", pixelColor2: "Red" },
+  { beamTilt: 48, beamColor: Beam.Color.Blue,     pan: { start: 85, stop: 170, step:  1 }, pixelColor1: "Red", pixelColor2: "Dark Blue" },
+  { beamTilt: 30, beamColor: Beam.Color.Violet,   pan: { start: 85, stop: 170, step:  1 }, pixelColor1: "Dark Blue", pixelColor2: "Violet" },
+  { beamTilt: 40, beamColor: Beam.Color.Green,    pan: { start: 85, stop: 170, step:  1 }, pixelColor1: "Violet", pixelColor2: "Green"  },
+  { beamTilt: 84, beamColor: Beam.Color.White,    pan: { start: 85, stop: 170, step:  1 }, pixelColor1: "Black", pixelColor2: "Orange"  },
 ];
 
 const valentineScenes = [
@@ -99,12 +100,12 @@ const valentineScenes = [
 // all data that changes to choose a show should be in this section
 
 const beamStartTime = "17:00:00";
-const beamStopTime  = "21:10:00";
+const beamStopTime  = "20:49:00";
 
 const runBeams = true;
 const runOutline = true;
 const runWashers = true;
-const runOrnaments = false;
+const runOrnaments = true;
 const runSpiders = true;
 
 const scenes = halloweenScenes;
@@ -215,7 +216,8 @@ function updateShow() {
   if (runBeams)     { sendBeamsChannelData(beamChannelData); }
   if (runWashers)   { sendWasherChannelData(scene.pixelColor2); }
   if (runOutline)   { sendOutlineChannelData(scene.pixelColor1, scene.pixelColor2, scene.stepCount, scene.stepIndex); }
-  if (runOrnaments) { sendOrnamentChannelData(scene.pixelColor1, scene.pixelColor2, scene.stepCount, scene.stepIndex); }
+  //if (runOrnaments) { sendOrnamentChannelData(scene.pixelColor1, scene.pixelColor2, scene.stepCount, scene.stepIndex); }
+  if (runOrnaments) { sendPumpkinChannelData(); }
   if (runSpiders)   { sendSpiderChannelData(scene.pixelColor2); }
 }
 

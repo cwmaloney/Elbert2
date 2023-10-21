@@ -1,10 +1,10 @@
 "use strict";
 
 const { E131 } = require("./E131.js");
-const { Beam, Washer, OutlinePixel } = require("./config.js");
+const { Beam, Washer, OutlinePixel, OrnamentPixel, OrnamentOutlinePixel } = require("./config.js");
 const { colorNameToRgb } = require("./config-colors.js");
 
-const lampChangeWait = 15500;
+const lampChangeWait = 500;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -55,11 +55,23 @@ const ornaments = [
         name: "west",
         address: "192.168.1.101",
         universes: [194, 195, 196, 197]
+      },
+    ],
+    outlineControllers: [
+      {
+        address: "192.168.1.104",
+        universes: [206, 207]
+      }
+    ],
+    topControllers: [
+      {
+        address: "192.168.1.104",
+        universes: [209]
       }
     ]
   },
   {
-    name: "east",
+    name: "west",
     controllers: [
       {
         name: "east",
@@ -70,6 +82,18 @@ const ornaments = [
         name: "west",
         address: "192.168.1.107",
         universes: [216, 217, 218, 219]
+      }
+    ],
+    outlineControllers: [
+      {
+        address: "192.168.1.110",
+        universes: [231, 232]
+      }
+    ],
+    topControllers: [
+      {
+        address: "192.168.1.110",
+        universes: [234]
       }
     ]
   }
@@ -82,8 +106,79 @@ const ornamentPixelsPerRadial = 21;
 const ornamentPixelsPerController = ornamentRadialsPerController * ornamentPixelsPerRadial;
 const ornamentPixelsPerUniverse = ornamentPixelsPerController/4;
 const pixelsPerOrnament = ornamentPixelsPerController * controllersPerOrnament;
+const ornamentOutlinePixelCount = 326;
+const ornamentOutlinePixelsPerController = 326;
+const ornamentOutlinePixelsPerUniverse = 170;
+const ornamentTopPixelCount = 120;
+const ornamentTopPixelsPerController = 170;
+const ornamentTopPixelsPerUniverse = 170;
 
+function getPumpkinEyeAndMouthIndexes() {
+  let indexes = [];
+  // mouth
+  for (let i = 0; i < 10; ++i)
+  {
+    indexes.push(getRadialRadiusPixel(i, 9));
+    indexes.push(getRadialRadiusPixel(i, 10));
+    indexes.push(getRadialRadiusPixel(i, 11));
+    indexes.push(getRadialRadiusPixel(i, 12));
+    indexes.push(getRadialRadiusPixel(i, 13));
+  }
+  indexes.push(getRadialRadiusPixel(10, 10));
+  indexes.push(getRadialRadiusPixel(10, 11));
+  indexes.push(getRadialRadiusPixel(10, 12));
+  indexes.push(getRadialRadiusPixel(11, 11));
 
+  for (let i = 54; i < 64; ++i)
+  {
+    indexes.push(getRadialRadiusPixel(i, 9));
+    indexes.push(getRadialRadiusPixel(i, 10));
+    indexes.push(getRadialRadiusPixel(i, 11));
+    indexes.push(getRadialRadiusPixel(i, 12));
+    indexes.push(getRadialRadiusPixel(i, 13));
+  }
+  indexes.push(getRadialRadiusPixel(53, 10));
+  indexes.push(getRadialRadiusPixel(53, 11));
+  indexes.push(getRadialRadiusPixel(53, 12));
+  indexes.push(getRadialRadiusPixel(52, 11));
+  
+  // eyes
+  const leftEyeRadials = [30, 29, 28, 27, 26, 25, 24, 23];
+  const rightEyeRadials = [35, 36, 37, 38, 39, 40, 41, 42];
+  let height = 9;
+  for (let i = 0; i < leftEyeRadials.length; ++i)
+  {
+    for (let j = i; j < leftEyeRadials.length; ++j) {
+      indexes.push(getRadialRadiusPixel(leftEyeRadials[i], height + j));      
+      indexes.push(getRadialRadiusPixel(rightEyeRadials[i], height + j));
+    }
+  }
+  
+  // nose
+  const noseTopRadials = [26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38];
+  for (let i = 0; i < noseTopRadials.length; ++i) {
+    indexes.push(getRadialRadiusPixel(noseTopRadials[i], 0));
+    indexes.push(getRadialRadiusPixel(noseTopRadials[i] + 21, 0));
+    indexes.push(getRadialRadiusPixel(noseTopRadials[i] - 21, 0));
+  }
+  for (let i = 2; i < noseTopRadials.length - 2; ++i) {
+    indexes.push(getRadialRadiusPixel(noseTopRadials[i], 1));
+    indexes.push(getRadialRadiusPixel(noseTopRadials[i] + 21, 1));
+    indexes.push(getRadialRadiusPixel(noseTopRadials[i] - 21, 1));
+  }
+  for (let i = 4; i < noseTopRadials.length - 4; ++i) {
+    indexes.push(getRadialRadiusPixel(noseTopRadials[i], 2));
+    indexes.push(getRadialRadiusPixel(noseTopRadials[i] + 21, 2));
+    indexes.push(getRadialRadiusPixel(noseTopRadials[i] - 21, 2));
+  }
+  for (let i = 6; i < noseTopRadials.length - 6; ++i) {
+    indexes.push(getRadialRadiusPixel(noseTopRadials[i], 3));
+    indexes.push(getRadialRadiusPixel(noseTopRadials[i] + 21, 3));
+    indexes.push(getRadialRadiusPixel(noseTopRadials[i] - 21, 3));
+  }
+
+  return indexes;
+}
 
 // These are the IP addresses of the spider controllers
 const spiderAddresses = ["192.168.1.54", "192.168.1.55"];
@@ -126,12 +221,45 @@ function getOrnamentPixelAddress(ornamentIndex, pixelNumber) {
   const controller = ornament.controllers[controllerIndex];
   const universeIndex = Math.floor(controllerPixelIndex / ornamentPixelsPerUniverse);
   const universePixelIndex = controllerPixelIndex % ornamentPixelsPerUniverse;
+  const universe = controller.universes[universeIndex];
   return {
     address: controller.address,
-    universe: controller.universes[universeIndex],
+    universe: universe,
     pixelIndex: universePixelIndex
   };
 }
+
+function getOrnamentOutlinePixelAddress(ornamentIndex, pixelNumber) {
+  const ornament = ornaments[ornamentIndex];
+  const controllerIndex = Math.floor(pixelNumber / ornamentOutlinePixelsPerController);
+  const controllerPixelIndex = pixelNumber % ornamentOutlinePixelsPerController;
+  const controller = ornament.outlineControllers[controllerIndex];
+  const universeIndex = Math.floor(controllerPixelIndex / ornamentOutlinePixelsPerUniverse);
+  const universePixelIndex = controllerPixelIndex % ornamentOutlinePixelsPerUniverse;
+  const universe = controller.universes[universeIndex];
+  return {
+    address: controller.address,
+    universe: universe,
+    pixelIndex: universePixelIndex
+  };
+}
+
+
+function getOrnamentTopPixelAddress(ornamentIndex, pixelNumber) {
+  const ornament = ornaments[ornamentIndex];
+  const controllerIndex = Math.floor(pixelNumber / ornamentTopPixelsPerController);
+  const controllerPixelIndex = pixelNumber % ornamentTopPixelsPerController;
+  const controller = ornament.topControllers[controllerIndex];
+  const universeIndex = Math.floor(controllerPixelIndex / ornamentTopPixelsPerUniverse);
+  const universePixelIndex = controllerPixelIndex % ornamentTopPixelsPerUniverse;
+  const universe = controller.universes[universeIndex];
+  return {
+    address: controller.address,
+    universe: universe,
+    pixelIndex: universePixelIndex
+  };
+}
+
 
 /////////////////////////////////////////////////////////////////////////////
 // Configure E.131 Universes
@@ -180,6 +308,34 @@ for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
   const ornament = ornaments[ornamentIndex];
   for (let controllerIndex = 0; controllerIndex < ornament.controllers.length; controllerIndex++) {
     const controller = ornament.controllers[controllerIndex];
+     for (let universeIndex = 0; universeIndex < controller.universes.length; universeIndex++) {
+      const universe = controller.universes[universeIndex];
+      e131.configureUniverse({
+        "address": controller.address,
+        "universe": universe,
+        "sourcePort": 5568,
+        "sendOnlyChangeData": false,
+        "sendSequenceNumbers": false,
+        "refreshInterval": 1000
+      });
+    }
+  }
+  for (let controllerIndex = 0; controllerIndex < ornament.outlineControllers.length; controllerIndex++) {
+    const controller = ornament.outlineControllers[controllerIndex];
+     for (let universeIndex = 0; universeIndex < controller.universes.length; universeIndex++) {
+      const universe = controller.universes[universeIndex];
+      e131.configureUniverse({
+        "address": controller.address,
+        "universe": universe,
+        "sourcePort": 5568,
+        "sendOnlyChangeData": false,
+        "sendSequenceNumbers": false,
+        "refreshInterval": 1000
+      });
+    }
+  }
+  for (let controllerIndex = 0; controllerIndex < ornament.topControllers.length; controllerIndex++) {
+    const controller = ornament.topControllers[controllerIndex];
      for (let universeIndex = 0; universeIndex < controller.universes.length; universeIndex++) {
       const universe = controller.universes[universeIndex];
       e131.configureUniverse({
@@ -455,11 +611,10 @@ function sendOrnamentChannelData(pixelColor1, pixelColor2, stepCount, stepIndex)
   const pixelsPerStep = Math.floor(pixelsPerOrnament / stepCount);
   const changeIndex = pixelsPerStep * stepIndex;
   for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
-    const ornament = ornaments[ornamentIndex];
-    for (let pixelNumber = 167; pixelNumber < pixelsPerOrnament; pixelNumber++) {
-      const pixelData = (pixelNumber <= changeIndex) ? pixelColor1Data : pixelColor2Data;
+    for (let pixelNumber = 0; pixelNumber < pixelsPerOrnament; pixelNumber++) {
+      const pixelData = (pixelNumber <= changeIndex) ? pixelColor2Data : pixelColor1Data;
       const { address, universe, pixelIndex } = getOrnamentPixelAddress(ornamentIndex, pixelNumber);
-      const pixelChannel = (pixelIndex * OutlinePixel.ChannelCount) + 1;
+      const pixelChannel = (pixelIndex * OrnamentPixel.ChannelCount) + 1;
       e131.setChannelData(address, universe, pixelChannel, pixelData);
     }
   }
@@ -474,6 +629,147 @@ function sendOrnamentChannelData(pixelColor1, pixelColor2, stepCount, stepIndex)
       }
     }
   }
+}
+
+
+function sendPumpkinChannelData() {
+  const orangeRgb = colorNameToRgb["Orange"];
+  const blackRgb = colorNameToRgb["Black"];
+  const whiteRgb = colorNameToRgb["White"];
+  const greenRgb = colorNameToRgb["Green"];
+  const redRgb = colorNameToRgb["Red"];
+  const blueRgb = colorNameToRgb["Blue"];
+  
+  // fill the pumpkin
+  for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
+    for (let pixelNumber = 0; pixelNumber < pixelsPerOrnament; pixelNumber++) {
+      setOrnamentChannelData(ornamentIndex, orangeRgb, pixelNumber);
+    }
+  }
+  
+  // fill the pumpkin outline
+  for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
+    for (let pixelNumber = 0; pixelNumber < ornamentOutlinePixelCount; pixelNumber++) {
+      setOrnamentOutlineChannelData(ornamentIndex, orangeRgb, pixelNumber);
+    }
+  }
+  
+  // fill the pumpkin top
+  for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
+    for (let pixelNumber = 0; pixelNumber < ornamentTopPixelCount; pixelNumber++) {
+      setOrnamentTopChannelData(ornamentIndex, greenRgb, pixelNumber);
+    }
+  }
+
+  // make the eyes and mouth black
+  for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
+    for (const index of getPumpkinEyeAndMouthIndexes()) {
+      setOrnamentChannelData(ornamentIndex, blackRgb, index);
+    }
+  }
+
+  // add white teeth
+  for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(1, 9));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(2, 9));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(3, 9));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(1, 10));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(2, 10));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(3, 10));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(1, 11));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(2, 11));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(3, 11));
+
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(6, 11));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(7, 11));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(8, 11));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(6, 12));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(7, 12));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(8, 12));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(6, 13));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(7, 13));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(8, 13));
+
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(60, 11));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(61, 11));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(62, 11));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(60, 12));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(61, 12));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(62, 12));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(60, 13));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(61, 13));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(62, 13));
+
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(55, 9));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(56, 9));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(57, 9));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(55, 10));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(56, 10));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(57, 10));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(55, 11));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(56, 11));
+    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(57, 11));
+  }
+
+  // send the body
+  for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
+    const ornament = ornaments[ornamentIndex];
+    for (let controllerIndex = 0; controllerIndex < ornament.controllers.length; controllerIndex++) {
+      const controller = ornament.controllers[controllerIndex];
+      for (let universeIndex = 0; universeIndex < controller.universes.length; universeIndex++) {
+        const universe = controller.universes[universeIndex];
+        e131.send(controller.address, universe);
+      }
+    }
+  }
+
+  // send the outline
+  for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
+    const ornament = ornaments[ornamentIndex];
+    for (let controllerIndex = 0; controllerIndex < ornament.outlineControllers.length; controllerIndex++) {
+      const controller = ornament.outlineControllers[controllerIndex];
+      for (let universeIndex = 0; universeIndex < controller.universes.length; universeIndex++) {
+        const universe = controller.universes[universeIndex];
+        e131.send(controller.address, universe);
+      }
+    }
+  }
+
+  // send the top
+  for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
+    const ornament = ornaments[ornamentIndex];
+    for (let controllerIndex = 0; controllerIndex < ornament.topControllers.length; controllerIndex++) {
+      const controller = ornament.topControllers[controllerIndex];
+      for (let universeIndex = 0; universeIndex < controller.universes.length; universeIndex++) {
+        const universe = controller.universes[universeIndex];
+        e131.send(controller.address, universe);
+      }
+    }
+  }
+}
+
+function setOrnamentChannelData(ornamentIndex, color, pixelNumber) {
+  const { address, universe, pixelIndex } = getOrnamentPixelAddress(ornamentIndex, pixelNumber);
+  const pixelChannel = (pixelIndex * OrnamentPixel.ChannelCount) + 1;
+  e131.setChannelData(address, universe, pixelChannel, color);
+}
+
+function setOrnamentOutlineChannelData(ornamentIndex, color, pixelNumber) {
+  const { address, universe, pixelIndex } = getOrnamentOutlinePixelAddress(ornamentIndex, pixelNumber);
+  const pixelChannel = (pixelIndex * OrnamentOutlinePixel.ChannelCount) + 1;
+  e131.setChannelData(address, universe, pixelChannel, color);
+}
+
+function setOrnamentTopChannelData(ornamentIndex, color, pixelNumber) {
+  const { address, universe, pixelIndex } = getOrnamentTopPixelAddress(ornamentIndex, pixelNumber);
+  const pixelChannel = (pixelIndex * OrnamentOutlinePixel.ChannelCount) + 1;
+  e131.setChannelData(address, universe, pixelChannel, color);
+}
+
+// radialIndex is which radial
+// radius is which pixel on the radial, how far from the center, zero based
+function getRadialRadiusPixel(radialIndex, radius) {
+  return radialIndex * ornamentPixelsPerRadial + (radialIndex % 2 ? ornamentPixelsPerRadial - radius - 1 : radius);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -534,5 +830,6 @@ module.exports = {
   sendWasherChannelData,
   sendOutlineChannelData,
   sendOrnamentChannelData,
+  sendPumpkinChannelData,
   sendSpiderChannelData
 };
