@@ -99,13 +99,16 @@ const valentineScenes = [
 /////////////////////////////////////////////////////////////////////////////
 // all data that changes to choose a show should be in this section
 
-const beamStartTime = "17:00:00";
-const beamStopTime  = "20:49:00";
+const beamStartTime = "18:00:00";
+const beamStopTime  = "21:03:00";
+// const beamStartTime = "19:20:00";
+// const beamStopTime  = "19:22:00";
 
 const runBeams = true;
 const runOutline = true;
 const runWashers = true;
-const runOrnaments = true;
+const runOrnaments = false;
+const runPumpkins = true;
 const runSpiders = true;
 
 const scenes = halloweenScenes;
@@ -216,9 +219,9 @@ function updateShow() {
   if (runBeams)     { sendBeamsChannelData(beamChannelData); }
   if (runWashers)   { sendWasherChannelData(scene.pixelColor2); }
   if (runOutline)   { sendOutlineChannelData(scene.pixelColor1, scene.pixelColor2, scene.stepCount, scene.stepIndex); }
-  //if (runOrnaments) { sendOrnamentChannelData(scene.pixelColor1, scene.pixelColor2, scene.stepCount, scene.stepIndex); }
-  if (runOrnaments) { sendPumpkinChannelData(); }
-  if (runSpiders)   { sendSpiderChannelData(scene.pixelColor2); }
+  if (runOrnaments) { sendOrnamentChannelData(scene.pixelColor1, scene.pixelColor2, scene.stepCount, scene.stepIndex); }
+  if (runPumpkins)  { sendPumpkinChannelData(scene.pixelColor1, scene.pixelColor2, scene.stepCount, scene.stepIndex); }
+  if (runSpiders)   { sendSpiderChannelData(scene.pixelColor2, scene.stepCount, scene.stepIndex); }
 }
 
 /////////////////////////////////////////////////////////////////////////////

@@ -113,9 +113,9 @@ const ornamentTopPixelCount = 120;
 const ornamentTopPixelsPerController = 170;
 const ornamentTopPixelsPerUniverse = 170;
 
-function getPumpkinEyeAndMouthIndexes() {
+function getPumpkinMouthIndexes() {
   let indexes = [];
-  // mouth
+
   for (let i = 0; i < 10; ++i)
   {
     indexes.push(getRadialRadiusPixel(i, 9));
@@ -141,8 +141,13 @@ function getPumpkinEyeAndMouthIndexes() {
   indexes.push(getRadialRadiusPixel(53, 11));
   indexes.push(getRadialRadiusPixel(53, 12));
   indexes.push(getRadialRadiusPixel(52, 11));
+
+  return indexes;
+}
   
-  // eyes
+function getPumpkinEyesIndexes() {
+  let indexes = [];
+
   const leftEyeRadials = [30, 29, 28, 27, 26, 25, 24, 23];
   const rightEyeRadials = [35, 36, 37, 38, 39, 40, 41, 42];
   let height = 9;
@@ -153,8 +158,14 @@ function getPumpkinEyeAndMouthIndexes() {
       indexes.push(getRadialRadiusPixel(rightEyeRadials[i], height + j));
     }
   }
+
+  return indexes;
+}
   
-  // nose
+  
+function getPumpkinNoseIndexes() {
+  let indexes = [];
+
   const noseTopRadials = [26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38];
   for (let i = 0; i < noseTopRadials.length; ++i) {
     indexes.push(getRadialRadiusPixel(noseTopRadials[i], 0));
@@ -176,6 +187,104 @@ function getPumpkinEyeAndMouthIndexes() {
     indexes.push(getRadialRadiusPixel(noseTopRadials[i] + 21, 3));
     indexes.push(getRadialRadiusPixel(noseTopRadials[i] - 21, 3));
   }
+
+  return indexes;
+}
+  
+  
+function getPumpkinTeethIndexes() {
+  let indexes = [];
+
+  indexes.push(getRadialRadiusPixel(1, 9));
+  indexes.push(getRadialRadiusPixel(2, 9));
+  indexes.push(getRadialRadiusPixel(3, 9));
+  indexes.push(getRadialRadiusPixel(1, 10));
+  indexes.push(getRadialRadiusPixel(2, 10));
+  indexes.push(getRadialRadiusPixel(3, 10));
+  indexes.push(getRadialRadiusPixel(1, 11));
+  indexes.push(getRadialRadiusPixel(2, 11));
+  indexes.push(getRadialRadiusPixel(3, 11));
+
+  indexes.push(getRadialRadiusPixel(6, 11));
+  indexes.push(getRadialRadiusPixel(7, 11));
+  indexes.push(getRadialRadiusPixel(8, 11));
+  indexes.push(getRadialRadiusPixel(6, 12));
+  indexes.push(getRadialRadiusPixel(7, 12));
+  indexes.push(getRadialRadiusPixel(8, 12));
+  indexes.push(getRadialRadiusPixel(6, 13));
+  indexes.push(getRadialRadiusPixel(7, 13));
+  indexes.push(getRadialRadiusPixel(8, 13));
+
+  indexes.push(getRadialRadiusPixel(60, 11));
+  indexes.push(getRadialRadiusPixel(61, 11));
+  indexes.push(getRadialRadiusPixel(62, 11));
+  indexes.push(getRadialRadiusPixel(60, 12));
+  indexes.push(getRadialRadiusPixel(61, 12));
+  indexes.push(getRadialRadiusPixel(62, 12));
+  indexes.push(getRadialRadiusPixel(60, 13));
+  indexes.push(getRadialRadiusPixel(61, 13));
+  indexes.push(getRadialRadiusPixel(62, 13));
+
+  indexes.push(getRadialRadiusPixel(55, 9));
+  indexes.push(getRadialRadiusPixel(56, 9));
+  indexes.push(getRadialRadiusPixel(57, 9));
+  indexes.push(getRadialRadiusPixel(55, 10));
+  indexes.push(getRadialRadiusPixel(56, 10));
+  indexes.push(getRadialRadiusPixel(57, 10));
+  indexes.push(getRadialRadiusPixel(55, 11));
+  indexes.push(getRadialRadiusPixel(56, 11));
+  indexes.push(getRadialRadiusPixel(57, 11));
+
+  return indexes;
+}
+
+  
+  
+function getPumpkinTongueIndexes() {
+  let indexes = [];
+
+  indexes.push(getRadialRadiusPixel(6, 11));
+  indexes.push(getRadialRadiusPixel(7, 11));
+  indexes.push(getRadialRadiusPixel(8, 11));
+  indexes.push(getRadialRadiusPixel(9, 11));
+  indexes.push(getRadialRadiusPixel(10, 11));
+  indexes.push(getRadialRadiusPixel(11, 11));
+
+  indexes.push(getRadialRadiusPixel(6, 12));
+  indexes.push(getRadialRadiusPixel(7, 12));
+  indexes.push(getRadialRadiusPixel(8, 12));
+  indexes.push(getRadialRadiusPixel(9, 12));
+  indexes.push(getRadialRadiusPixel(10, 12));
+  indexes.push(getRadialRadiusPixel(11, 12));
+
+  indexes.push(getRadialRadiusPixel(7, 13));
+  indexes.push(getRadialRadiusPixel(8, 13));
+  indexes.push(getRadialRadiusPixel(9, 13));
+  indexes.push(getRadialRadiusPixel(10, 13));
+
+  indexes.push(getRadialRadiusPixel(7, 14));
+  indexes.push(getRadialRadiusPixel(8, 14));
+  indexes.push(getRadialRadiusPixel(9, 14));
+  indexes.push(getRadialRadiusPixel(10, 14));
+
+  indexes.push(getRadialRadiusPixel(7, 15));
+  indexes.push(getRadialRadiusPixel(8, 15));
+  indexes.push(getRadialRadiusPixel(9, 15));
+  indexes.push(getRadialRadiusPixel(10, 15));
+
+  indexes.push(getRadialRadiusPixel(7, 16));
+  indexes.push(getRadialRadiusPixel(8, 16));
+  indexes.push(getRadialRadiusPixel(9, 16));
+  indexes.push(getRadialRadiusPixel(10, 16));
+
+  indexes.push(getRadialRadiusPixel(8, 17));
+  indexes.push(getRadialRadiusPixel(9, 17));
+
+  indexes.push(getRadialRadiusPixel(8, 18));
+  indexes.push(getRadialRadiusPixel(9, 18));
+
+  indexes.push(getRadialRadiusPixel(8, 19));
+  indexes.push(getRadialRadiusPixel(9, 19));
 
   return indexes;
 }
@@ -539,7 +648,7 @@ function sendWasherChannelData(pixelColor) {
 
 /////////////////////////////////////////////////////////////////////////////
 
-function sendSpiderChannelData(pixelColor) {
+function sendSpiderChannelData(pixelColor, stepCount, stepIndex) {
 
   for (var spiderControllerIndex = 0; spiderControllerIndex < spiderAddresses.length; spiderControllerIndex++) {
     const address = spiderAddresses[spiderControllerIndex];
@@ -548,8 +657,17 @@ function sendSpiderChannelData(pixelColor) {
  
     for (var spiderIndex = 0; spiderIndex < spidersPerController; spiderIndex++) {
       for (var pixelIndex = 0; pixelIndex < pixelsPerSpider; pixelIndex++) {
-        const eyeOrHourglass = ((pixelIndex >= 176 && pixelIndex <= 188) || pixelIndex == 88 || pixelIndex == 89);
-        const color = eyeOrHourglass ? ((pixelColor == 'Red') ? 'Yellow' : 'Red') : pixelColor;
+        const eye = (pixelIndex == 88 || pixelIndex == 89);
+        const hourglass = (pixelIndex >= 176 && pixelIndex <= 188);
+        let color = pixelColor;
+        if (hourglass) {
+          color = ((pixelColor == 'Red') ? 'Yellow' : 'Red');
+        } else if (eye) {
+          if (stepIndex % 32 < 8)
+            color = "Black";
+          else
+            color = ((pixelColor == 'Red') ? 'Yellow' : 'Red');
+        }
         const pixelColorData = colorNameToRgb[color];
         const pixelData = [pixelColorData[0], pixelColorData[1], pixelColorData[2]];
         e131.setChannelData(address, universe, channel, pixelData);
@@ -631,26 +749,30 @@ function sendOrnamentChannelData(pixelColor1, pixelColor2, stepCount, stepIndex)
   }
 }
 
+/////////////////////////////////////////////////////////////////////////////
 
-function sendPumpkinChannelData() {
+function sendPumpkinChannelData(pixelColor1, pixelColor2, stepCount, stepIndex) {
   const orangeRgb = colorNameToRgb["Orange"];
   const blackRgb = colorNameToRgb["Black"];
   const whiteRgb = colorNameToRgb["White"];
-  const greenRgb = colorNameToRgb["Green"];
+  const greenRgb = colorNameToRgb["Dark Green"];
   const redRgb = colorNameToRgb["Red"];
   const blueRgb = colorNameToRgb["Blue"];
+  const purpleRgb = colorNameToRgb["Purple"];
   
   // fill the pumpkin
   for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
     for (let pixelNumber = 0; pixelNumber < pixelsPerOrnament; pixelNumber++) {
-      setOrnamentChannelData(ornamentIndex, orangeRgb, pixelNumber);
+      const color = (stepIndex < 264) ? orangeRgb : purpleRgb;
+      setOrnamentChannelData(ornamentIndex, color, pixelNumber);
     }
   }
   
   // fill the pumpkin outline
   for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
     for (let pixelNumber = 0; pixelNumber < ornamentOutlinePixelCount; pixelNumber++) {
-      setOrnamentOutlineChannelData(ornamentIndex, orangeRgb, pixelNumber);
+      const color = (stepIndex < 264) ? orangeRgb : purpleRgb;
+      setOrnamentOutlineChannelData(ornamentIndex, color, pixelNumber);
     }
   }
   
@@ -661,55 +783,42 @@ function sendPumpkinChannelData() {
     }
   }
 
-  // make the eyes and mouth black
+  // make the eyes black
   for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
-    for (const index of getPumpkinEyeAndMouthIndexes()) {
+    for (const index of getPumpkinEyesIndexes()) {
+      setOrnamentChannelData(ornamentIndex, (stepIndex % 64 < 55) ? blackRgb : purpleRgb, index);
+    }
+  }
+
+  // make the mouth black
+  for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
+    for (const index of getPumpkinMouthIndexes()) {
+      setOrnamentChannelData(ornamentIndex, blackRgb, index);
+    }
+  }
+
+  // make the nose black
+  for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
+    for (const index of getPumpkinNoseIndexes()) {
       setOrnamentChannelData(ornamentIndex, blackRgb, index);
     }
   }
 
   // add white teeth
   for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(1, 9));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(2, 9));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(3, 9));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(1, 10));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(2, 10));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(3, 10));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(1, 11));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(2, 11));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(3, 11));
-
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(6, 11));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(7, 11));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(8, 11));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(6, 12));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(7, 12));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(8, 12));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(6, 13));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(7, 13));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(8, 13));
-
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(60, 11));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(61, 11));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(62, 11));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(60, 12));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(61, 12));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(62, 12));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(60, 13));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(61, 13));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(62, 13));
-
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(55, 9));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(56, 9));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(57, 9));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(55, 10));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(56, 10));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(57, 10));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(55, 11));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(56, 11));
-    setOrnamentChannelData(ornamentIndex, whiteRgb, getRadialRadiusPixel(57, 11));
+    for (const index of getPumpkinTeethIndexes()) {
+      setOrnamentChannelData(ornamentIndex, whiteRgb, index);
+    }
   }
+
+  // // add tongue
+  // if (stepIndex > 50) {
+  //   for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
+  //     for (const index of getPumpkinTongueIndexes()) {
+  //       setOrnamentChannelData(ornamentIndex, redRgb, index);
+  //     }
+  //   }
+  // }
 
   // send the body
   for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
@@ -796,13 +905,13 @@ function checkBeamLampState(beamState, beamStartMinute, beamStopMinute) {
     if (beamState !== "on") {
       sendBeamsOn();
       beamState = "on";
-      return {beamState: "on", timeout: lampChangeWait};
+      return {beamState: "on", timeout: 500};
     }
   } else {
     if (beamState !== "off") {
       sendBeamsOff();
       beamState = "off";
-      return {beamState: "off", timeout: lampChangeWait};
+      return {beamState: "off", timeout: 10000};
     }
   }  
   return {beamState: beamState, timeout: 0};
