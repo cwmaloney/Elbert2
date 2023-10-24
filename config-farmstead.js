@@ -145,17 +145,42 @@ function getPumpkinMouthIndexes() {
   return indexes;
 }
   
-function getPumpkinEyesIndexes() {
+function getPumpkinEyesIndexes(top, height, openHeight) {
   let indexes = [];
 
   const leftEyeRadials = [30, 29, 28, 27, 26, 25, 24, 23];
   const rightEyeRadials = [35, 36, 37, 38, 39, 40, 41, 42];
-  let height = 9;
-  for (let i = 0; i < leftEyeRadials.length; ++i)
+  const width = leftEyeRadials.length;
+
+  const bottom = top - height + 1;
+  for (let radialIndex = 0; radialIndex < width; ++radialIndex)
   {
-    for (let j = i; j < leftEyeRadials.length; ++j) {
-      indexes.push(getRadialRadiusPixel(leftEyeRadials[i], height + j));      
-      indexes.push(getRadialRadiusPixel(rightEyeRadials[i], height + j));
+    const radialHeight = Math.max(openHeight - radialIndex, 1)
+    const radialTop = bottom + radialHeight - 1;
+    for (let radius = bottom; radius <= radialTop; ++radius) {
+      indexes.push(getRadialRadiusPixel(leftEyeRadials[radialIndex], radius));      
+      indexes.push(getRadialRadiusPixel(rightEyeRadials[radialIndex], radius));
+    }
+  }
+
+  return indexes;
+}
+  
+function getPumpkinEyesCentersIndexes(top, height, openHeight) {
+  let indexes = [];
+
+  const leftEyeRadials = [30, 29, 28, 27, 26, 25, 24, 23];
+  const rightEyeRadials = [35, 36, 37, 38, 39, 40, 41, 42];
+  const width = leftEyeRadials.length;
+
+  const bottom = top - height + 1;
+  for (let radialIndex = 0; radialIndex < width; ++radialIndex)
+  {
+    const radialHeight = Math.max(openHeight - radialIndex, 1)
+    const radialTop = bottom + radialHeight - 1;
+    for (let radius = bottom; radius <= radialTop; ++radius) {
+      indexes.push(getRadialRadiusPixel(leftEyeRadials[radialIndex], radius));      
+      indexes.push(getRadialRadiusPixel(rightEyeRadials[radialIndex], radius));
     }
   }
 
@@ -784,9 +809,11 @@ function sendPumpkinChannelData(pixelColor1, pixelColor2, stepCount, stepIndex) 
   }
 
   // make the eyes black
+  const height = 8;
+  const openHeight =  Math.max(height - (Math.floor((stepIndex/height)) % height), 1);
   for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
-    for (const index of getPumpkinEyesIndexes()) {
-      setOrnamentChannelData(ornamentIndex, (stepIndex % 64 < 55) ? blackRgb : purpleRgb, index);
+    for (const index of getPumpkinEyesIndexes(17, height, openHeight)) {
+      setOrnamentChannelData(ornamentIndex, blackRgb, index);
     }
   }
 
