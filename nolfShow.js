@@ -75,13 +75,13 @@ const testScenes = [
 ];
 
 const halloweenScenes = [
-  { beamTilt: 25, beamColor: Beam.Color.Magenta,  pan: { start: 85, stop: 170, step:  1 }, pixelColor1: "Orange", pixelColor2: "Magenta" },
-  { beamTilt: 72, beamColor: Beam.Color.Orange,   pan: { start: 85, stop: 170, step:  1 }, pixelColor1: "Magenta", pixelColor2: "Orange"  },
-  { beamTilt: 36, beamColor: Beam.Color.Red,      pan: { start: 85, stop: 170, step:  1 }, pixelColor1: "Orange", pixelColor2: "Red" },
-  { beamTilt: 48, beamColor: Beam.Color.Blue,     pan: { start: 85, stop: 170, step:  1 }, pixelColor1: "Red", pixelColor2: "Dark Blue" },
-  { beamTilt: 30, beamColor: Beam.Color.Violet,   pan: { start: 85, stop: 170, step:  1 }, pixelColor1: "Dark Blue", pixelColor2: "Violet" },
-  { beamTilt: 40, beamColor: Beam.Color.Green,    pan: { start: 85, stop: 170, step:  1 }, pixelColor1: "Violet", pixelColor2: "Green"  },
-  { beamTilt: 84, beamColor: Beam.Color.White,    pan: { start: 85, stop: 170, step:  1 }, pixelColor1: "Black", pixelColor2: "Orange"  },
+  { beamTilt: 25, beamColor: Beam.Color.Magenta,  pan: { start: 85, stop: 170, step:  1 }, pixelColor1: "Dark Violet", pixelColor2: "Magenta" },
+  { beamTilt: 72, beamColor: Beam.Color.Orange,   pan: { start: 85, stop: 170, step:  1 }, pixelColor1: "Dark Violet", pixelColor2: "Orange"  },
+  { beamTilt: 36, beamColor: Beam.Color.Red,      pan: { start: 85, stop: 170, step:  1 }, pixelColor1: "Dark Violet", pixelColor2: "Red" },
+  { beamTilt: 48, beamColor: Beam.Color.Blue,     pan: { start: 85, stop: 170, step:  1 }, pixelColor1: "Dark Violet", pixelColor2: "Dark Blue" },
+  { beamTilt: 30, beamColor: Beam.Color.Violet,   pan: { start: 85, stop: 170, step:  1 }, pixelColor1: "Dark Violet", pixelColor2: "Violet" },
+  { beamTilt: 40, beamColor: Beam.Color.Green,    pan: { start: 85, stop: 170, step:  1 }, pixelColor1: "Dark Violet", pixelColor2: "Green"  },
+  { beamTilt: 84, beamColor: Beam.Color.White,    pan: { start: 85, stop: 170, step:  1 }, pixelColor1: "Dark Violet", pixelColor2: "Orange"  },
 ];
 
 const valentineScenes = [
@@ -99,8 +99,8 @@ const valentineScenes = [
 /////////////////////////////////////////////////////////////////////////////
 // all data that changes to choose a show should be in this section
 
-const beamStartTime = "18:00:00";
-const beamStopTime  = "21:03:00";
+const beamStartTime = "17:15:00";
+const beamStopTime  = "21:05:00";
 // const beamStartTime = "19:20:00";
 // const beamStopTime  = "19:22:00";
 

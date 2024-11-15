@@ -719,8 +719,9 @@ function sendOutlineChannelData(pixelColor1, pixelColor2, stepCount, stepIndex) 
   const pixelColor2Data = colorNameToRgb[pixelColor2];
 
   const horizontalStringLength = getOutlineStringLength(horizontalStringMap);
+  const horizontalPixelsToChange = Math.floor(((horizontalStringLength / stepCount) * (stepIndex+2)) / 2);
   for (let pixelNumber = 0; pixelNumber < horizontalStringLength; pixelNumber++) {
-    const pixelData = (pixelNumber >= (stepIndex * 2) && pixelNumber <= (horizontalStringLength - (stepIndex * 2)))
+    const pixelData = (pixelNumber > horizontalPixelsToChange && pixelNumber < (horizontalStringLength - 1 - horizontalPixelsToChange))
       ? pixelColor1Data : pixelColor2Data;
     const { address, universe, pixelIndex } = getOutlinePixelAddress(pixelNumber, horizontalStringMap);
     const pixelChannel = (pixelIndex * OutlinePixel.ChannelCount) + 1;
@@ -728,8 +729,9 @@ function sendOutlineChannelData(pixelColor1, pixelColor2, stepCount, stepIndex) 
   }
 
   const centerStringLength = getOutlineStringLength(centerStringMap);
+  const centerPixelsToChange = ((centerStringLength / stepCount) * stepIndex / 2);
   for (let pixelNumber = 0; pixelNumber < centerStringLength; pixelNumber++) {
-    const pixelData = (pixelNumber >= stepIndex && pixelNumber <= (centerStringLength - stepIndex - 8))
+    const pixelData = (pixelNumber >= centerPixelsToChange && pixelNumber +5 <= (centerStringLength - centerPixelsToChange))
       ? pixelColor1Data : pixelColor2Data;
     const { address, universe, pixelIndex } = getOutlinePixelAddress(pixelNumber, centerStringMap);
     const pixelChannel = (pixelIndex * OutlinePixel.ChannelCount) + 1;
@@ -810,7 +812,13 @@ function sendPumpkinChannelData(pixelColor1, pixelColor2, stepCount, stepIndex) 
 
   // make the eyes black
   const height = 8;
-  const openHeight =  Math.max(height - (Math.floor((stepIndex/height)) % height), 1);
+  let openHeight = height;
+  if (stepIndex > 72) {
+    openHeight = 1;
+  } else if (stepIndex > 8 && stepIndex < 64) {
+    openHeight = height - (Math.floor(((stepIndex)/height)) % height);
+  }
+  openHeight = Math.max(openHeight, 1);
   for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
     for (const index of getPumpkinEyesIndexes(17, height, openHeight)) {
       setOrnamentChannelData(ornamentIndex, blackRgb, index);

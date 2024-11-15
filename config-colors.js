@@ -70,7 +70,7 @@ const colorNameToRgb = {
   "Horned Frog Purple": [ 77, 25, 121 ],
 
   Violet: [ 139, 0, 255 ],
-  "Dark Violet": [ 35, 0, 58 ],
+  "Dark Violet": [ 18, 0, 45 ],
 
   Black: [ 0, 0, 0 ],
   Off:  [ 0, 0, 0 ]
