@@ -42,6 +42,57 @@ const centerStringMap = [
   { start: 340, end: 365, controller: 1, universe: 2 }
 ];
 
+const pumpkinsAndTrees = [
+  {
+    name: "east",
+    controllers: [
+      {
+        name: 'main',
+        address: "192.168.1.112",
+        universes: [244, 245, 246, 247, 248, 249, 250, 251, 252]
+      }
+    ]
+  },
+  {
+    name: "west",
+    controllers: [
+      {
+        name: 'main',
+        address: "192.168.1.114",
+        universes: [244, 245, 246, 247, 248, 249, 250, 251, 252]
+      }
+    ]
+  }
+];
+
+const treeOutlinePixels = 650;
+const treeFacePixels = 150;
+
+// east face is face1
+const face1LeftEye = [130, 131, 132, 133, 134, 135, 136, 137, 143, 144, 145, 146, 147, 148, 149, 150];
+const face1RightEye = [111, 112, 113, 114, 115, 116, 117, 118, 119, 121, 123, 127, 126, 128, 129];
+const face1SmallRoundMouth = [40, 41, 42, 44, 45, 46, 47, 48, 49, 54, 53, 70, 82, 81, 84, 85, 86, 91, 92, 93, 95, 63, 62, 61];
+
+const face2LeftEye = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
+const face2RightEye = [23, 24, 25, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 43, 44];
+const face2SmallRoundMouth = [46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 70, 71, 72, 73, 83, 84, 90, 91, 92];
+
+const pumpkinOutlinePixels = 650;
+
+const pumpkinTopFaceLeftEye = [521, 522, 523, 524, 525, 526, 527, 530, 531];
+const pumpkinTopFaceRightEye = [433, 434, 435, 436, 437, 438, 439, 440, 443, 444, 445, 446, 447];
+const pumpkinTopFaceMouth = [ 462, 463, 464, 465, 466,468,488,489,490,491,493,494,454,455,456,457,458,459,460,461];
+
+const pumpkinMiddleFaceLeftEye = [336,337,338,339,340,321,322,323,324,325,326,327,328,329];
+const pumpkinMiddleFaceRightEye = [307,308,319,310,311,312,313,346,345,344,343,342,341,318,319,320];
+const pumpkinMiddleFaceMouth = [277,278,279,280,281,265,305,36,302,301,300,297,296,295,294,293,292,291,290,289,288,287,285,284,257,256,255,254,253,252,251,250,249,248,247,246,245,235,222,223,224,225,226,227,228,229,230,231,232,238,239,240,241,269];
+
+const pumpkinBottomFaceLeftEye = [134,135,136,137,138,141,142,143,144,145];
+const pumpkinBottomFaceRightEye = [78,79,80,81,82,85,86,87,88,89,91];
+const pumpkinBottomFaceMouth = [190,189,188,187,186,185,184,183,182,181,180,179,178,177,176,175,174,173,172,171,1114,112,113,114,115,117,118,119,120,121,122,123,124,125,125,127,156,157,158];
+const pumpkinOutlineSegments = [[1,77],[82,104],[128,133],[147,155],[197,221],[347,432],[449,453],[498,521],[533,558],[570,650] ];
+const pumpkinStem = [559,560,561,562,563,564,565,566,567,568,569];
+
 const ornaments = [
   {
     name: "east",
@@ -104,7 +155,7 @@ const controllersPerOrnament = 2;
 const ornamentRadialsPerController = 32;
 const ornamentPixelsPerRadial = 21;
 const ornamentPixelsPerController = ornamentRadialsPerController * ornamentPixelsPerRadial;
-const ornamentPixelsPerUniverse = ornamentPixelsPerController/4;
+const ornamentPixelsPerUniverse = ornamentPixelsPerController / 4;
 const pixelsPerOrnament = ornamentPixelsPerController * controllersPerOrnament;
 const ornamentOutlinePixelCount = 326;
 const ornamentOutlinePixelsPerController = 326;
@@ -116,8 +167,7 @@ const ornamentTopPixelsPerUniverse = 170;
 function getPumpkinMouthIndexes() {
   let indexes = [];
 
-  for (let i = 0; i < 10; ++i)
-  {
+  for (let i = 0; i < 10; ++i) {
     indexes.push(getRadialRadiusPixel(i, 9));
     indexes.push(getRadialRadiusPixel(i, 10));
     indexes.push(getRadialRadiusPixel(i, 11));
@@ -129,8 +179,7 @@ function getPumpkinMouthIndexes() {
   indexes.push(getRadialRadiusPixel(10, 12));
   indexes.push(getRadialRadiusPixel(11, 11));
 
-  for (let i = 54; i < 64; ++i)
-  {
+  for (let i = 54; i < 64; ++i) {
     indexes.push(getRadialRadiusPixel(i, 9));
     indexes.push(getRadialRadiusPixel(i, 10));
     indexes.push(getRadialRadiusPixel(i, 11));
@@ -144,7 +193,7 @@ function getPumpkinMouthIndexes() {
 
   return indexes;
 }
-  
+
 function getPumpkinEyesIndexes(top, height, openHeight) {
   let indexes = [];
 
@@ -153,19 +202,18 @@ function getPumpkinEyesIndexes(top, height, openHeight) {
   const width = leftEyeRadials.length;
 
   const bottom = top - height + 1;
-  for (let radialIndex = 0; radialIndex < width; ++radialIndex)
-  {
+  for (let radialIndex = 0; radialIndex < width; ++radialIndex) {
     const radialHeight = Math.max(openHeight - radialIndex, 1)
     const radialTop = bottom + radialHeight - 1;
     for (let radius = bottom; radius <= radialTop; ++radius) {
-      indexes.push(getRadialRadiusPixel(leftEyeRadials[radialIndex], radius));      
+      indexes.push(getRadialRadiusPixel(leftEyeRadials[radialIndex], radius));
       indexes.push(getRadialRadiusPixel(rightEyeRadials[radialIndex], radius));
     }
   }
 
   return indexes;
 }
-  
+
 function getPumpkinEyesCentersIndexes(top, height, openHeight) {
   let indexes = [];
 
@@ -174,20 +222,19 @@ function getPumpkinEyesCentersIndexes(top, height, openHeight) {
   const width = leftEyeRadials.length;
 
   const bottom = top - height + 1;
-  for (let radialIndex = 0; radialIndex < width; ++radialIndex)
-  {
+  for (let radialIndex = 0; radialIndex < width; ++radialIndex) {
     const radialHeight = Math.max(openHeight - radialIndex, 1)
     const radialTop = bottom + radialHeight - 1;
     for (let radius = bottom; radius <= radialTop; ++radius) {
-      indexes.push(getRadialRadiusPixel(leftEyeRadials[radialIndex], radius));      
+      indexes.push(getRadialRadiusPixel(leftEyeRadials[radialIndex], radius));
       indexes.push(getRadialRadiusPixel(rightEyeRadials[radialIndex], radius));
     }
   }
 
   return indexes;
 }
-  
-  
+
+
 function getPumpkinNoseIndexes() {
   let indexes = [];
 
@@ -215,8 +262,8 @@ function getPumpkinNoseIndexes() {
 
   return indexes;
 }
-  
-  
+
+
 function getPumpkinTeethIndexes() {
   let indexes = [];
 
@@ -263,8 +310,8 @@ function getPumpkinTeethIndexes() {
   return indexes;
 }
 
-  
-  
+
+
 function getPumpkinTongueIndexes() {
   let indexes = [];
 
@@ -442,7 +489,7 @@ for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
   const ornament = ornaments[ornamentIndex];
   for (let controllerIndex = 0; controllerIndex < ornament.controllers.length; controllerIndex++) {
     const controller = ornament.controllers[controllerIndex];
-     for (let universeIndex = 0; universeIndex < controller.universes.length; universeIndex++) {
+    for (let universeIndex = 0; universeIndex < controller.universes.length; universeIndex++) {
       const universe = controller.universes[universeIndex];
       e131.configureUniverse({
         "address": controller.address,
@@ -456,7 +503,7 @@ for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
   }
   for (let controllerIndex = 0; controllerIndex < ornament.outlineControllers.length; controllerIndex++) {
     const controller = ornament.outlineControllers[controllerIndex];
-     for (let universeIndex = 0; universeIndex < controller.universes.length; universeIndex++) {
+    for (let universeIndex = 0; universeIndex < controller.universes.length; universeIndex++) {
       const universe = controller.universes[universeIndex];
       e131.configureUniverse({
         "address": controller.address,
@@ -470,7 +517,7 @@ for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
   }
   for (let controllerIndex = 0; controllerIndex < ornament.topControllers.length; controllerIndex++) {
     const controller = ornament.topControllers[controllerIndex];
-     for (let universeIndex = 0; universeIndex < controller.universes.length; universeIndex++) {
+    for (let universeIndex = 0; universeIndex < controller.universes.length; universeIndex++) {
       const universe = controller.universes[universeIndex];
       e131.configureUniverse({
         "address": controller.address,
@@ -679,7 +726,7 @@ function sendSpiderChannelData(pixelColor, stepCount, stepIndex) {
     const address = spiderAddresses[spiderControllerIndex];
     let channel = 1;
     let universe = spiderUniverses[spiderControllerIndex][0];
- 
+
     for (var spiderIndex = 0; spiderIndex < spidersPerController; spiderIndex++) {
       for (var pixelIndex = 0; pixelIndex < pixelsPerSpider; pixelIndex++) {
         const eye = (pixelIndex == 88 || pixelIndex == 89);
@@ -703,7 +750,7 @@ function sendSpiderChannelData(pixelColor, stepCount, stepIndex) {
           universe++;
         }
       }
-      if (spiderIndex%2 == 1 || spiderIndex == spidersPerController-1) {
+      if (spiderIndex % 2 == 1 || spiderIndex == spidersPerController - 1) {
         e131.send(address, universe);
         channel = 1;
         universe++;
@@ -719,7 +766,7 @@ function sendOutlineChannelData(pixelColor1, pixelColor2, stepCount, stepIndex) 
   const pixelColor2Data = colorNameToRgb[pixelColor2];
 
   const horizontalStringLength = getOutlineStringLength(horizontalStringMap);
-  const horizontalPixelsToChange = Math.floor(((horizontalStringLength / stepCount) * (stepIndex+2)) / 2);
+  const horizontalPixelsToChange = Math.floor(((horizontalStringLength / stepCount) * (stepIndex + 2)) / 2);
   for (let pixelNumber = 0; pixelNumber < horizontalStringLength; pixelNumber++) {
     const pixelData = (pixelNumber > horizontalPixelsToChange && pixelNumber < (horizontalStringLength - 1 - horizontalPixelsToChange))
       ? pixelColor1Data : pixelColor2Data;
@@ -731,7 +778,7 @@ function sendOutlineChannelData(pixelColor1, pixelColor2, stepCount, stepIndex) 
   const centerStringLength = getOutlineStringLength(centerStringMap);
   const centerPixelsToChange = ((centerStringLength / stepCount) * stepIndex / 2);
   for (let pixelNumber = 0; pixelNumber < centerStringLength; pixelNumber++) {
-    const pixelData = (pixelNumber >= centerPixelsToChange && pixelNumber +5 <= (centerStringLength - centerPixelsToChange))
+    const pixelData = (pixelNumber >= centerPixelsToChange && pixelNumber + 5 <= (centerStringLength - centerPixelsToChange))
       ? pixelColor1Data : pixelColor2Data;
     const { address, universe, pixelIndex } = getOutlinePixelAddress(pixelNumber, centerStringMap);
     const pixelChannel = (pixelIndex * OutlinePixel.ChannelCount) + 1;
@@ -786,7 +833,7 @@ function sendPumpkinChannelData(pixelColor1, pixelColor2, stepCount, stepIndex) 
   const redRgb = colorNameToRgb["Red"];
   const blueRgb = colorNameToRgb["Blue"];
   const purpleRgb = colorNameToRgb["Purple"];
-  
+
   // fill the pumpkin
   for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
     for (let pixelNumber = 0; pixelNumber < pixelsPerOrnament; pixelNumber++) {
@@ -794,7 +841,7 @@ function sendPumpkinChannelData(pixelColor1, pixelColor2, stepCount, stepIndex) 
       setOrnamentChannelData(ornamentIndex, color, pixelNumber);
     }
   }
-  
+
   // fill the pumpkin outline
   for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
     for (let pixelNumber = 0; pixelNumber < ornamentOutlinePixelCount; pixelNumber++) {
@@ -802,7 +849,7 @@ function sendPumpkinChannelData(pixelColor1, pixelColor2, stepCount, stepIndex) 
       setOrnamentOutlineChannelData(ornamentIndex, color, pixelNumber);
     }
   }
-  
+
   // fill the pumpkin top
   for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
     for (let pixelNumber = 0; pixelNumber < ornamentTopPixelCount; pixelNumber++) {
@@ -816,7 +863,7 @@ function sendPumpkinChannelData(pixelColor1, pixelColor2, stepCount, stepIndex) 
   if (stepIndex > 72) {
     openHeight = 1;
   } else if (stepIndex > 8 && stepIndex < 64) {
-    openHeight = height - (Math.floor(((stepIndex)/height)) % height);
+    openHeight = height - (Math.floor(((stepIndex) / height)) % height);
   }
   openHeight = Math.max(openHeight, 1);
   for (let ornamentIndex = 0; ornamentIndex < ornaments.length; ornamentIndex++) {
@@ -920,13 +967,12 @@ function getRadialRadiusPixel(radialIndex, radius) {
 
 function parseTimeToMinutes(timeString) {
   const timestamp = new Date('1970-01-01T' + timeString);
-  return timestamp.getHours()* 60 + timestamp.getMinutes();
+  return timestamp.getHours() * 60 + timestamp.getMinutes();
 }
 
 /////////////////////////////////////////////////////////////////////////////
 
-function isTimeToShowBeams(beamStartMinute, beamStopMinute)
-{
+function isTimeToShowBeams(beamStartMinute, beamStopMinute) {
   const timestamp = new Date();
   const minute = timestamp.getHours() * 60 + timestamp.getMinutes();
   return (minute >= beamStartMinute && minute <= beamStopMinute);
@@ -940,16 +986,16 @@ function checkBeamLampState(beamState, beamStartMinute, beamStopMinute) {
     if (beamState !== "on") {
       sendBeamsOn();
       beamState = "on";
-      return {beamState: "on", timeout: 500};
+      return { beamState: "on", timeout: 500 };
     }
   } else {
     if (beamState !== "off") {
       sendBeamsOff();
       beamState = "off";
-      return {beamState: "off", timeout: 10000};
+      return { beamState: "off", timeout: 10000 };
     }
-  }  
-  return {beamState: beamState, timeout: 0};
+  }
+  return { beamState: beamState, timeout: 0 };
 }
 
 /////////////////////////////////////////////////////////////////////////////
