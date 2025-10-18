@@ -59,7 +59,7 @@ const pumpkinsAndTrees = [
       {
         name: 'main',
         address: "192.168.1.114",
-        universes: [244, 245, 246, 247, 248, 249, 250, 251, 252]
+        universes: [234, 235, 236, 237, 238, 239, 240, 241, 242]
       }
     ]
   }
