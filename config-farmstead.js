@@ -52,6 +52,7 @@ const pumpkinsStackControllers = {
     universes: [234, 235, 236, 237, 238]
   }
 };
+const pumpkinStackControllerArray = [spookyTreeControllers.east, spookyTreeControllers.west];
 
 const spookyTreeControllers = {
   east: {
@@ -63,6 +64,7 @@ const spookyTreeControllers = {
     universes: [239, 240, 241, 242]
   }
 };
+const spookyTreeControllerArray = [spookyTreeControllers.east, spookyTreeControllers.west];
 
 const treeOutlinePixels = 650;
 const treeFacePixels = 150;
@@ -546,6 +548,39 @@ for (let controllerIndex = 0; controllerIndex < spiderAddresses.length; controll
   }
 }
 
+// configure spooky tree universes
+for (let controllerIndex = 0; controllerIndex < spookyTreeControllerArray.length; controllerIndex++) {
+  const controller = spookyTreeControllerArray[controllerIndex];
+  const universes = controller.universes;
+  for (let universeIndex = 0; universeIndex < universes.length; universeIndex++) {
+    const universe = universes[universeIndex];
+    e131.configureUniverse({
+      "address": controller.address,
+      "universe": universe,
+      "sourcePort": 5568,
+      "sendOnlyChangeData": false,
+      "sendSequenceNumbers": false,
+      "refreshInterval": 1000
+    });
+  }
+}
+
+// configure pumpkin stack universes
+for (let controllerIndex = 0; controllerIndex < pumpkinStackControllerArray.length; controllerIndex++) {
+  const controller = pumpkinStackControllerArray[controllerIndex];
+  const universes = controller.universes;
+  for (let universeIndex = 0; universeIndex < universes.length; universeIndex++) {
+    const universe = universes[universeIndex];
+    e131.configureUniverse({
+      "address": controller.address,
+      "universe": universe,
+      "sourcePort": 5568,
+      "sendOnlyChangeData": false,
+      "sendSequenceNumbers": false,
+      "refreshInterval": 1000
+    });
+  }
+}
 
 /////////////////////////////////////////////////////////////////////////////
 
