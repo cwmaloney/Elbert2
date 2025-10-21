@@ -17,7 +17,9 @@ const
   sendOutlineChannelData,
   sendOrnamentChannelData,
   sendPumpkinChannelData,
-  sendSpiderChannelData
+  sendSpiderChannelData,
+
+  sendSpookyTreeChannelData
 
   } = require("./config-farmstead.js");
 
@@ -110,6 +112,7 @@ const runWashers = true;
 const runOrnaments = false;
 const runPumpkins = true;
 const runSpiders = true;
+const runSpookyTrees = true;
 
 const scenes = halloweenScenes;
 
@@ -222,6 +225,8 @@ function updateShow() {
   if (runOrnaments) { sendOrnamentChannelData(scene.pixelColor1, scene.pixelColor2, scene.stepCount, scene.stepIndex); }
   if (runPumpkins)  { sendPumpkinChannelData(scene.pixelColor1, scene.pixelColor2, scene.stepCount, scene.stepIndex); }
   if (runSpiders)   { sendSpiderChannelData(scene.pixelColor2, scene.stepCount, scene.stepIndex); }
+
+  if (runSpookyTrees) { sendSpookyTreeChannelData(scene.pixelColor2, scene.stepCount, scene.stepIndex); }
 }
 
 /////////////////////////////////////////////////////////////////////////////

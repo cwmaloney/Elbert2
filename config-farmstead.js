@@ -52,7 +52,7 @@ const pumpkinsStackControllers = {
     universes: [234, 235, 236, 237, 238]
   }
 };
-const pumpkinStackControllerArray = [spookyTreeControllers.east, spookyTreeControllers.west];
+const pumpkinStackControllerArray = [pumpkinsStackControllers.east, pumpkinsStackControllers.west];
 
 const spookyTreeControllers = {
   east: {
@@ -1055,5 +1055,35 @@ module.exports = {
   sendOutlineChannelData,
   sendOrnamentChannelData,
   sendPumpkinChannelData,
-  sendSpiderChannelData
+  sendSpiderChannelData,
+
+  sendSpookyTreeChannelData
 };
+
+/////////////////////////////////////////////////////////////////////////////
+
+function sendSpookyTreeChannelData(pixelColor, stepCount, stepIndex) {
+
+  for (let treeIndex = 0; treeIndex < spookyTreeControllers.length; treeIndex++) {
+    const treeController = spookyTreeControllers[treeIndex]
+    const address = treeController.address;
+    const universes = treeController.universes;
+    // tree outline
+    let universeIndex = 0;
+    let channel = 1;
+    for (let pixelIndex = 1; pixelIndex <= treeOutlinePixels; pixelIndex++) {
+      // for (let universeIndex = 0; universeIndex < universes.length; universeIndex++) {
+      let color = pixelColor;
+      const pixelColorData = colorNameToRgb[color];
+      const pixelData = [pixelColorData[0], pixelColorData[1], pixelColorData[2]];
+      e131.setChannelData(address, universe, channel, pixelData);
+      channel += pixelColorData.length;
+      if (channel >= 510) {
+        e131.send(address, universe);
+        channel = 1;
+        universeIndex++;
+      }
+    }
+    e131.send(address, universe);
+  }
+}
