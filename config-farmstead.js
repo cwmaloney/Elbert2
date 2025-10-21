@@ -42,7 +42,7 @@ const centerStringMap = [
   { start: 340, end: 365, controller: 1, universe: 2 }
 ];
 
-const pumpkinsStackControllers = {
+const spookyTreeControllers = {
   east: {
     address: "192.168.1.112",
     universes: [244, 245, 246, 247, 248]
@@ -52,9 +52,9 @@ const pumpkinsStackControllers = {
     universes: [234, 235, 236, 237, 238]
   }
 };
-const pumpkinStackControllerArray = [pumpkinsStackControllers.east, pumpkinsStackControllers.west];
+const spookyTreeControllersArray = [spookyTreeControllers.east, spookyTreeControllers.west];
 
-const spookyTreeControllers = {
+const pumpkinStackControllers = {
   east: {
     address: "192.168.1.112",
     universes: [249, 250, 251, 252]
@@ -64,7 +64,7 @@ const spookyTreeControllers = {
     universes: [239, 240, 241, 242]
   }
 };
-const spookyTreeControllerArray = [spookyTreeControllers.east, spookyTreeControllers.west];
+const pumpkinStackControllersArray = [pumpkinStackControllers.east, pumpkinStackControllers.west];
 
 const treeOutlinePixels = 650;
 const treeFacePixels = 150;
@@ -549,8 +549,8 @@ for (let controllerIndex = 0; controllerIndex < spiderAddresses.length; controll
 }
 
 // configure spooky tree universes
-for (let controllerIndex = 0; controllerIndex < spookyTreeControllerArray.length; controllerIndex++) {
-  const controller = spookyTreeControllerArray[controllerIndex];
+for (let controllerIndex = 0; controllerIndex < spookyTreeControllersArray.length; controllerIndex++) {
+  const controller = spookyTreeControllersArray[controllerIndex];
   const universes = controller.universes;
   for (let universeIndex = 0; universeIndex < universes.length; universeIndex++) {
     const universe = universes[universeIndex];
@@ -566,8 +566,8 @@ for (let controllerIndex = 0; controllerIndex < spookyTreeControllerArray.length
 }
 
 // configure pumpkin stack universes
-for (let controllerIndex = 0; controllerIndex < pumpkinStackControllerArray.length; controllerIndex++) {
-  const controller = pumpkinStackControllerArray[controllerIndex];
+for (let controllerIndex = 0; controllerIndex < pumpkinStackControllersArray.length; controllerIndex++) {
+  const controller = pumpkinStackControllersArray[controllerIndex];
   const universes = controller.universes;
   for (let universeIndex = 0; universeIndex < universes.length; universeIndex++) {
     const universe = universes[universeIndex];
@@ -1057,22 +1057,23 @@ module.exports = {
   sendPumpkinChannelData,
   sendSpiderChannelData,
 
-  sendSpookyTreeChannelData
+  sendSpookyTreeChannelData,
+  sendPumpkinStackChannelData
 };
 
 /////////////////////////////////////////////////////////////////////////////
 
 function sendSpookyTreeChannelData(pixelColor, stepCount, stepIndex) {
 
-  for (let treeIndex = 0; treeIndex < spookyTreeControllers.length; treeIndex++) {
-    const treeController = spookyTreeControllers[treeIndex]
+  for (let treeIndex = 0; treeIndex < spookyTreeControllersArray.length; treeIndex++) {
+    const treeController = spookyTreeControllersArray[treeIndex]
     const address = treeController.address;
     const universes = treeController.universes;
     // tree outline
     let universeIndex = 0;
+    let universe = universes[universeIndex];
     let channel = 1;
     for (let pixelIndex = 1; pixelIndex <= treeOutlinePixels; pixelIndex++) {
-      // for (let universeIndex = 0; universeIndex < universes.length; universeIndex++) {
       let color = pixelColor;
       const pixelColorData = colorNameToRgb[color];
       const pixelData = [pixelColorData[0], pixelColorData[1], pixelColorData[2]];
@@ -1082,6 +1083,35 @@ function sendSpookyTreeChannelData(pixelColor, stepCount, stepIndex) {
         e131.send(address, universe);
         channel = 1;
         universeIndex++;
+        universe = universes[universeIndex];
+      }
+    }
+    e131.send(address, universe);
+  }
+}
+/////////////////////////////////////////////////////////////////////////////
+
+function sendPumpkinStackChannelData(pixelColor, stepCount, stepIndex) {
+
+  for (let treeIndex = 0; treeIndex <pumpkinStackControllersArray.length; treeIndex++) {
+    const treeController =pumpkinStackControllersArray[treeIndex]
+    const address = treeController.address;
+    const universes = treeController.universes;
+    // tree outline
+    let universeIndex = 0;
+    let universe = universes[universeIndex];
+    let channel = 1;
+    for (let pixelIndex = 1; pixelIndex <= treeOutlinePixels; pixelIndex++) {
+      let color = pixelColor;
+      const pixelColorData = colorNameToRgb[color];
+      const pixelData = [pixelColorData[0], pixelColorData[1], pixelColorData[2]];
+      e131.setChannelData(address, universe, channel, pixelData);
+      channel += pixelColorData.length;
+      if (channel >= 510) {
+        e131.send(address, universe);
+        channel = 1;
+        universeIndex++;
+        universe = universes[universeIndex];
       }
     }
     e131.send(address, universe);
