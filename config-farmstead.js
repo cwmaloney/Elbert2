@@ -57,10 +57,12 @@ const spookyTreeControllersArray = [spookyTreeControllers.east, spookyTreeContro
 
 const spookyTreeFaceControllers = {
   east: {
+    name: "east",
     address: "192.168.1.112",
     universes: [248]
   },
   west: {
+    name: "west",
     address: "192.168.1.114",
     universes: [238]
   }
@@ -69,10 +71,12 @@ const spookyTreeFaceControllersArray = [spookyTreeFaceControllers.east, spookyTr
 
 const pumpkinStackControllers = {
   east: {
+    name: "east",
     address: "192.168.1.112",
     universes: [249, 250, 251, 252]
   },
   west: {
+    name: "west",
     address: "192.168.1.114",
     universes: [239, 240, 241, 242]
   }
@@ -82,16 +86,17 @@ const pumpkinStackControllersArray = [pumpkinStackControllers.east, pumpkinStack
 const treeOutlinePixels = 650;
 const treeFacePixels = 150;
 
-// east face is face1
+// east face is face2
+const treeFace2LeftEye = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
+const treeFace2RightEye = [23, 24, 25, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 43, 44];
+const treeFace2Mouth = [[45, 46], [54, 59], [61, 64], [76, 79], [86, 88], [97, 98], [70, 73], 83, 84, [90, 92]];
+
+// west face is face1
 const treeFace1LeftEye = [130, 131, 132, 133, 134, 135, 136, 137, 143, 144, 145, 146, 147, 148, 149, 150];
 const treeFace1RightEye = [111, 112, 113, 114, 115, 116, 117, 118, 119, 121, 123, 127, 126, 128, 129];
 const treeFace1SmallRoundMouth = [40, 41, 42, 44, 45, 46, 47, 48, 49, 54, 53, 70, 82, 81, 84, 85, 86, 91, 92, 93, 95, 63, 62, 61];
 
-const treeFace2LeftEye = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
-const treeFace2RightEye = [23, 24, 25, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 43, 44];
-const treeFace2SmallRoundMouth = [46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 70, 71, 72, 73, 83, 84, 90, 91, 92];
-
-const pumpkinOutlinePixels = 650;
+const pumpkinPixels = 650;
 
 const pumpkinTopFaceLeftEye = [521, 522, 523, 524, 525, 526, 527, 530, 531];
 const pumpkinTopFaceRightEye = [433, 434, 435, 436, 437, 438, 439, 440, 443, 444, 445, 446, 447];
@@ -103,8 +108,9 @@ const pumpkinMiddleFaceMouth = [277, 278, 279, 280, 281, 265, 305, 36, 302, 301,
 
 const pumpkinBottomFaceLeftEye = [134, 135, 136, 137, 138, 141, 142, 143, 144, 145];
 const pumpkinBottomFaceRightEye = [78, 79, 80, 81, 82, 85, 86, 87, 88, 89, 91];
-const pumpkinBottomFaceMouth = [190, 189, 188, 187, 186, 185, 184, 183, 182, 181, 180, 179, 178, 177, 176, 175, 174, 173, 172, 171, 1114, 112, 113, 114, 115, 117, 118, 119, 120, 121, 122, 123, 124, 125, 125, 127, 156, 157, 158];
-const pumpkinOutlineSegments = [[1, 77], [82, 104], [128, 133], [147, 155], [197, 221], [347, 432], [449, 453], [498, 521], [533, 558], [570, 650]];
+const pumpkinBottomFaceMouth = [[105, 127], [156, 171]];
+
+const pumpkinOutlineSegments = [[1, 77], [92, 104], [128, 133], [147, 155], [197, 221], [347, 432], [449, 453], [498, 521], [534, 558], [570, 650]];
 const pumpkinStem = [559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569];
 
 const ornaments = [
@@ -1094,24 +1100,46 @@ module.exports = {
 /////////////////////////////////////////////////////////////////////////////
 
 function sendSpookyTreeChannelData(pixelColor, stepCount, stepIndex) {
-
   let outlineColor = pixelColor;
   const outlineColorData = colorNameToRgb[outlineColor];
   const outineChannelData = [outlineColorData[0], outlineColorData[1], outlineColorData[2]];
 
+  let faceeColor = "White";
+  const faceColorData = colorNameToRgb[faceeColor];
+  const faceChannelData = [faceColorData[0], faceColorData[1], faceColorData[2]];
+
   for (let treeIndex = 0; treeIndex < spookyTreeControllersArray.length; treeIndex++) {
     const treeController = spookyTreeControllersArray[treeIndex]
-    const address = treeController.address;
-    const universes = treeController.universes;
+    const treeControllerAddress = treeController.address;
+    const treeUniverses = treeController.universes;
 
     for (let pixelIndex = 0; pixelIndex < treeOutlinePixels; pixelIndex++) {
-      setPixel(address, universes, pixelIndex, outineChannelData);
+      setPixel(treeControllerAddress, treeUniverses, pixelIndex, outineChannelData);
     }
 
-    for (let universeIndex = 0; universeIndex < universes.length; universeIndex++) {
-      const universe = universes[universeIndex];
-      e131.send(address, universe);
+    for (let universeIndex = 0; universeIndex < treeUniverses.length; universeIndex++) {
+      const universe = treeUniverses[universeIndex];
+      e131.send(treeControllerAddress, universe);
     }
+
+    const faceController = spookyTreeFaceControllersArray[treeIndex];
+    const faceControllerAddress = faceController.address;
+    const faceUniverses = faceController.universes;
+    if (faceController.name == 'west') {
+      setPixels(faceControllerAddress, faceUniverses, treeFace1LeftEye, faceChannelData);
+      setPixels(faceControllerAddress, faceUniverses, treeFace1RightEye, faceChannelData);
+      setPixels(faceControllerAddress, faceUniverses, treeFace1SmallRoundMouth, faceChannelData);
+    } else if (faceController.name == 'east') {
+      setPixels(faceControllerAddress, faceUniverses, treeFace2LeftEye, faceChannelData);
+      setPixels(faceControllerAddress, faceUniverses, treeFace2RightEye, faceChannelData);
+      setPixels(faceControllerAddress, faceUniverses, treeFace2Mouth, faceChannelData);
+    }
+
+    for (let universeIndex = 0; universeIndex < faceUniverses.length; universeIndex++) {
+      const universe = faceUniverses[universeIndex];
+      e131.send(faceControllerAddress, universe);
+    }
+
   }
 }
 
@@ -1125,10 +1153,12 @@ function setPixels(address, universes, pixels, channelData) {
   for (let index = 0; index < pixels.length; index++) {
     const element = pixels[index];
     if (Array.isArray(element)) {
-      setPixel(address, universes, element, color)
-      return;
+      for (let elementIndex = element[0]; elementIndex <= element[1]; elementIndex++) {
+        setPixel(address, universes, elementIndex, channelData)
+      }
+    } else {
+      setPixel(address, universes, element, channelData);
     }
-    setPixel(address, universes, element, color);
   }
 }
 
@@ -1143,26 +1173,38 @@ function setPixel(address, universes, pixelIndex, channelData) {
 
 function sendPumpkinStackChannelData(pixelColor, stepCount, stepIndex) {
 
-  for (let treeIndex = 0; treeIndex < pumpkinStackControllersArray.length; treeIndex++) {
-    const treeController = pumpkinStackControllersArray[treeIndex]
-    const address = treeController.address;
-    const universes = treeController.universes;
-    let universeIndex = 0;
-    let universe = universes[universeIndex];
-    let channel = 1;
-    for (let pixelIndex = 1; pixelIndex <= treeOutlinePixels; pixelIndex++) {
-      let color = pixelColor;
-      const pixelColorData = colorNameToRgb[color];
-      const pixelData = [pixelColorData[0], pixelColorData[1], pixelColorData[2]];
-      e131.setChannelData(address, universe, channel, pixelData);
-      channel += pixelColorData.length;
-      if (channel >= 510) {
-        e131.send(address, universe);
-        channel = 1;
-        universeIndex++;
-        universe = universes[universeIndex];
-      }
+  let outlineColor = "Orange";
+  const outlineColorData = colorNameToRgb[outlineColor];
+  const outlineChannelData = [outlineColorData[0], outlineColorData[1], outlineColorData[2]];
+
+  let faceeColor = "Purple";
+  const faceColorData = colorNameToRgb[faceeColor];
+  const faceChannelData = [faceColorData[0], faceColorData[1], faceColorData[2]];
+
+  for (let stackIndex = 0; stackIndex < pumpkinStackControllersArray.length; stackIndex++) {
+    const controller = pumpkinStackControllersArray[stackIndex]
+    const address = controller.address;
+    const universes = controller.universes;
+
+    setPixels(address, universes, pumpkinOutlineSegments, outlineChannelData);
+    setPixels(address, universes, pumpkinStem, outlineChannelData);
+
+    setPixels(address, universes, pumpkinTopFaceLeftEye, faceChannelData);
+    setPixels(address, universes, pumpkinTopFaceRightEye, faceChannelData);
+    setPixels(address, universes, pumpkinTopFaceMouth, faceChannelData);
+
+    setPixels(address, universes, pumpkinMiddleFaceLeftEye, faceChannelData);
+    setPixels(address, universes, pumpkinMiddleFaceRightEye, faceChannelData);
+    setPixels(address, universes, pumpkinMiddleFaceMouth, faceChannelData);
+
+    setPixels(address, universes, pumpkinBottomFaceLeftEye, faceChannelData);
+    setPixels(address, universes, pumpkinBottomFaceRightEye, faceChannelData);
+    setPixels(address, universes, pumpkinBottomFaceMouth, faceChannelData);
+
+
+    for (let universeIndex = 0; universeIndex < universes.length; universeIndex++) {
+      const universe = universes[universeIndex];
+      e131.send(address, universe);
     }
-    e131.send(address, universe);
   }
 }
