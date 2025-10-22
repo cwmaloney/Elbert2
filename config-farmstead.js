@@ -45,14 +45,27 @@ const centerStringMap = [
 const spookyTreeControllers = {
   east: {
     address: "192.168.1.112",
-    universes: [244, 245, 246, 247, 248]
+    universes: [244, 245, 246, 247]
   },
   west: {
     address: "192.168.1.114",
-    universes: [234, 235, 236, 237, 238]
+    universes: [234, 235, 236, 237]
   }
 };
+
 const spookyTreeControllersArray = [spookyTreeControllers.east, spookyTreeControllers.west];
+
+const spookyTreeFaceControllers = {
+  east: {
+    address: "192.168.1.112",
+    universes: [248]
+  },
+  west: {
+    address: "192.168.1.114",
+    universes: [238]
+  }
+};
+const spookyTreeFaceControllersArray = [spookyTreeFaceControllers.east, spookyTreeFaceControllers.west];
 
 const pumpkinStackControllers = {
   east: {
@@ -551,6 +564,23 @@ for (let controllerIndex = 0; controllerIndex < spiderAddresses.length; controll
 // configure spooky tree universes
 for (let controllerIndex = 0; controllerIndex < spookyTreeControllersArray.length; controllerIndex++) {
   const controller = spookyTreeControllersArray[controllerIndex];
+  const universes = controller.universes;
+  for (let universeIndex = 0; universeIndex < universes.length; universeIndex++) {
+    const universe = universes[universeIndex];
+    e131.configureUniverse({
+      "address": controller.address,
+      "universe": universe,
+      "sourcePort": 5568,
+      "sendOnlyChangeData": false,
+      "sendSequenceNumbers": false,
+      "refreshInterval": 1000
+    });
+  }
+}
+
+// configure spooky tree face universes
+for (let controllerIndex = 0; controllerIndex < spookyTreeFaceControllersArray.length; controllerIndex++) {
+  const controller = spookyTreeFaceControllersArray[controllerIndex];
   const universes = controller.universes;
   for (let universeIndex = 0; universeIndex < universes.length; universeIndex++) {
     const universe = universes[universeIndex];
@@ -1065,39 +1095,58 @@ module.exports = {
 
 function sendSpookyTreeChannelData(pixelColor, stepCount, stepIndex) {
 
+  let outlineColor = pixelColor;
+  const outlineColorData = colorNameToRgb[outlineColor];
+  const outineChannelData = [outlineColorData[0], outlineColorData[1], outlineColorData[2]];
+
   for (let treeIndex = 0; treeIndex < spookyTreeControllersArray.length; treeIndex++) {
     const treeController = spookyTreeControllersArray[treeIndex]
     const address = treeController.address;
     const universes = treeController.universes;
-    // tree outline
-    let universeIndex = 0;
-    let universe = universes[universeIndex];
-    let channel = 1;
-    for (let pixelIndex = 1; pixelIndex <= treeOutlinePixels; pixelIndex++) {
-      let color = pixelColor;
-      const pixelColorData = colorNameToRgb[color];
-      const pixelData = [pixelColorData[0], pixelColorData[1], pixelColorData[2]];
-      e131.setChannelData(address, universe, channel, pixelData);
-      channel += pixelColorData.length;
-      if (channel >= 510) {
-        e131.send(address, universe);
-        channel = 1;
-        universeIndex++;
-        universe = universes[universeIndex];
-      }
+
+    for (let pixelIndex = 0; pixelIndex < treeOutlinePixels; pixelIndex++) {
+      setPixel(address, universes, pixelIndex, outineChannelData);
     }
-    e131.send(address, universe);
+
+    for (let universeIndex = 0; universeIndex < universes.length; universeIndex++) {
+      const universe = universes[universeIndex];
+      e131.send(address, universe);
+    }
   }
 }
+
+function getPixelIndex(pixelIndex) {
+  const universeIndex = Math.floor(pixelIndex / 170);
+  const pixelInUniverseIndex = pixelIndex % 170;
+  return { universeIndex, pixelInUniverseIndex };
+}
+
+function setPixels(address, universes, pixels, channelData) {
+  for (let index = 0; index < pixels.length; index++) {
+    const element = pixels[index];
+    if (Array.isArray(element)) {
+      setPixel(address, universes, element, color)
+      return;
+    }
+    setPixel(address, universes, element, color);
+  }
+}
+
+function setPixel(address, universes, pixelIndex, channelData) {
+  const { universeIndex, pixelInUniverseIndex } = getPixelIndex(pixelIndex);
+  const universe = universes[universeIndex];
+  const channel = pixelInUniverseIndex * 3 + 1;
+  e131.setChannelData(address, universe, channel, channelData);
+}
+
 /////////////////////////////////////////////////////////////////////////////
 
 function sendPumpkinStackChannelData(pixelColor, stepCount, stepIndex) {
 
-  for (let treeIndex = 0; treeIndex <pumpkinStackControllersArray.length; treeIndex++) {
-    const treeController =pumpkinStackControllersArray[treeIndex]
+  for (let treeIndex = 0; treeIndex < pumpkinStackControllersArray.length; treeIndex++) {
+    const treeController = pumpkinStackControllersArray[treeIndex]
     const address = treeController.address;
     const universes = treeController.universes;
-    // tree outline
     let universeIndex = 0;
     let universe = universes[universeIndex];
     let channel = 1;
