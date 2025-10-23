@@ -87,14 +87,14 @@ const treeOutlinePixels = 650;
 const treeFacePixels = 150;
 
 // east face is face2
-const treeFace2LeftEye = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
-const treeFace2RightEye = [23, 24, 25, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 43, 44];
-const treeFace2Mouth = [[45, 46], [54, 59], [61, 64], [76, 79], [86, 88], [97, 98], [70, 73], 83, 84, [90, 92]];
+const treeFace2LeftEye = [[4, 22]];
+const treeFace2RightEye = [23, 24, 25, [28, 41], 43, 44];
+const treeFace2Mouth = [[45, 46], [54, 59], [61, 64], [76, 79], [86, 88], [97, 99], [70, 73], 83, 84, [90, 92]];
 
 // west face is face1
-const treeFace1LeftEye = [130, 131, 132, 133, 134, 135, 136, 137, 143, 144, 145, 146, 147, 148, 149, 150];
-const treeFace1RightEye = [111, 112, 113, 114, 115, 116, 117, 118, 119, 121, 123, 127, 126, 128, 129];
-const treeFace1SmallRoundMouth = [40, 41, 42, 44, 45, 46, 47, 48, 49, 54, 53, 70, 82, 81, 84, 85, 86, 91, 92, 93, 95, 63, 62, 61];
+const treeFace1LeftEye = [[130, 143]];
+const treeFace1RightEye = [[111, 118], 119, 121, 123, 127, 126, 127, 128, 129];
+const treeFace1Mouth = [1, 2, 3, 5, 6, 8, 10, 11, 13, 15, 16, [19, 34], 98, 99, 100, [50, 53], [63, 75], ];
 
 const pumpkinPixels = 650;
 
@@ -1100,7 +1100,7 @@ module.exports = {
 /////////////////////////////////////////////////////////////////////////////
 
 function sendSpookyTreeChannelData(pixelColor, stepCount, stepIndex) {
-  let outlineColor = pixelColor;
+  let outlineColor = "Blue";
   const outlineColorData = colorNameToRgb[outlineColor];
   const outineChannelData = [outlineColorData[0], outlineColorData[1], outlineColorData[2]];
 
@@ -1113,7 +1113,7 @@ function sendSpookyTreeChannelData(pixelColor, stepCount, stepIndex) {
     const treeControllerAddress = treeController.address;
     const treeUniverses = treeController.universes;
 
-    for (let pixelIndex = 0; pixelIndex < treeOutlinePixels; pixelIndex++) {
+    for (let pixelIndex = 1; pixelIndex <= treeOutlinePixels; pixelIndex++) {
       setPixel(treeControllerAddress, treeUniverses, pixelIndex, outineChannelData);
     }
 
@@ -1128,7 +1128,7 @@ function sendSpookyTreeChannelData(pixelColor, stepCount, stepIndex) {
     if (faceController.name == 'west') {
       setPixels(faceControllerAddress, faceUniverses, treeFace1LeftEye, faceChannelData);
       setPixels(faceControllerAddress, faceUniverses, treeFace1RightEye, faceChannelData);
-      setPixels(faceControllerAddress, faceUniverses, treeFace1SmallRoundMouth, faceChannelData);
+      setPixels(faceControllerAddress, faceUniverses, treeFace1Mouth, faceChannelData);
     } else if (faceController.name == 'east') {
       setPixels(faceControllerAddress, faceUniverses, treeFace2LeftEye, faceChannelData);
       setPixels(faceControllerAddress, faceUniverses, treeFace2RightEye, faceChannelData);
@@ -1144,8 +1144,9 @@ function sendSpookyTreeChannelData(pixelColor, stepCount, stepIndex) {
 }
 
 function getPixelIndex(pixelIndex) {
-  const universeIndex = Math.floor(pixelIndex / 170);
-  const pixelInUniverseIndex = pixelIndex % 170;
+  const pZero = pixelIndex -1;
+  const universeIndex = Math.floor(pZero / 170);
+  const pixelInUniverseIndex = pZero % 170 + 1;
   return { universeIndex, pixelInUniverseIndex };
 }
 
@@ -1165,7 +1166,7 @@ function setPixels(address, universes, pixels, channelData) {
 function setPixel(address, universes, pixelIndex, channelData) {
   const { universeIndex, pixelInUniverseIndex } = getPixelIndex(pixelIndex);
   const universe = universes[universeIndex];
-  const channel = pixelInUniverseIndex * 3 + 1;
+  const channel = (pixelInUniverseIndex - 1) * 3 + 1;
   e131.setChannelData(address, universe, channel, channelData);
 }
 
