@@ -99,18 +99,18 @@ const treeFace1Mouth = [1, 2, 3, 5, 6, 8, 10, 11, 13, 15, 16, [19, 34], 98, 99, 
 const pumpkinPixels = 650;
 
 const pumpkinTopFaceLeftEye = [521, 522, 523, 524, 525, 526, 527, 530, 531];
-const pumpkinTopFaceRightEye = [433, 434, 435, 436, 437, 438, 439, 440, 443, 444, 445, 446, 447];
-const pumpkinTopFaceMouth = [462, 463, 464, 465, 466, 468, 488, 489, 490, 491, 493, 494, 454, 455, 456, 457, 458, 459, 460, 461];
+const pumpkinTopFaceRightEye = [433, 434, 435, 436, 437, 438, 439, 440, 443, 444, 447, 448];
+const pumpkinTopFaceMouth = [[454, 466]];
 
-const pumpkinMiddleFaceLeftEye = [336, 337, 338, 339, 340, 321, 322, 323, 324, 325, 326, 327, 328, 329];
-const pumpkinMiddleFaceRightEye = [307, 308, 319, 310, 311, 312, 313, 346, 345, 344, 343, 342, 341, 318, 319, 320];
-const pumpkinMiddleFaceMouth = [277, 278, 279, 280, 281, 265, 305, 36, 302, 301, 300, 297, 296, 295, 294, 293, 292, 291, 290, 289, 288, 287, 285, 284, 257, 256, 255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245, 235, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 238, 239, 240, 241, 269];
+const pumpkinMiddleFaceLeftEye = [336, 337, 338, 339, 340, 321, 322, 323, 324, 325, 326, 327, 328, 329, 334, 335];
+const pumpkinMiddleFaceRightEye = [307, 308, 309, 310, 311, 312, 313, 346, 345, 344, 343, 342, 341, 318, 319, 320];
+const pumpkinMiddleFaceMouth = [252, [263,271], 281, 276];
 
-const pumpkinBottomFaceLeftEye = [134, 135, 136, 137, 138, 141, 142, 143, 144, 145];
+const pumpkinBottomFaceLeftEye = [134, 135, 136, 137, 138, 141, 142, 143, 144, 146];
 const pumpkinBottomFaceRightEye = [78, 79, 80, 81, 82, 85, 86, 87, 88, 89, 91];
 const pumpkinBottomFaceMouth = [[105, 127], [156, 171]];
 
-const pumpkinOutlineSegments = [[1, 77], [92, 104], [128, 133], [147, 155], [197, 221], [347, 432], [449, 453], [498, 521], [534, 558], [570, 650]];
+const pumpkinOutlineSegments = [[1, 77], [92, 104], [128, 133], [147, 155], [197, 221], [347, 432], [449, 453], [498, 520], [537, 558], [570, 650]];
 const pumpkinStem = [559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569];
 
 const ornaments = [
