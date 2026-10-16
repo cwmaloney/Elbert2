@@ -102,12 +102,12 @@ const valentineScenes = [
 /////////////////////////////////////////////////////////////////////////////
 // all data that changes to choose a show should be in this section
 
-const beamStartTime = "17:15:00";
-const beamStopTime  = "21:05:00";
+const beamStartTime = "16:50:00";
+const beamStopTime  = "19:59:00";
 // const beamStartTime = "19:20:00";
 // const beamStopTime  = "19:22:00";
 
-const runBeams = true;
+const runBeams = false;
 const runOutline = true;
 const runWashers = true;
 const runOrnaments = false;

@@ -86,14 +86,14 @@ const pumpkinStackControllersArray = [pumpkinStackControllers.east, pumpkinStack
 const treeOutlinePixels = 650;
 const treeFacePixels = 150;
 
-// east face is face2
+// west face is face2
 const treeFace2LeftEye = [[4, 22]];
 const treeFace2RightEye = [23, 24, 25, [28, 41], 43, 44];
 const treeFace2Mouth = [[45, 46], [54, 59], [61, 64], [76, 79], [86, 88], [97, 99], [70, 73], 83, 84, [90, 92]];
 
-// west face is face1
+// east face is face1
 const treeFace1LeftEye = [[130, 143]];
-const treeFace1RightEye = [[111, 118], 119, 121, 123, 127, 126, 127, 128, 129];
+const treeFace1RightEye =  [[119,  129]];
 const treeFace1Mouth = [1, 2, 3, 5, 6, 8, 10, 11, 13, 15, 16, [19, 34], 98, 99, 100, [50, 53], [63, 75], ];
 
 const pumpkinPixels = 650;
@@ -390,7 +390,6 @@ const spiderUniverses = [[60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71], [72, 
 
 // number of pixels per spider
 const pixelsPerSpider = 189;
-const pixelsPerUniverse = 170;
 const channelsPerSpiderUniverse = 510;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1104,8 +1103,8 @@ function sendSpookyTreeChannelData(pixelColor, stepCount, stepIndex) {
   const outlineColorData = colorNameToRgb[outlineColor];
   const outineChannelData = [outlineColorData[0], outlineColorData[1], outlineColorData[2]];
 
-  let faceeColor = "White";
-  const faceColorData = colorNameToRgb[faceeColor];
+  let faceColor = "White";
+  const faceColorData = colorNameToRgb[faceColor];
   const faceChannelData = [faceColorData[0], faceColorData[1], faceColorData[2]];
 
   for (let treeIndex = 0; treeIndex < spookyTreeControllersArray.length; treeIndex++) {
@@ -1125,11 +1124,13 @@ function sendSpookyTreeChannelData(pixelColor, stepCount, stepIndex) {
     const faceController = spookyTreeFaceControllersArray[treeIndex];
     const faceControllerAddress = faceController.address;
     const faceUniverses = faceController.universes;
-    if (faceController.name == 'west') {
+    if (faceController.name == 'east') {
       setPixels(faceControllerAddress, faceUniverses, treeFace1LeftEye, faceChannelData);
       setPixels(faceControllerAddress, faceUniverses, treeFace1RightEye, faceChannelData);
       setPixels(faceControllerAddress, faceUniverses, treeFace1Mouth, faceChannelData);
-    } else if (faceController.name == 'east') {
+    } else if (faceController.name == 'west') {
+      setPixels(faceControllerAddress, faceUniverses, [1,2,3], [255, 0, 0]);
+      setPixels(faceControllerAddress, faceUniverses, [26,27,42], [255, 0, 0]);
       setPixels(faceControllerAddress, faceUniverses, treeFace2LeftEye, faceChannelData);
       setPixels(faceControllerAddress, faceUniverses, treeFace2RightEye, faceChannelData);
       setPixels(faceControllerAddress, faceUniverses, treeFace2Mouth, faceChannelData);
