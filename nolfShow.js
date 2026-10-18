@@ -102,12 +102,12 @@ const valentineScenes = [
 /////////////////////////////////////////////////////////////////////////////
 // all data that changes to choose a show should be in this section
 
-const beamStartTime = "16:50:00";
-const beamStopTime  = "19:59:00";
+const beamStartTime = "16:40:00";
+const beamStopTime  = "21:05:00";
 // const beamStartTime = "19:20:00";
 // const beamStopTime  = "19:22:00";
 
-const runBeams = false;
+const runBeams = true;
 const runOutline = true;
 const runWashers = true;
 const runOrnaments = false;
@@ -221,7 +221,8 @@ function startScene() {
 /////////////////////////////////////////////////////////////////////////////
 
 function updateShow() {
-  if (runBeams)     { sendBeamsChannelData(beamChannelData); }
+  const areBeamsOn = isTimeToShowBeams(beamStartMinute, beamStopMinute);
+  if (runBeams && areBeamsOn)     { sendBeamsChannelData(beamChannelData); }
   if (runWashers)   { sendWasherChannelData(scene.pixelColor2); }
   if (runOutline)   { sendOutlineChannelData(scene.pixelColor1, scene.pixelColor2, scene.stepCount, scene.stepIndex); }
   if (runOrnaments) { sendOrnamentChannelData(scene.pixelColor1, scene.pixelColor2, scene.stepCount, scene.stepIndex); }

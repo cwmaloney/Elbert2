@@ -750,6 +750,10 @@ function sendBeamChannelData(beamIndex, beamChannelData) {
 /////////////////////////////////////////////////////////////////////////////
 
 function sendBeamsChannelData(beamChannelData) {
+  //   const isItTimeToShowBeams = isTimeToShowBeams(beamStartMinute, beamStopMinute);
+  // if (!isItTimeToShowBeams) {
+  //   return;
+  // }
   for (var beamIndex = 0; beamIndex < beams.length; beamIndex++) {
     e131.setChannelData(beams[beamIndex].address, beams[beamIndex].universe, beams[beamIndex].channel, beamChannelData);
   }
@@ -1058,8 +1062,8 @@ function checkBeamLampState(beamState, beamStartMinute, beamStopMinute) {
       return { beamState: "on", timeout: 500 };
     }
   } else {
+    sendBeamsOff();
     if (beamState !== "off") {
-      sendBeamsOff();
       beamState = "off";
       return { beamState: "off", timeout: 10000 };
     }
